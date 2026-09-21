@@ -1651,6 +1651,15 @@ export type Database = {
         Args: { _profile_id: string; _workspace_id: string }
         Returns: boolean
       }
+      notify: {
+        Args: {
+          _actor: string
+          _body: string
+          _recipient: string
+          _type: string
+        }
+        Returns: undefined
+      }
       owns_profile: { Args: { _profile_id: string }; Returns: boolean }
     }
     Enums: {
