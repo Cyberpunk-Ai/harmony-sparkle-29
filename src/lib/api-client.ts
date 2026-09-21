@@ -224,80 +224,28 @@ export async function createPost(input: {
   tags?: string[];
   poll?: any;
 }) {
-  const primaryUserId = me();
-  let authUserId = primaryUserId;
+  const userId = me();
+  if (!isDbId(userId)) throw new Error("Sign in to post");
 
-  try {
-    const { data: authData } = await supabase.auth.getUser();
-    if (authData?.user?.id) {
-      authUserId = authData.user.id;
-    }
-  } catch {
-    /* ignore session lookup failure */
-  }
+  const { data, error } = await db
+    .from("posts")
+    .insert({
+      user_id: userId,
+      content: input.content,
+      image_gradient: input.image_gradient ?? null,
+      media_url: input.media_url ?? null,
+      tags: input.tags ?? [],
+      poll: input.poll ?? null,
+    })
+    .select("*")
+    .single();
 
-  const payload = {
-    user_id: authUserId,
-    content: input.content,
-    image_gradient: input.image_gradient ?? null,
-    media_url: input.media_url ?? null,
-    tags: input.tags ?? [],
-    poll: input.poll ?? null,
-  };
+  if (error) throw new Error(error.message || "Could not publish your post");
 
-  let insertedData: any = null;
-
-  try {
-    const { data, error } = await db.from("posts").insert(payload).select("*").single();
-    if (error) {
-      // If error is code 42501 or user_id mismatch, retry with primaryUserId
-      if (authUserId !== primaryUserId) {
-        const { data: retryData, error: retryError } = await db
-          .from("posts")
-          .insert({ ...payload, user_id: primaryUserId })
-          .select("*")
-          .single();
-        if (!retryError && retryData) {
-          insertedData = retryData;
-        } else {
-          console.warn("Post DB insert retry notice:", retryError);
-        }
-      } else {
-        console.warn("Post DB insert notice:", error);
-      }
-    } else {
-      insertedData = data;
-    }
-  } catch (err) {
-    console.warn("Post insert exception notice:", err);
-  }
-
-  if (insertedData) {
-    const post = rowToPost(insertedData);
-    emitRealtime("post:created", post);
-    return { ...post, post } as Post & { post: Post };
-  }
-
-  // Robust Fallback: create client post if database RLS blocks direct table insert
-  const fallbackPost: Post = {
-    id: `post_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-    user_id: primaryUserId,
-    content: input.content,
-    image_gradient: input.image_gradient ?? null,
-    media_url: input.media_url ?? null,
-    image_url: input.media_url ?? null,
-    tags: input.tags ?? [],
-    created_at: nowIso(),
-    likeCount: 0,
-    commentCount: 0,
-    repostCount: 0,
-    viewCount: 1,
-    poll: input.poll ?? null,
-  };
-
-  await hydrateAuthors([primaryUserId]);
-  emitRealtime("post:created", fallbackPost);
-  return { ...fallbackPost, post: fallbackPost } as Post & { post: Post };
+  await hydrateAuthors([userId]);
+  const post = rowToPost(data);
+  emitRealtime("post:created", post);
+  return { ...post, post } as Post & { post: Post };
 }
 
 export async function deletePost(id: string) {
