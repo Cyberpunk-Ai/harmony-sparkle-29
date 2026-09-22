@@ -165,7 +165,7 @@ function ProfilePage() {
   }
 
   function handleShareProfile() {
-    const profileUrl = `${window.location.origin}/profile?id=${userProfile.id}`;
+    const profileUrl = `${window.location.origin}/u/${userProfile.username}`;
     if (navigator.share) {
       navigator
         .share({
