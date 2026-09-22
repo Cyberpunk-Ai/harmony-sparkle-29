@@ -22,6 +22,8 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SpacesRouteImport } from './routes/spaces'
 import { Route as BillingCallbackRouteImport } from './routes/billing.callback'
+import { Route as PostIdRouteImport } from './routes/post.$id'
+import { Route as UUsernameRouteImport } from './routes/u.$username'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 import { Route as ApiPublicPaystackWebhookRouteImport } from './routes/api/public/paystack/webhook'
 
@@ -90,6 +92,16 @@ const BillingCallbackRoute = BillingCallbackRouteImport.update({
   path: '/billing/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PostIdRoute = PostIdRouteImport.update({
+  id: '/post/$id',
+  path: '/post/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UUsernameRoute = UUsernameRouteImport.update({
+  id: '/u/$username',
+  path: '/u/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
   id: '/api/public/media/$',
   path: '/api/public/media/$',
@@ -116,6 +128,8 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/billing/callback': typeof BillingCallbackRoute
+  '/post/$id': typeof PostIdRoute
+  '/u/$username': typeof UUsernameRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/api/public/paystack/webhook': typeof ApiPublicPaystackWebhookRoute
 }
@@ -133,6 +147,8 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/billing/callback': typeof BillingCallbackRoute
+  '/post/$id': typeof PostIdRoute
+  '/u/$username': typeof UUsernameRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/api/public/paystack/webhook': typeof ApiPublicPaystackWebhookRoute
 }
@@ -151,6 +167,8 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/billing/callback': typeof BillingCallbackRoute
+  '/post/$id': typeof PostIdRoute
+  '/u/$username': typeof UUsernameRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/api/public/paystack/webhook': typeof ApiPublicPaystackWebhookRoute
 }
@@ -170,6 +188,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/billing/callback'
+    | '/post/$id'
+    | '/u/$username'
     | '/api/public/media/$'
     | '/api/public/paystack/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -187,6 +207,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/billing/callback'
+    | '/post/$id'
+    | '/u/$username'
     | '/api/public/media/$'
     | '/api/public/paystack/webhook'
   id:
@@ -204,6 +226,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/billing/callback'
+    | '/post/$id'
+    | '/u/$username'
     | '/api/public/media/$'
     | '/api/public/paystack/webhook'
   fileRoutesById: FileRoutesById
@@ -222,6 +246,8 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SpacesRoute: typeof SpacesRoute
   BillingCallbackRoute: typeof BillingCallbackRoute
+  PostIdRoute: typeof PostIdRoute
+  UUsernameRoute: typeof UUsernameRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
   ApiPublicPaystackWebhookRoute: typeof ApiPublicPaystackWebhookRoute
 }
@@ -319,6 +345,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BillingCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/post/$id': {
+      id: '/post/$id'
+      path: '/post/$id'
+      fullPath: '/post/$id'
+      preLoaderRoute: typeof PostIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/u/$username': {
+      id: '/u/$username'
+      path: '/u/$username'
+      fullPath: '/u/$username'
+      preLoaderRoute: typeof UUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/media/$': {
       id: '/api/public/media/$'
       path: '/api/public/media/$'
@@ -350,6 +390,8 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SpacesRoute: SpacesRoute,
   BillingCallbackRoute: BillingCallbackRoute,
+  PostIdRoute: PostIdRoute,
+  UUsernameRoute: UUsernameRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
   ApiPublicPaystackWebhookRoute: ApiPublicPaystackWebhookRoute,
 }
