@@ -1058,18 +1058,20 @@ export async function deleteMessage(messageId: string) {
 
 export async function getNotifications(): Promise<Notification[]> {
   if (!isDbId(me())) return [];
-  try {
-    const { data } = await db
-      .from("notifications")
-      .select("*")
-      .eq("recipient_id", me())
-      .order("created_at", { ascending: false })
-      .limit(50);
-    if (data && data.length > 0) return data as Notification[];
-  } catch (err) {
-    console.warn("getNotifications notice:", err);
+  const { data, error } = await db
+    .from("notifications")
+    .select("*")
+    .eq("recipient_id", me())
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) {
+    console.warn("getNotifications notice:", error.message);
+    return [];
   }
-  return [];
+  const rows = (data ?? []) as Notification[];
+  // Load the people behind each notification so names and avatars render.
+  await hydrateAuthors(rows.map((n) => n.actor_id));
+  return rows;
 }
 
 export async function markNotificationsRead() {
