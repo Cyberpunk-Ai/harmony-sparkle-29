@@ -116,7 +116,7 @@ export const getForYouPosts = createServerFn({ method: "GET" })
 
     const now = Date.now();
     const seen = new Set(engagedIds);
-    const scored = rows.map((row: any) => {
+    const scored: Array<{ row: any; score: number }> = rows.map((row: any) => {
       const ageHours = Math.max(0, (now - new Date(row.created_at).getTime()) / 3_600_000);
       const decay = Math.exp(-ageHours / 36); // ~1.5 day half-life-ish
 
