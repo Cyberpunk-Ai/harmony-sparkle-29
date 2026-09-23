@@ -649,6 +649,9 @@ export type Database = {
           currency: string
           destination: string | null
           failure_reason: string | null
+          fee_amount: number
+          fee_bps: number
+          gross_amount: number | null
           id: string
           method: string
           recipient_code: string | null
@@ -664,6 +667,9 @@ export type Database = {
           currency?: string
           destination?: string | null
           failure_reason?: string | null
+          fee_amount?: number
+          fee_bps?: number
+          gross_amount?: number | null
           id?: string
           method?: string
           recipient_code?: string | null
@@ -679,6 +685,9 @@ export type Database = {
           currency?: string
           destination?: string | null
           failure_reason?: string | null
+          fee_amount?: number
+          fee_bps?: number
+          gross_amount?: number | null
           id?: string
           method?: string
           recipient_code?: string | null
@@ -1400,9 +1409,12 @@ export type Database = {
           amount: number
           created_at: string
           currency: string
+          fee_amount: number
+          fee_bps: number
           from_user_id: string
           id: string
           message: string
+          net_amount: number
           post_id: string | null
           to_user_id: string
         }
@@ -1410,9 +1422,12 @@ export type Database = {
           amount: number
           created_at?: string
           currency?: string
+          fee_amount?: number
+          fee_bps?: number
           from_user_id: string
           id?: string
           message?: string
+          net_amount?: number
           post_id?: string | null
           to_user_id: string
         }
@@ -1420,9 +1435,12 @@ export type Database = {
           amount?: number
           created_at?: string
           currency?: string
+          fee_amount?: number
+          fee_bps?: number
           from_user_id?: string
           id?: string
           message?: string
+          net_amount?: number
           post_id?: string | null
           to_user_id?: string
         }
@@ -1661,6 +1679,7 @@ export type Database = {
         Returns: undefined
       }
       owns_profile: { Args: { _profile_id: string }; Returns: boolean }
+      platform_fee_bps: { Args: { _profile_id: string }; Returns: number }
     }
     Enums: {
       app_role: "user" | "moderator" | "admin"

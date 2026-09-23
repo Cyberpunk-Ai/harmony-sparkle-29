@@ -36,6 +36,13 @@
       "when": 1789954579492,
       "tag": "0004_counters_notifications_triggers",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790127437945,
+      "tag": "0005_story_graph_and_fees",
+      "breakpoints": true
     }
   ]
 }
