@@ -454,7 +454,7 @@ function PostCardBase({
     if (navigator.share) {
       navigator
         .share({
-          title: `${author.display_name} on Spaces`,
+          title: `${author.display_name} on Spaces1`,
           text: post.content,
           url: shareUrl,
         })

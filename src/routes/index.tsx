@@ -38,7 +38,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Spaces is a social platform for creators and communities: smart feeds, live audio rooms, stories, and encrypted chat in one beautiful place.",
+          "Spaces1 is a social platform for creators and communities: smart feeds, live audio rooms, stories, and encrypted chat in one beautiful place.",
       },
       { property: "og:title", content: "Spaces1 — Where Your World Comes to Life" },
       {
@@ -833,7 +833,7 @@ function Testimonials() {
             Loved by <span className="gradient-text">creators</span> everywhere
           </h2>
           <p className="text-xl text-gray-600">
-            Hear from the creators and communities building their lives on Spaces.
+            Hear from the creators and communities building their lives on Spaces1.
           </p>
         </Reveal>
         <div className="grid gap-8 md:grid-cols-3">
@@ -1038,7 +1038,7 @@ function Cta() {
               Ready to light up your world?
             </h2>
             <p className="text-lg text-white/80">
-              Join millions of creators and communities on Spaces. Free forever, upgrade anytime.
+              Join millions of creators and communities on Spaces1. Free forever, upgrade anytime.
             </p>
             <form
               className="mx-auto flex max-w-md flex-col gap-3 sm:flex-row"
@@ -1110,7 +1110,7 @@ function Footer() {
           ))}
         </div>
         <div className="flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-8 text-sm text-gray-400 sm:flex-row">
-          <p>© 2026 Spaces. All rights reserved.</p>
+          <p>© 2026 Spaces1. All rights reserved.</p>
           <p>Made for creators, everywhere.</p>
         </div>
       </div>

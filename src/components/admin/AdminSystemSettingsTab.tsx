@@ -431,7 +431,7 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
                     announcement_banner: { ...banner, message: e.target.value },
                   })
                 }
-                placeholder="e.g. Welcome to Spaces! Join our live audio session today."
+                placeholder="e.g. Welcome to Spaces1! Join our live audio session today."
                 className="w-full rounded-2xl border border-border bg-background px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
               />
             </div>

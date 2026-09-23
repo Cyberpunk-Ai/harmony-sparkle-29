@@ -16,12 +16,12 @@ export const Route = createFileRoute("/auth")({
       {
         name: "description",
         content:
-          "Create your Spaces account or sign back in to post, join live audio rooms, message creators and tip the people you follow.",
+          "Create your Spaces1 account or sign back in to post, join live audio rooms, message creators and tip the people you follow.",
       },
       { property: "og:title", content: "Sign In or Join — Spaces1" },
       {
         property: "og:description",
-        content: "Create a Spaces account or sign in to post, chat and go live.",
+        content: "Create a Spaces1 account or sign in to post, chat and go live.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -111,7 +111,7 @@ function AuthPage() {
         }
 
         if (data.session) {
-          toast.success("Account created — welcome to Spaces!");
+          toast.success("Account created — welcome to Spaces1!");
           void navigate({ to: "/" });
           return;
         }
@@ -178,7 +178,7 @@ function AuthPage() {
           </span>
           <div>
             <h1 className="text-xl font-black tracking-tight text-foreground">
-              {isLoggedIn ? "Account Active" : mode === "signin" ? "Welcome back" : "Join Spaces"}
+              {isLoggedIn ? "Account Active" : mode === "signin" ? "Welcome back" : "Join Spaces1"}
             </h1>
             <p className="text-xs text-muted-foreground">
               {isLoggedIn

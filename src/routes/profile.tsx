@@ -50,10 +50,10 @@ export const Route = createFileRoute("/profile")({
       {
         name: "description",
         content:
-          "Creator profile on Spaces: posts, replies, media and live audio rooms with follower stats and custom branding.",
+          "Creator profile on Spaces1: posts, replies, media and live audio rooms with follower stats and custom branding.",
       },
       { property: "og:title", content: "Profile — Spaces1" },
-      { property: "og:description", content: "Discover creator profiles, posts, and live audio rooms on Spaces." },
+      { property: "og:description", content: "Discover creator profiles, posts, and live audio rooms on Spaces1." },
     ],
   }),
   component: ProfilePage,
@@ -169,7 +169,7 @@ function ProfilePage() {
     if (navigator.share) {
       navigator
         .share({
-          title: `${userProfile.display_name} on Spaces`,
+          title: `${userProfile.display_name} on Spaces1`,
           text: userProfile.bio,
           url: profileUrl,
         })
@@ -374,7 +374,7 @@ function ProfilePage() {
         {userProfile.followers > 0 && (
           <Panel className="flex items-center gap-3">
             <p className="text-sm text-muted-foreground">
-              Followed by <strong className="font-semibold text-foreground">{compact(userProfile.followers)}</strong> creators on Spaces
+              Followed by <strong className="font-semibold text-foreground">{compact(userProfile.followers)}</strong> creators on Spaces1
             </p>
           </Panel>
         )}

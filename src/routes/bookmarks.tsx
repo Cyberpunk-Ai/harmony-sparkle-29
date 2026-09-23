@@ -17,12 +17,12 @@ export const Route = createFileRoute("/bookmarks")({
       {
         name: "description",
         content:
-          "Your saved posts on Spaces. Keep the essays, frames and threads worth returning to in one private, searchable collection.",
+          "Your saved posts on Spaces1. Keep the essays, frames and threads worth returning to in one private, searchable collection.",
       },
       { property: "og:title", content: "Bookmarks — Spaces1" },
       {
         property: "og:description",
-        content: "A private collection of the posts you saved on Spaces.",
+        content: "A private collection of the posts you saved on Spaces1.",
       },
     ],
   }),

@@ -58,12 +58,12 @@ export const Route = createFileRoute("/settings")({
       {
         name: "description",
         content:
-          "Manage your Spaces account: profile details, notification preferences, privacy controls, appearance, and creator tools.",
+          "Manage your Spaces1 account: profile details, notification preferences, privacy controls, appearance, and creator tools.",
       },
       { property: "og:title", content: "Settings — Spaces1" },
       {
         property: "og:description",
-        content: "Profile, notifications, privacy, appearance, and creator controls for your Spaces account.",
+        content: "Profile, notifications, privacy, appearance, and creator controls for your Spaces1 account.",
       },
     ],
   }),

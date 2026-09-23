@@ -1,5 +1,5 @@
 /**
- * Data access layer for the Spaces app. All calls go through the Lovable Cloud
+ * Data access layer for the Spaces1 app. All calls go through the Lovable Cloud
  * backend (Supabase) with defensive mapping so the UI keeps working while the
  * schema evolves.
  */
