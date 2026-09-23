@@ -13,13 +13,13 @@ export const Route = createFileRoute("/post/$id")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Post unavailable — Starpace" },
+          { title: "Post unavailable — Spaces1" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
-    const snippet = loaderData.content.slice(0, 150) || "A post on Starpace";
-    const title = `${loaderData.author.displayName} on Starpace`;
+    const snippet = loaderData.content.slice(0, 150) || "A post on Spaces1";
+    const title = `${loaderData.author.displayName} on Spaces1`;
     return {
       meta: [
         { title },

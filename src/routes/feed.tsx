@@ -24,16 +24,16 @@ export const Route = createFileRoute("/feed")({
   }),
   head: () => ({
     meta: [
-      { title: "Your Feed — Starpace" },
+      { title: "Your Feed — Spaces1" },
       {
         name: "description",
         content:
-          "Your Spaces home: share a moment, follow live Spaces, and see posts from the creators and communities you care about.",
+          "Your Spaces1 home: share a moment, follow live Spaces, and see posts from the creators and communities you care about.",
       },
-      { property: "og:title", content: "Your Feed — Starpace" },
+      { property: "og:title", content: "Your Feed — Spaces1" },
       {
         property: "og:description",
-        content: "Share moments, join live Spaces, and discover creators on Spaces.",
+        content: "Share moments, join live Spaces, and discover creators on Spaces1.",
       },
     ],
   }),
@@ -390,7 +390,7 @@ function FeedPage() {
   return (
     <AppShell title="Home" right={<DefaultRail />}>
       <div className="mx-auto max-w-2xl space-y-5 relative">
-        <h1 className="sr-only">Your Spaces feed</h1>
+        <h1 className="sr-only">Your Spaces1 feed</h1>
 
         {/* Tab switcher & Tuning control - Smart Scroll Behavior */}
         <div

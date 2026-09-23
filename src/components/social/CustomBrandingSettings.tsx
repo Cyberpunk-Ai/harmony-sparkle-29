@@ -98,7 +98,7 @@ export function CustomBrandingSettings() {
             </div>
             <p className="text-xs text-muted-foreground">@{currentUser.username}</p>
             <p className="text-xs font-medium text-foreground/90 italic pt-1">
-              "{branding.tagline || "Verified Creator on Spaces"}"
+              "{branding.tagline || "Verified Creator on Spaces1"}"
             </p>
           </div>
         </div>

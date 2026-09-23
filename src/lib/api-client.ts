@@ -1,5 +1,5 @@
 /**
- * Data access layer for the Spaces app. All calls go through the Lovable Cloud
+ * Data access layer for the Spaces1 app. All calls go through the Lovable Cloud
  * backend (Supabase) with defensive mapping so the UI keeps working while the
  * schema evolves.
  */
@@ -94,6 +94,23 @@ export async function getPosts(
   } = {},
 ): Promise<Post[]> {
   if (options.bookmarked) return getBookmarkedPosts(options.limit ?? 50);
+  // "For you" is ranked server-side (behaviour + graph + quality + diversity).
+  if (options.filter === "foryou" && !options.userId && !options.tag && isDbId(me())) {
+    try {
+      const { getForYouPosts } = await import("@/lib/recommendations.functions");
+      const res: any = await getForYouPosts({
+        data: { limit: Math.min(options.limit ?? appConfig.feed.pageSize, appConfig.feed.maxPageSize) },
+      });
+      const ranked = (res?.posts ?? []).map((row: any) => rowToPost(row));
+      if (ranked.length > 0) {
+        await hydrateAuthors(ranked.map((p: Post) => p.user_id));
+        await hydrateEngagement(ranked);
+        return ranked;
+      }
+    } catch (err) {
+      console.warn("For you ranking unavailable, using recency:", err);
+    }
+  }
   if (options.filter === "following") options = { ...options, following: true };
   if (options.authorId) options = { ...options, userId: options.authorId };
   const limit = Math.min(options.limit ?? appConfig.feed.pageSize, appConfig.feed.maxPageSize);

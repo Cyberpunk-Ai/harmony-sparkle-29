@@ -126,7 +126,7 @@ export function UpgradeModal() {
               {selectedPlan === "pro" ? <Crown className="h-10 w-10" /> : <Sparkles className="h-10 w-10" />}
             </div>
             <h3 className="mt-6 text-2xl font-black">
-              Welcome to Spaces {targetPlanDetails.name}!
+              Welcome to Spaces1 {targetPlanDetails.name}!
             </h3>
             <p className="mt-2 text-sm text-muted-foreground max-w-md">
               Your account has been upgraded. The {targetPlanDetails.badge} badge and full plan capabilities are now active immediately across the platform.

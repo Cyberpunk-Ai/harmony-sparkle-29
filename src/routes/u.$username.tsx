@@ -13,14 +13,14 @@ export const Route = createFileRoute("/u/$username")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Profile unavailable — Starpace" },
+          { title: "Profile unavailable — Spaces1" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
-    const title = `${loaderData.displayName} (@${loaderData.username}) — Starpace`;
+    const title = `${loaderData.displayName} (@${loaderData.username}) — Spaces1`;
     const description =
-      loaderData.bio || `Follow @${loaderData.username} on Starpace for posts and live audio rooms.`;
+      loaderData.bio || `Follow @${loaderData.username} on Spaces1 for posts and live audio rooms.`;
     return {
       meta: [
         { title },

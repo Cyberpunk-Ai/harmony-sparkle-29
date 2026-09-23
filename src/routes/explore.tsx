@@ -21,16 +21,16 @@ export const Route = createFileRoute("/explore")({
   }),
   head: () => ({
     meta: [
-      { title: "Explore — Discover Creators & Topics on Spaces" },
+      { title: "Explore — Discover Creators & Topics on Spaces1" },
       {
         name: "description",
         content:
           "Explore trending tags, rising creators, media posts, and the topics moving fastest across Spaces right now.",
       },
-      { property: "og:title", content: "Explore — Discover Creators & Topics on Spaces" },
+      { property: "og:title", content: "Explore — Discover Creators & Topics on Spaces1" },
       {
         property: "og:description",
-        content: "Trending tags, rising creators, and the topics moving fastest on Spaces.",
+        content: "Trending tags, rising creators, and the topics moving fastest on Spaces1.",
       },
     ],
   }),
@@ -435,7 +435,7 @@ function ExplorePage() {
                         <FollowButton targetUserId={p.id} />
                       </div>
                       <p className="mt-3 line-clamp-2 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                        {p.bio || "Digital creator & visual explorer on Spaces"}
+                        {p.bio || "Digital creator & visual explorer on Spaces1"}
                       </p>
                     </div>
                     <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-xs font-semibold text-muted-foreground">

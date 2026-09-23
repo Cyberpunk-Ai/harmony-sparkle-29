@@ -3,6 +3,7 @@ import { Loader2, Sparkles, CheckCircle2, ArrowRight } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
+import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { setLoggedOut, useAuth } from "@/lib/auth-state";
 import { cn } from "@/lib/utils";
@@ -12,16 +13,16 @@ export const Route = createFileRoute("/auth")({
     typeof search["email"] === "string" ? { email: search["email"] as string } : {},
   head: () => ({
     meta: [
-      { title: "Sign In or Join — Starpace" },
+      { title: "Sign In or Join — Spaces1" },
       {
         name: "description",
         content:
-          "Create your Spaces account or sign back in to post, join live audio rooms, message creators and tip the people you follow.",
+          "Create your Spaces1 account or sign back in to post, join live audio rooms, message creators and tip the people you follow.",
       },
-      { property: "og:title", content: "Sign In or Join — Starpace" },
+      { property: "og:title", content: "Sign In or Join — Spaces1" },
       {
         property: "og:description",
-        content: "Create a Spaces account or sign in to post, chat and go live.",
+        content: "Create a Spaces1 account or sign in to post, chat and go live.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -65,11 +66,16 @@ function AuthPage() {
   async function handleGoogle() {
     setBusy(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: `${window.location.origin}/` },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
       });
-      if (error) toast.error(friendlyAuthError(error.message));
+      if (result.error) {
+        toast.error(friendlyAuthError(result.error.message));
+        return;
+      }
+      if (result.redirected) return;
+      toast.success("Signed in");
+      void navigate({ to: "/" });
     } catch (err) {
       toast.error(err instanceof Error ? friendlyAuthError(err.message) : "Google sign-in failed");
     } finally {
@@ -111,7 +117,7 @@ function AuthPage() {
         }
 
         if (data.session) {
-          toast.success("Account created — welcome to Spaces!");
+          toast.success("Account created — welcome to Spaces1!");
           void navigate({ to: "/" });
           return;
         }
@@ -178,7 +184,7 @@ function AuthPage() {
           </span>
           <div>
             <h1 className="text-xl font-black tracking-tight text-foreground">
-              {isLoggedIn ? "Account Active" : mode === "signin" ? "Welcome back" : "Join Spaces"}
+              {isLoggedIn ? "Account Active" : mode === "signin" ? "Welcome back" : "Join Spaces1"}
             </h1>
             <p className="text-xs text-muted-foreground">
               {isLoggedIn
@@ -223,7 +229,7 @@ function AuthPage() {
               onClick={() => void navigate({ to: "/" })}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-brand to-brand-pink py-2.5 text-sm font-bold text-white shadow-sm hover:opacity-95 active:scale-98 transition-all"
             >
-              <span>Continue to Starpace</span>
+              <span>Continue to Spaces1</span>
               <ArrowRight className="h-4 w-4" />
             </button>
 
