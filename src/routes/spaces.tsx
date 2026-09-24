@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Radio, Mic, Calendar, Headphones, Play, Plus, Search, X, Loader2, Sparkles, Check } from "lucide-react";
 import { AppShell, Panel, PageHeader } from "@/components/social/AppShell";
 import { RailFooter } from "@/components/social/RightRail";
@@ -281,12 +281,14 @@ function SpacesPage() {
 
 
   // Auto-open space if spaceId is provided in URL
+  // Open only once per link; list refreshes must not reopen a closed room.
+  const autoOpened = useRef<string | null>(null);
   useEffect(() => {
-    if (search.spaceId && allSpaces.length > 0) {
-      const found = allSpaces.find((s) => s.id === search.spaceId);
-      if (found) {
-        setActiveSpace(found);
-      }
+    if (!search.spaceId || autoOpened.current === search.spaceId || allSpaces.length === 0) return;
+    const found = allSpaces.find((s) => s.id === search.spaceId);
+    if (found) {
+      autoOpened.current = search.spaceId;
+      setActiveSpace((cur) => (cur?.id === found.id ? cur : found));
     }
   }, [search.spaceId, allSpaces]);
 

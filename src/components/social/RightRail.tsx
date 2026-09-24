@@ -8,8 +8,9 @@ import { InfoModal } from "@/components/social/InfoModal";
 import { compact } from "@/lib/formatters";
 import { currentUserId } from "@/lib/profile-service";
 import type { Profile, Space, TrendingTag } from "@/lib/types";
-import { toggleFollowUser, getTrendingTags, getUsers, getSpaces } from "@/lib/api-client";
+import { toggleFollowUser, isFollowing, getTrendingTags, getUsers, getSpaces } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export function SearchBox({ placeholder = "Search Spaces" }: { placeholder?: string }) {
   const [val, setVal] = useState("");
@@ -39,17 +40,29 @@ export function FollowButton({ initial = false, targetUserId }: { initial?: bool
   const [following, setFollowing] = useState(initial);
   const [loading, setLoading] = useState(false);
 
+  // Read the saved follow state so it survives a refresh.
+  useEffect(() => {
+    if (!targetUserId) return;
+    let alive = true;
+    isFollowing(targetUserId).then((v) => alive && setFollowing(v)).catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [targetUserId]);
+
   async function handleToggle() {
-    const next = !following;
-    setFollowing(next);
-    if (targetUserId) {
-      setLoading(true);
-      try {
-        await toggleFollowUser(targetUserId);
-      } catch {}
-      finally {
-        setLoading(false);
-      }
+    if (!targetUserId || loading) return;
+    const prev = following;
+    setFollowing(!prev);
+    setLoading(true);
+    try {
+      const res = await toggleFollowUser(targetUserId);
+      setFollowing(res.following);
+    } catch (err: any) {
+      setFollowing(prev);
+      toast.error(err?.message || "Couldn't update follow. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 

@@ -12,7 +12,6 @@ import type { Profile } from "@/lib/types";
 
 let loadedOnce = false;
 
-const STORAGE_KEY = "spaces_local_session_user";
 
 async function loadSessionProfile() {
   try {
@@ -42,9 +41,6 @@ async function loadSessionProfile() {
       if (row) {
         const profile = rowToProfile(row as Record<string, unknown>);
         profile.email = authUser.email ?? undefined;
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
-        } catch {}
         setCurrentUser(profile);
         return;
       }
@@ -54,9 +50,6 @@ async function loadSessionProfile() {
   }
 
   // No verified session: sign the visitor out locally too.
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch {}
   setCurrentUser(null);
 }
 
@@ -64,9 +57,6 @@ async function loadSessionProfile() {
 export function updateUserSession(patch: Partial<Profile>) {
   const next = { ...currentUser, ...patch } as Profile;
   setCurrentUser(next);
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch {}
 
   if (next.id && next.id !== "guest" && !next.id.startsWith("local_") && !next.id.startsWith("google_")) {
     void supabase
@@ -84,17 +74,11 @@ export function updateUserSession(patch: Partial<Profile>) {
 
 /** Adopt a freshly authenticated profile into the in-memory session. */
 export function setLoggedIn(profile: Profile) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
-  } catch {}
   setCurrentUser(profile);
 }
 
 /** Clear the session and reset the in-memory profile to guest. */
 export function setLoggedOut() {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch {}
   try {
     void supabase.auth.signOut();
   } catch {}

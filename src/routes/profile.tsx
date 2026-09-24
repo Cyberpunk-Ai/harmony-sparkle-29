@@ -26,7 +26,7 @@ import { TipModal } from "@/components/social/TipModal";
 import { compact } from "@/lib/formatters";
 import { currentUser as defaultUser, getProfile } from "@/lib/profile-service";
 import type { Post, Profile } from "@/lib/types";
-import { getPosts, getCurrentUser, getUserProfile, toggleFollowUser } from "@/lib/api-client";
+import { getPosts, getCurrentUser, getUserProfile, toggleFollowUser, isFollowing as isFollowingUser } from "@/lib/api-client";
 import { useRealtime } from "@/lib/realtime";
 import { useAuth } from "@/lib/auth-state";
 import { usePlan } from "@/lib/plan-state";
@@ -117,9 +117,7 @@ function ProfilePage() {
       profilePromise = getUserProfile(targetId).then((res) => {
         if (res?.profile) {
           setUserProfile(res.profile);
-          if ((res.profile as any).isFollowing !== undefined) {
-            setIsFollowing(!!(res.profile as any).isFollowing);
-          }
+          void isFollowingUser(res.profile.id).then(setIsFollowing).catch(() => {});
         }
       });
     } else {
