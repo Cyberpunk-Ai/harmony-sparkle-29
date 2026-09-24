@@ -43,6 +43,13 @@
       "when": 1790127437945,
       "tag": "0005_story_graph_and_fees",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790213837945,
+      "tag": "0006_security_hardening",
+      "breakpoints": true
     }
   ]
 }

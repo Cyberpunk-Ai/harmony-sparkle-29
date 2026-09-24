@@ -15,16 +15,24 @@ import { currentUser } from "@/lib/profile-service";
 import type { AdminOverviewData, UserRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-
-const AdminOverviewTab = lazy(() => import("@/components/admin/AdminOverviewTab").then((m) => ({ default: m.AdminOverviewTab })));
+const AdminOverviewTab = lazy(() =>
+  import("@/components/admin/AdminOverviewTab").then((m) => ({ default: m.AdminOverviewTab })),
+);
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
       { title: "Admin Console — Spaces1" },
-      { name: "description", content: "Moderation queue, user management, content review, audit logs and platform settings for Spaces administrators." },
+      {
+        name: "description",
+        content:
+          "Moderation queue, user management, content review, audit logs and platform settings for Spaces administrators.",
+      },
       { property: "og:title", content: "Admin Console — Spaces1" },
-      { property: "og:description", content: "Moderation, users, content, audit logs and platform settings." },
+      {
+        property: "og:description",
+        content: "Moderation, users, content, audit logs and platform settings.",
+      },
       { property: "og:type", content: "website" },
       { name: "robots", content: "noindex" },
       { name: "twitter:card", content: "summary" },
@@ -33,7 +41,15 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-const TABS = ["overview", "users", "content", "moderation", "withdrawals", "audit", "settings"] as const;
+const TABS = [
+  "overview",
+  "users",
+  "content",
+  "moderation",
+  "withdrawals",
+  "audit",
+  "settings",
+] as const;
 
 function AdminPage() {
   const { user } = useAuth();
@@ -133,7 +149,9 @@ function AdminPage() {
             onClick={() => setTab(t)}
             className={cn(
               "rounded-full border px-4 py-1.5 text-xs font-bold capitalize transition-colors",
-              tab === t ? "border-brand bg-brand/10 text-brand" : "border-border text-muted-foreground hover:bg-foreground/5",
+              tab === t
+                ? "border-brand bg-brand/10 text-brand"
+                : "border-border text-muted-foreground hover:bg-foreground/5",
             )}
           >
             {t}
@@ -143,15 +161,23 @@ function AdminPage() {
 
       {tab === "overview" && overview && (
         <Suspense fallback={<div className="h-64 animate-pulse rounded-2xl bg-muted/40" />}>
-        <AdminOverviewTab overview={overview} activeRole={activeRole} onNavigateTab={(t) => setTab(t as any)} />
+          <AdminOverviewTab
+            overview={overview}
+            activeRole={activeRole}
+            onNavigateTab={(t) => setTab(t as any)}
+          />
         </Suspense>
       )}
       {tab === "users" && <AdminUsersTab activeRole={activeRole} currentUserId={profile.id} />}
       {tab === "content" && <AdminContentTab activeRole={activeRole} currentUserId={profile.id} />}
-      {tab === "moderation" && <AdminModerationTab activeRole={activeRole} currentUserId={profile.id} />}
+      {tab === "moderation" && (
+        <AdminModerationTab activeRole={activeRole} currentUserId={profile.id} />
+      )}
       {tab === "withdrawals" && <AdminPayoutsTab />}
       {tab === "audit" && <AdminAuditLogsTab activeRole={activeRole} />}
-      {tab === "settings" && <AdminSystemSettingsTab activeRole={activeRole} currentUserId={profile.id} />}
+      {tab === "settings" && (
+        <AdminSystemSettingsTab activeRole={activeRole} currentUserId={profile.id} />
+      )}
     </div>
   );
 }

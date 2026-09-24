@@ -5,7 +5,6 @@ import { currentUser, setCurrentUser, subscribeProfiles } from "@/lib/profile-se
 import { supabase } from "@/integrations/supabase/client";
 import { attachRemoteRecord, signedInProfileId } from "@/lib/remote-store";
 
-
 interface PlanUsage {
   aiDraftsToday: number;
   day: string;
@@ -63,9 +62,7 @@ function commit(next: Partial<StoredPlanState>) {
 /** Opens the global upgrade modal, optionally naming the locked feature. */
 export function openUpgradeModal(featureHint?: string) {
   if (typeof window === "undefined") return;
-  window.dispatchEvent(
-    new CustomEvent("spaces:open-upgrade-modal", { detail: { featureHint } }),
-  );
+  window.dispatchEvent(new CustomEvent("spaces:open-upgrade-modal", { detail: { featureHint } }));
 }
 
 export function usePlan() {
@@ -99,9 +96,7 @@ export function usePlan() {
         plan,
         billing_cycle: cycle,
         status: "active",
-        renews_at: new Date(
-          Date.now() + (cycle === "annual" ? 365 : 30) * 86400000,
-        ).toISOString(),
+        renews_at: new Date(Date.now() + (cycle === "annual" ? 365 : 30) * 86400000).toISOString(),
       });
     }
   }

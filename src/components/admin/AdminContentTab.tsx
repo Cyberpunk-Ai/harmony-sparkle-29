@@ -72,7 +72,7 @@ export function AdminContentTab({ activeRole, currentUserId }: AdminContentTabPr
     },
     "space:ended": ({ spaceId }: { spaceId: string }) => {
       setSpaces((prev) =>
-        prev.map((s) => (s.id === spaceId ? { ...s, live: false, is_live: false } : s))
+        prev.map((s) => (s.id === spaceId ? { ...s, live: false, is_live: false } : s)),
       );
     },
   });
@@ -96,9 +96,7 @@ export function AdminContentTab({ activeRole, currentUserId }: AdminContentTabPr
   const handleTerminateSpace = async (spaceId: string) => {
     try {
       await terminateSpaceAdmin(spaceId, currentUserId);
-      setSpaces((prev) =>
-        prev.map((s) => (s.id === spaceId ? { ...s, is_live: false } : s))
-      );
+      setSpaces((prev) => prev.map((s) => (s.id === spaceId ? { ...s, is_live: false } : s)));
       showToast("Audio space session terminated");
     } catch (err: any) {
       toast.error(err.message || "Failed to terminate space");
@@ -137,7 +135,7 @@ export function AdminContentTab({ activeRole, currentUserId }: AdminContentTabPr
               "flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-colors",
               contentType === "posts"
                 ? "bg-card text-foreground shadow-xs"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             <FileText className="h-3.5 w-3.5" />
@@ -149,7 +147,7 @@ export function AdminContentTab({ activeRole, currentUserId }: AdminContentTabPr
               "flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-colors",
               contentType === "spaces"
                 ? "bg-card text-foreground shadow-xs"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             <Radio className="h-3.5 w-3.5 text-rose-500" />
@@ -161,7 +159,7 @@ export function AdminContentTab({ activeRole, currentUserId }: AdminContentTabPr
               "flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-colors",
               contentType === "stories"
                 ? "bg-card text-foreground shadow-xs"
-                : "text-muted-foreground hover:text-foreground"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             <Sparkles className="h-3.5 w-3.5 text-brand" />
@@ -299,7 +297,7 @@ export function AdminContentTab({ activeRole, currentUserId }: AdminContentTabPr
                       "flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[0.68rem] font-bold",
                       isLive
                         ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 animate-pulse"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-muted text-muted-foreground",
                     )}
                   >
                     <Radio className="h-3 w-3" />
@@ -343,7 +341,7 @@ export function AdminContentTab({ activeRole, currentUserId }: AdminContentTabPr
               key={story.id}
               className={cn(
                 "glass-panel relative flex h-52 flex-col justify-between overflow-hidden rounded-3xl border border-border/80 p-4 shadow-soft",
-                story.gradient || "bg-gradient-to-br from-violet-600 to-pink-600"
+                story.gradient || "bg-gradient-to-br from-violet-600 to-pink-600",
               )}
             >
               <div className="flex items-center justify-between text-white drop-shadow-md">
@@ -365,7 +363,12 @@ export function AdminContentTab({ activeRole, currentUserId }: AdminContentTabPr
 
               <div className="flex items-center justify-between text-xs text-white/90 drop-shadow-md">
                 <span>❤️ {story.likes_count || 0}</span>
-                <span className="text-[0.68rem]">{new Date(story.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <span className="text-[0.68rem]">
+                  {new Date(story.created_at).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
               </div>
             </div>
           ))}

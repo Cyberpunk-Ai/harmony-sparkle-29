@@ -19,12 +19,40 @@ interface TonePreset {
 }
 
 const tonePresets: TonePreset[] = [
-  { label: "Engaging & Thoughtful", prompt: "Share a thoughtful insight about modern creative work, design, or technology", tier: "free" },
-  { label: "Quick Actionable Tip", prompt: "Share a quick, high-impact tip for creators or builders", tier: "free" },
-  { label: "Viral Hook Builder 🚀", prompt: "Craft a high-converting, curiosity-sparking opening hook about breaking through noise in tech", tier: "plus" },
-  { label: "Provocative Hot Take 🔥", prompt: "Share a bold, thought-provoking perspective challenging conventional wisdom in modern design", tier: "plus" },
-  { label: "Deep Industry Analysis 🧠", prompt: "Write an authoritative, multi-perspective breakdown of emerging software trends and creator ecosystems", tier: "pro" },
-  { label: "Poetic Storyteller Arc 📖", prompt: "Write a vivid, emotionally resonant micro-story reflecting on craft, persistence, and late night creation", tier: "pro" },
+  {
+    label: "Engaging & Thoughtful",
+    prompt: "Share a thoughtful insight about modern creative work, design, or technology",
+    tier: "free",
+  },
+  {
+    label: "Quick Actionable Tip",
+    prompt: "Share a quick, high-impact tip for creators or builders",
+    tier: "free",
+  },
+  {
+    label: "Viral Hook Builder 🚀",
+    prompt:
+      "Craft a high-converting, curiosity-sparking opening hook about breaking through noise in tech",
+    tier: "plus",
+  },
+  {
+    label: "Provocative Hot Take 🔥",
+    prompt:
+      "Share a bold, thought-provoking perspective challenging conventional wisdom in modern design",
+    tier: "plus",
+  },
+  {
+    label: "Deep Industry Analysis 🧠",
+    prompt:
+      "Write an authoritative, multi-perspective breakdown of emerging software trends and creator ecosystems",
+    tier: "pro",
+  },
+  {
+    label: "Poetic Storyteller Arc 📖",
+    prompt:
+      "Write a vivid, emotionally resonant micro-story reflecting on craft, persistence, and late night creation",
+    tier: "pro",
+  },
 ];
 
 export function AiDraftModal({ isOpen, onClose, onSelectDraft, currentDraft }: AiDraftModalProps) {
@@ -99,11 +127,18 @@ export function AiDraftModal({ isOpen, onClose, onSelectDraft, currentDraft }: A
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold">Spaces Gemini Spark</h2>
-                <span className={cn("text-[0.65rem] font-bold px-1.5 py-0.5 rounded", planDetails.badgeColor)}>
+                <span
+                  className={cn(
+                    "text-[0.65rem] font-bold px-1.5 py-0.5 rounded",
+                    planDetails.badgeColor,
+                  )}
+                >
                   {planDetails.badge}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">Draft high-engagement social posts with AI</p>
+              <p className="text-xs text-muted-foreground">
+                Draft high-engagement social posts with AI
+              </p>
             </div>
           </div>
           <button
@@ -154,15 +189,17 @@ export function AiDraftModal({ isOpen, onClose, onSelectDraft, currentDraft }: A
               Tone & Format Engine
             </label>
             <span className="text-[0.68rem] text-muted-foreground">
-              {currentPlan === "free" ? "2 Free • 4 Plus/Pro Tones" : currentPlan === "plus" ? "4 Unlocked • 2 Pro Tones" : "All Tones Unlocked"}
+              {currentPlan === "free"
+                ? "2 Free • 4 Plus/Pro Tones"
+                : currentPlan === "plus"
+                  ? "4 Unlocked • 2 Pro Tones"
+                  : "All Tones Unlocked"}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             {tonePresets.map((tp) => {
-              const isLocked =
-                (tp.tier === "plus" && !isPlus) ||
-                (tp.tier === "pro" && !isPro);
+              const isLocked = (tp.tier === "plus" && !isPlus) || (tp.tier === "pro" && !isPro);
 
               return (
                 <button
@@ -204,14 +241,20 @@ export function AiDraftModal({ isOpen, onClose, onSelectDraft, currentDraft }: A
               onChange={(e) => setCustomPrompt(e.target.value)}
               placeholder="e.g. Write a launch teaser for a new spatial audio feature..."
               className="flex-1 rounded-2xl bg-foreground/5 px-4 py-2.5 text-sm outline-none border border-transparent focus:border-brand/40 focus:bg-background transition-all"
-              onKeyDown={(e) => e.key === "Enter" && customPrompt.trim() && handleGenerate(customPrompt)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && customPrompt.trim() && handleGenerate(customPrompt)
+              }
             />
             <button
               onClick={() => handleGenerate(customPrompt || "Share a creative thought for today")}
               disabled={loading || isLimitReached}
               className="flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-brand to-brand-pink px-4 py-2.5 text-sm font-bold text-white shadow-soft hover:shadow-glow transition-all active:scale-95 disabled:opacity-50"
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Wand2 className="h-4 w-4" />
+              )}
               Generate
             </button>
           </div>
@@ -237,7 +280,11 @@ export function AiDraftModal({ isOpen, onClose, onSelectDraft, currentDraft }: A
                 onClick={handleCopy}
                 className="flex items-center gap-1 hover:underline text-muted-foreground"
               >
-                {copied ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
+                {copied ? (
+                  <Check className="h-3 w-3 text-emerald-500" />
+                ) : (
+                  <Copy className="h-3 w-3" />
+                )}
                 {copied ? "Copied" : "Copy"}
               </button>
             </div>

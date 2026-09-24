@@ -8,7 +8,13 @@ import { InfoModal } from "@/components/social/InfoModal";
 import { compact } from "@/lib/formatters";
 import { currentUserId } from "@/lib/profile-service";
 import type { Profile, Space, TrendingTag } from "@/lib/types";
-import { toggleFollowUser, isFollowing, getTrendingTags, getUsers, getSpaces } from "@/lib/api-client";
+import {
+  toggleFollowUser,
+  isFollowing,
+  getTrendingTags,
+  getUsers,
+  getSpaces,
+} from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -36,7 +42,13 @@ export function SearchBox({ placeholder = "Search Spaces" }: { placeholder?: str
   );
 }
 
-export function FollowButton({ initial = false, targetUserId }: { initial?: boolean; targetUserId?: string }) {
+export function FollowButton({
+  initial = false,
+  targetUserId,
+}: {
+  initial?: boolean;
+  targetUserId?: string;
+}) {
   const [following, setFollowing] = useState(initial);
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +56,9 @@ export function FollowButton({ initial = false, targetUserId }: { initial?: bool
   useEffect(() => {
     if (!targetUserId) return;
     let alive = true;
-    isFollowing(targetUserId).then((v) => alive && setFollowing(v)).catch(() => {});
+    isFollowing(targetUserId)
+      .then((v) => alive && setFollowing(v))
+      .catch(() => {});
     return () => {
       alive = false;
     };
@@ -120,7 +134,9 @@ export function TrendingPanel() {
                 className="group block rounded-2xl px-3 py-2 transition-colors duration-300 hover:bg-foreground/5"
               >
                 <p className="text-[11px] text-muted-foreground">{t.category}</p>
-                <p className="font-bold text-sm group-hover:text-brand transition-colors">#{cleanTag}</p>
+                <p className="font-bold text-sm group-hover:text-brand transition-colors">
+                  #{cleanTag}
+                </p>
                 <p className="text-[11px] text-muted-foreground">{t.count}</p>
               </Link>
             </li>
@@ -262,7 +278,9 @@ export function LiveSpacesPanel() {
                   <Radio className="h-4 w-4" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="line-clamp-1 text-xs sm:text-sm font-semibold leading-snug group-hover:text-brand transition-colors">{s.title}</p>
+                  <p className="line-clamp-1 text-xs sm:text-sm font-semibold leading-snug group-hover:text-brand transition-colors">
+                    {s.title}
+                  </p>
                   <p className="mt-0.5 text-[11px] text-muted-foreground flex items-center gap-1">
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
                     {compact(s.listeners)} listening

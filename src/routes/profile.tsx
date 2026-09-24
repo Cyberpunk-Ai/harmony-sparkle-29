@@ -26,7 +26,13 @@ import { TipModal } from "@/components/social/TipModal";
 import { compact } from "@/lib/formatters";
 import { currentUser as defaultUser, getProfile } from "@/lib/profile-service";
 import type { Post, Profile } from "@/lib/types";
-import { getPosts, getCurrentUser, getUserProfile, toggleFollowUser, isFollowing as isFollowingUser } from "@/lib/api-client";
+import {
+  getPosts,
+  getCurrentUser,
+  getUserProfile,
+  toggleFollowUser,
+  isFollowing as isFollowingUser,
+} from "@/lib/api-client";
 import { useRealtime } from "@/lib/realtime";
 import { useAuth } from "@/lib/auth-state";
 import { usePlan } from "@/lib/plan-state";
@@ -36,8 +42,9 @@ import { useCreatorBalance } from "@/lib/monetization-state";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-
-const AnalyticsDashboard = lazy(() => import("@/components/social/AnalyticsDashboard").then((m) => ({ default: m.AnalyticsDashboard })));
+const AnalyticsDashboard = lazy(() =>
+  import("@/components/social/AnalyticsDashboard").then((m) => ({ default: m.AnalyticsDashboard })),
+);
 
 export const Route = createFileRoute("/profile")({
   validateSearch: (search: Record<string, unknown>): { id?: string; user?: string } => ({
@@ -53,14 +60,17 @@ export const Route = createFileRoute("/profile")({
           "Creator profile on Spaces1: posts, replies, media and live audio rooms with follower stats and custom branding.",
       },
       { property: "og:title", content: "Profile — Spaces1" },
-      { property: "og:description", content: "Discover creator profiles, posts, and live audio rooms on Spaces1." },
+      {
+        property: "og:description",
+        content: "Discover creator profiles, posts, and live audio rooms on Spaces1.",
+      },
     ],
   }),
   component: ProfilePage,
 });
 
-const ownTabs = ["Posts", "Reposts", "Replies", "Media", "Likes", "Analytics"] as const;
-const otherTabs = ["Posts", "Reposts", "Replies", "Media", "Likes"] as const;
+const ownTabs = ["Posts", "Reposts", "Media", "Likes", "Analytics"] as const;
+const otherTabs = ["Posts", "Reposts", "Media"] as const;
 
 function ProfilePage() {
   const navigate = useNavigate();
@@ -71,7 +81,7 @@ function ProfilePage() {
   const { user: authUser } = useAuth();
   const { branding, activeTheme } = useBranding();
   const { pendingBalance, loading: balanceLoading } = useCreatorBalance();
-  
+
   const currentLoggedInUser = authUser || defaultUser;
   const cleanTarget = targetId?.replace(/^@/, "");
   const isMe =
@@ -82,9 +92,7 @@ function ProfilePage() {
     cleanTarget === currentLoggedInUser.id;
 
   // Resolve profile
-  const resolvedProfile: Profile = isMe
-    ? currentLoggedInUser
-    : getProfile(targetId);
+  const resolvedProfile: Profile = isMe ? currentLoggedInUser : getProfile(targetId);
 
   const [userProfile, setUserProfile] = useState<Profile>(resolvedProfile);
   const [tab, setTab] = useState<string>("Posts");
@@ -108,44 +116,59 @@ function ProfilePage() {
 
   useEffect(() => {
     setLoading(true);
-    let profilePromise;
-    if (isMe) {
-      profilePromise = getCurrentUser().then((res) => {
-        if (res?.user) setUserProfile(res.user);
-      });
-    } else if (targetId) {
-      profilePromise = getUserProfile(targetId).then((res) => {
-        if (res?.profile) {
-          setUserProfile(res.profile);
-          void isFollowingUser(res.profile.id).then(setIsFollowing).catch(() => {});
-        }
-      });
-    } else {
-      profilePromise = Promise.resolve();
-    }
+    // Resolve the profile first, then fetch only that author's posts instead of
+    // pulling the whole feed and filtering client-side.
+    const profilePromise: Promise<string | null> = isMe
+      ? getCurrentUser().then((res) => {
+          if (res?.user) {
+            setUserProfile(res.user);
+            return res.user.id;
+          }
+          return null;
+        })
+      : targetId
+        ? getUserProfile(targetId).then((res) => {
+            if (res?.profile) {
+              setUserProfile(res.profile);
+              void isFollowingUser(res.profile.id)
+                .then(setIsFollowing)
+                .catch(() => {});
+              return res.profile.id;
+            }
+            return null;
+          })
+        : Promise.resolve(null);
 
-    const postsPromise = getPosts()
+    profilePromise
+      .then((authorId) => (authorId ? getPosts({ userId: authorId }) : []))
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) setAllPosts(data);
-      });
-
-    Promise.all([profilePromise, postsPromise])
+        if (Array.isArray(data)) setAllPosts(data);
+      })
       .catch((err) => console.warn("Failed loading profile details:", err))
       .finally(() => setLoading(false));
   }, [isMe, targetId]);
 
-  useRealtime((event) => {
-    if (event.type === "user_profile_updated" && event.id === userProfile.id) {
-      setUserProfile((prev) => ({ ...prev, ...event }));
-    } else if (event.type === "new_post" && event.post) {
-      setAllPosts((prev) => [event.post, ...prev]);
-    } else if (event.type === "post_deleted" && event.postId) {
-      setAllPosts((prev) => prev.filter((p) => p.id !== event.postId));
-    }
-  }, ["user_profile_updated", "new_post", "post_deleted"]);
+  useRealtime(
+    (event) => {
+      if (event.type === "user_profile_updated" && event.id === userProfile.id) {
+        setUserProfile((prev) => ({ ...prev, ...event }));
+      } else if (event.type === "new_post" && event.post) {
+        // Only surface new posts by this profile's author; otherwise the list and
+        // counts get polluted by everyone's posts while viewing a profile.
+        if (event.post.user_id === userProfile.id) {
+          setAllPosts((prev) => [event.post, ...prev]);
+        }
+      } else if (event.type === "post_deleted" && event.postId) {
+        setAllPosts((prev) => prev.filter((p) => p.id !== event.postId));
+      }
+    },
+    ["user_profile_updated", "new_post", "post_deleted"],
+  );
 
   async function handleToggleFollow() {
     const next = !isFollowing;
+    const prevFollowing = isFollowing;
+    const prevFollowers = userProfile.followers;
     setIsFollowing(next);
     setUserProfile((p) => ({
       ...p,
@@ -154,9 +177,16 @@ function ProfilePage() {
     setFollowLoading(true);
     try {
       await toggleFollowUser(userProfile.id);
-      toast.success(next ? `Following @${userProfile.username}` : `Unfollowed @${userProfile.username}`);
-    } catch {
-      // optimistic state kept
+      toast.success(
+        next ? `Following @${userProfile.username}` : `Unfollowed @${userProfile.username}`,
+      );
+    } catch (err) {
+      // Roll back the optimistic update so the UI matches the server.
+      setIsFollowing(prevFollowing);
+      setUserProfile((p) => ({ ...p, followers: prevFollowers }));
+      toast.error(
+        err instanceof Error ? err.message : "Could not update follow. Please try again.",
+      );
     } finally {
       setFollowLoading(false);
     }
@@ -173,8 +203,10 @@ function ProfilePage() {
         })
         .catch(() => {});
     } else {
-      navigator.clipboard.writeText(profileUrl);
-      toast.success("Profile link copied to clipboard!");
+      navigator.clipboard
+        .writeText(profileUrl)
+        .then(() => toast.success("Profile link copied to clipboard!"))
+        .catch(() => toast.error("Could not copy link."));
     }
   }
 
@@ -185,22 +217,22 @@ function ProfilePage() {
     (p) =>
       p.repostedByMe ||
       (p as any).reposted_by === userProfile.id ||
-      (p as any).repost_user_id === userProfile.id
+      (p as any).repost_user_id === userProfile.id,
   );
   const media = allPosts.filter(
-    (p) => (p.image_gradient || p.image_url || p.media_url) && p.user_id === userProfile.id
+    (p) => (p.image_gradient || p.image_url || p.media_url) && p.user_id === userProfile.id,
   );
   const liked = allPosts.filter((p) => p.likedByMe);
   const list =
     tab === "Posts"
       ? authorPosts
       : tab === "Reposts"
-      ? reposts
-      : tab === "Media"
-      ? media
-      : tab === "Likes"
-      ? liked
-      : authorPosts.slice(0, 3);
+        ? reposts
+        : tab === "Media"
+          ? media
+          : tab === "Likes" && isMe
+            ? liked
+            : authorPosts;
 
   return (
     <AppShell title={userProfile.display_name} right={<DefaultRail />}>
@@ -222,13 +254,13 @@ function ProfilePage() {
           className={cn(
             "glass-panel overflow-hidden rounded-3xl shadow-soft transition-all duration-300",
             isMe && isPlus && branding.showAuraOnPosts && activeTheme.borderClass,
-            isMe && isPlus && branding.showAuraOnPosts && activeTheme.glowClass
+            isMe && isPlus && branding.showAuraOnPosts && activeTheme.glowClass,
           )}
         >
           <div
             className={cn(
               "relative h-40 bg-gradient-to-br transition-all duration-500 sm:h-52",
-              isMe && isPlus ? activeTheme.gradient : "from-brand via-brand-pink to-brand-orange"
+              isMe && isPlus ? activeTheme.gradient : "from-brand via-brand-pink to-brand-orange",
             )}
           >
             <div className="absolute inset-0 opacity-30 [background:radial-gradient(circle_at_20%_30%,white,transparent_55%)]" />
@@ -250,7 +282,9 @@ function ProfilePage() {
                     title="View Tips & Earnings"
                   >
                     <DollarSign className="h-4 w-4 stroke-[2.5]" />
-                    <span>Balance ({balanceLoading ? "..." : `$${pendingBalance.toFixed(2)}`})</span>
+                    <span>
+                      Balance ({balanceLoading ? "..." : `$${pendingBalance.toFixed(2)}`})
+                    </span>
                   </button>
                 ) : (
                   <button
@@ -293,7 +327,9 @@ function ProfilePage() {
                 ) : (
                   <>
                     <button
-                      onClick={() => navigate({ to: "/messages", search: { user: userProfile.id } })}
+                      onClick={() =>
+                        navigate({ to: "/messages", search: { user: userProfile.id } })
+                      }
                       className="rounded-full border border-border px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-bold text-foreground hover:bg-foreground/5 transition-all active:scale-95 flex items-center gap-1.5 min-h-[38px] cursor-pointer"
                     >
                       <MessageSquare className="h-4 w-4 text-brand" /> Message
@@ -305,7 +341,7 @@ function ProfilePage() {
                         "rounded-full px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold transition-all duration-300 active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-soft min-h-[38px]",
                         isFollowing
                           ? "bg-foreground/10 text-foreground hover:bg-foreground/15"
-                          : "bg-gradient-to-r from-brand to-brand-pink text-white hover:shadow-glow"
+                          : "bg-gradient-to-r from-brand to-brand-pink text-white hover:shadow-glow",
                       )}
                     >
                       {isFollowing ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
@@ -319,7 +355,12 @@ function ProfilePage() {
             <div className="mt-4">
               <h1 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight flex-wrap">
                 <span>{userProfile.display_name}</span>
-                <UserBadge isMe={isMe} plan={userProfile.plan} verified={userProfile.verified} size="md" />
+                <UserBadge
+                  isMe={isMe}
+                  plan={userProfile.plan}
+                  verified={userProfile.verified}
+                  size="md"
+                />
               </h1>
               <p className="text-sm text-muted-foreground">@{userProfile.username}</p>
 
@@ -337,7 +378,11 @@ function ProfilePage() {
                 )}
                 {userProfile.website && (
                   <a
-                    href={userProfile.website.startsWith("http") ? userProfile.website : `https://${userProfile.website}`}
+                    href={
+                      userProfile.website.startsWith("http")
+                        ? userProfile.website
+                        : `https://${userProfile.website}`
+                    }
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1.5 text-brand hover:underline"
@@ -372,7 +417,11 @@ function ProfilePage() {
         {userProfile.followers > 0 && (
           <Panel className="flex items-center gap-3">
             <p className="text-sm text-muted-foreground">
-              Followed by <strong className="font-semibold text-foreground">{compact(userProfile.followers)}</strong> creators on Spaces1
+              Followed by{" "}
+              <strong className="font-semibold text-foreground">
+                {compact(userProfile.followers)}
+              </strong>{" "}
+              creators on Spaces1
             </p>
           </Panel>
         )}
@@ -387,7 +436,7 @@ function ProfilePage() {
                 "flex-1 shrink-0 whitespace-nowrap rounded-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer min-h-[36px] sm:min-h-[40px] flex items-center justify-center",
                 tab === t
                   ? "bg-gradient-to-r from-brand to-brand-pink text-white shadow-soft"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               {t}
@@ -417,7 +466,9 @@ function ProfilePage() {
                   <Grid3X3 className="h-8 w-8 text-muted-foreground" />
                   <p className="font-bold">Nothing in {tab.toLowerCase()} yet</p>
                   <p className="text-xs text-muted-foreground max-w-xs">
-                    {isMe ? "Share your thoughts or upload media to see it here." : `@${userProfile.username} hasn't published anything in this section yet.`}
+                    {isMe
+                      ? "Share your thoughts or upload media to see it here."
+                      : `@${userProfile.username} hasn't published anything in this section yet.`}
                   </p>
                 </Panel>
               )}
@@ -448,5 +499,3 @@ function ProfilePage() {
     </AppShell>
   );
 }
-
-

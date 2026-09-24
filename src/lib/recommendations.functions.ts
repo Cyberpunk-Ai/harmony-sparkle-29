@@ -95,8 +95,7 @@ export const getForYouPosts = createServerFn({ method: "GET" })
       .limit(300);
 
     const rows = candidates ?? [];
-    const personalised =
-      engagedIds.length > 0 || firstDegree.size > 0 ? true : false;
+    const personalised = engagedIds.length > 0 || firstDegree.size > 0 ? true : false;
     if (!personalised) {
       return { posts: rows.slice(0, data.limit), personalised: false };
     }
@@ -121,9 +120,7 @@ export const getForYouPosts = createServerFn({ method: "GET" })
       const decay = Math.exp(-ageHours / 36); // ~1.5 day half-life-ish
 
       const engagement =
-        (row.like_count ?? 0) * 1 +
-        (row.comment_count ?? 0) * 2 +
-        (row.repost_count ?? 0) * 3;
+        (row.like_count ?? 0) * 1 + (row.comment_count ?? 0) * 2 + (row.repost_count ?? 0) * 3;
       const views = Math.max(1, row.view_count ?? 1);
       const quality = Math.log1p(engagement) * (0.5 + Math.min(1, engagement / views));
 
@@ -134,11 +131,7 @@ export const getForYouPosts = createServerFn({ method: "GET" })
           0,
         ) * 1.6;
 
-      const graphScore = firstDegree.has(row.user_id)
-        ? 3
-        : secondDegree.has(row.user_id)
-          ? 1.4
-          : 0;
+      const graphScore = firstDegree.has(row.user_id) ? 3 : secondDegree.has(row.user_id) ? 1.4 : 0;
 
       const ownPenalty = row.user_id === myId ? -1.5 : 0;
       const seenPenalty = seen.has(row.id) ? -2.5 : 0;

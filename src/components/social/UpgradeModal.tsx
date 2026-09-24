@@ -1,22 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  X,
-  Sparkles,
-  Crown,
-  Check,
-  CreditCard,
-  Zap,
-  ShieldCheck,
-  ArrowRight,
-} from "lucide-react";
+import { X, Sparkles, Crown, Check, CreditCard, Zap, ShieldCheck, ArrowRight } from "lucide-react";
 import { type PlanTier, type BillingCycle, PLAN_DETAILS } from "@/lib/plans";
 import { usePlan } from "@/lib/plan-state";
 import { useAuth } from "@/lib/auth-state";
 import { startPaystackCheckout } from "@/lib/paystack.functions";
 import { openPaystackPayment } from "@/lib/paystack-checkout";
 import { cn } from "@/lib/utils";
-
 
 export function UpgradeModal() {
   const { currentPlan, cycle: defaultCycle, upgradePlan } = usePlan();
@@ -29,7 +19,6 @@ export function UpgradeModal() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const startCheckout = useServerFn(startPaystackCheckout);
-
 
   useEffect(() => {
     const handleOpen = (e: any) => {
@@ -57,8 +46,10 @@ export function UpgradeModal() {
   if (!isOpen) return null;
 
   const targetPlanDetails = PLAN_DETAILS[selectedPlan];
-  const basePrice = cycle === "annual" ? targetPlanDetails.priceAnnual : targetPlanDetails.priceMonthly;
-  const rawTotal = cycle === "annual" ? targetPlanDetails.annualBilledTotal : targetPlanDetails.priceMonthly;
+  const basePrice =
+    cycle === "annual" ? targetPlanDetails.priceAnnual : targetPlanDetails.priceMonthly;
+  const rawTotal =
+    cycle === "annual" ? targetPlanDetails.annualBilledTotal : targetPlanDetails.priceMonthly;
   const finalTotal = rawTotal.toFixed(2);
 
   const handleCheckout = async (e: React.FormEvent) => {
@@ -87,7 +78,6 @@ export function UpgradeModal() {
       );
     }
   };
-
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-3 sm:p-4 animate-in fade-in duration-200">
@@ -123,13 +113,18 @@ export function UpgradeModal() {
                   : "bg-gradient-to-tr from-brand to-brand-pink text-white",
               )}
             >
-              {selectedPlan === "pro" ? <Crown className="h-10 w-10" /> : <Sparkles className="h-10 w-10" />}
+              {selectedPlan === "pro" ? (
+                <Crown className="h-10 w-10" />
+              ) : (
+                <Sparkles className="h-10 w-10" />
+              )}
             </div>
             <h3 className="mt-6 text-2xl font-black">
               Welcome to Spaces1 {targetPlanDetails.name}!
             </h3>
             <p className="mt-2 text-sm text-muted-foreground max-w-md">
-              Your account has been upgraded. The {targetPlanDetails.badge} badge and full plan capabilities are now active immediately across the platform.
+              Your account has been upgraded. The {targetPlanDetails.badge} badge and full plan
+              capabilities are now active immediately across the platform.
             </p>
             <div className="mt-6 flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-500">
               <Check className="h-4 w-4" /> Subscription Active & Verified
@@ -194,7 +189,12 @@ export function UpgradeModal() {
 
             {/* Billing Interval Toggle */}
             <div className="mt-4 flex items-center justify-center gap-3">
-              <span className={cn("text-xs font-semibold", cycle === "monthly" ? "text-foreground" : "text-muted-foreground")}>
+              <span
+                className={cn(
+                  "text-xs font-semibold",
+                  cycle === "monthly" ? "text-foreground" : "text-muted-foreground",
+                )}
+              >
                 Monthly
               </span>
               <button
@@ -211,7 +211,12 @@ export function UpgradeModal() {
                   )}
                 />
               </button>
-              <span className={cn("text-xs font-semibold flex items-center gap-1.5", cycle === "annual" ? "text-foreground font-bold" : "text-muted-foreground")}>
+              <span
+                className={cn(
+                  "text-xs font-semibold flex items-center gap-1.5",
+                  cycle === "annual" ? "text-foreground font-bold" : "text-muted-foreground",
+                )}
+              >
                 <span>Annual Billing</span>
                 <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[0.65rem] font-extrabold text-emerald-500 border border-emerald-500/20">
                   Save 20%
@@ -225,7 +230,12 @@ export function UpgradeModal() {
                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Included in {targetPlanDetails.name}
                 </span>
-                <span className={cn("text-xs font-extrabold px-2 py-0.5 rounded-full", targetPlanDetails.badgeColor)}>
+                <span
+                  className={cn(
+                    "text-xs font-extrabold px-2 py-0.5 rounded-full",
+                    targetPlanDetails.badgeColor,
+                  )}
+                >
                   {targetPlanDetails.badge}
                 </span>
               </div>
@@ -259,10 +269,8 @@ export function UpgradeModal() {
                   the payment clears. Prices are shown in US dollars and charged as the equivalent
                   amount in Kenyan Shillings.
                 </p>
-
               </div>
               {checkoutError && <p className="text-[0.7rem] text-rose-500">{checkoutError}</p>}
-
 
               {/* Price & Summary */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-border/50 pt-4">

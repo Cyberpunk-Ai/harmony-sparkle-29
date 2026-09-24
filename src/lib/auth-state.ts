@@ -12,7 +12,6 @@ import type { Profile } from "@/lib/types";
 
 let loadedOnce = false;
 
-
 async function loadSessionProfile() {
   try {
     const { data } = await supabase.auth.getUser();
@@ -58,7 +57,12 @@ export function updateUserSession(patch: Partial<Profile>) {
   const next = { ...currentUser, ...patch } as Profile;
   setCurrentUser(next);
 
-  if (next.id && next.id !== "guest" && !next.id.startsWith("local_") && !next.id.startsWith("google_")) {
+  if (
+    next.id &&
+    next.id !== "guest" &&
+    !next.id.startsWith("local_") &&
+    !next.id.startsWith("google_")
+  ) {
     void supabase
       .from("profiles")
       .update({
@@ -86,9 +90,7 @@ export function setLoggedOut() {
 }
 
 export function useAuth() {
-  const [user, setUser] = useState<Profile | null>(
-    currentUser.id === "guest" ? null : currentUser,
-  );
+  const [user, setUser] = useState<Profile | null>(currentUser.id === "guest" ? null : currentUser);
   const [loading, setLoading] = useState(!loadedOnce);
 
   useEffect(() => {

@@ -39,8 +39,10 @@ function handleFrom(email: string | undefined, fallback: string) {
 /** Turn provider errors into something a person can act on. */
 function friendlyAuthError(message: string): string {
   const m = message.toLowerCase();
-  if (m.includes("invalid login credentials")) return "That email and password don't match an account.";
-  if (m.includes("email not confirmed")) return "Please confirm your email first — check your inbox for the link.";
+  if (m.includes("invalid login credentials"))
+    return "That email and password don't match an account.";
+  if (m.includes("email not confirmed"))
+    return "Please confirm your email first — check your inbox for the link.";
   if (m.includes("already registered") || m.includes("user already exists"))
     return "An account with this email already exists. Try signing in instead.";
   if (m.includes("password")) return "Your password must be at least 6 characters.";
@@ -168,7 +170,9 @@ function AuthPage() {
       setCheckInbox("link");
       toast.success("Sign-in link sent — check your inbox.");
     } catch (err) {
-      toast.error(err instanceof Error ? friendlyAuthError(err.message) : "Could not send the link");
+      toast.error(
+        err instanceof Error ? friendlyAuthError(err.message) : "Could not send the link",
+      );
     } finally {
       setBusy(false);
     }

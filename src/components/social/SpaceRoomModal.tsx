@@ -78,14 +78,23 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
   const [handRaised, setHandRaised] = useState(false);
   const [summarizing, setSummarizing] = useState(false);
   const [summary, setSummary] = useState<{ summary: string; keyTakeaways: string[] } | null>(null);
-  const [floatingReactions, setFloatingReactions] = useState<{ id: string; emoji: string; left: number }[]>([]);
+  const [floatingReactions, setFloatingReactions] = useState<
+    { id: string; emoji: string; left: number }[]
+  >([]);
   const [activeTipAlert, setActiveTipAlert] = useState<LiveTipAlert | null>(null);
   const [isRecordingSpace, setIsRecordingSpace] = useState(true);
   const [showEndConfirmation, setShowEndConfirmation] = useState(false);
-  const [pinnedTopic, setPinnedTopic] = useState<string>("Welcome to the Space! Feel free to ask questions in chat or raise your hand.");
-  
+  const [pinnedTopic, setPinnedTopic] = useState<string>(
+    "Welcome to the Space! Feel free to ask questions in chat or raise your hand.",
+  );
+
   // Tipping state
-  const [tipTargetUser, setTipTargetUser] = useState<{ username: string; display_name: string; avatar_url?: string | null; plan?: string | null } | null>(null);
+  const [tipTargetUser, setTipTargetUser] = useState<{
+    username: string;
+    display_name: string;
+    avatar_url?: string | null;
+    plan?: string | null;
+  } | null>(null);
 
   const [participants, setParticipants] = useState<
     {
@@ -191,15 +200,19 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
         if (msgSpace && msgSpace !== space.id) return;
         if (msg && msg.userId === currentUser.id) return;
         if (msg) {
-          setMessages((prev) => prev.some((m) => m.id === msg.id) ? prev : [
-            ...prev,
-            {
-              id: msg.id || `msg_${Date.now()}`,
-              userId: msg.userId || msg.user_id,
-              body: msg.body || msg.content,
-              timestamp: "Just now",
-            },
-          ]);
+          setMessages((prev) =>
+            prev.some((m) => m.id === msg.id)
+              ? prev
+              : [
+                  ...prev,
+                  {
+                    id: msg.id || `msg_${Date.now()}`,
+                    userId: msg.userId || msg.user_id,
+                    body: msg.body || msg.content,
+                    timestamp: "Just now",
+                  },
+                ],
+          );
         }
       } else if (event.type === "space:tip" || event.type === "space_tip") {
         const tip = event.tip || event.data;
@@ -230,9 +243,13 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
           setParticipants((prev) =>
             prev.map((p) =>
               p.id === data.userId
-                ? { ...p, isSpeaking: !!(data.isSpeaking ?? data.speaking), isMuted: !!(data.isMuted ?? data.muted) }
-                : p
-            )
+                ? {
+                    ...p,
+                    isSpeaking: !!(data.isSpeaking ?? data.speaking),
+                    isMuted: !!(data.isMuted ?? data.muted),
+                  }
+                : p,
+            ),
           );
         }
       } else if (event.type === "space:hand" || event.type === "hand_raised") {
@@ -241,14 +258,18 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
           const user = getProfile(data.userId);
           toast.info(`${user.display_name} raised their hand!`);
           setParticipants((prev) =>
-            prev.map((p) => (p.id === data.userId ? { ...p, handRaised: data.raised !== false } : p))
+            prev.map((p) =>
+              p.id === data.userId ? { ...p, handRaised: data.raised !== false } : p,
+            ),
           );
         }
       } else if (event.type === "space:role") {
         const data = event.data || event;
         if (data && data.userId) {
           setParticipants((prev) =>
-            prev.map((p) => (p.id === data.userId ? { ...p, role: data.role, handRaised: false } : p)),
+            prev.map((p) =>
+              p.id === data.userId ? { ...p, role: data.role, handRaised: false } : p,
+            ),
           );
         }
       } else if (event.type === "space:left" || event.type === "participant_left") {
@@ -266,7 +287,7 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
       "space:joined",
       "space:left",
       "space:tip",
-    ]
+    ],
   );
 
   useEffect(() => {
@@ -293,9 +314,14 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
     setParticipants((prev) =>
       prev.map((p) =>
         p.id === currentUser.id
-          ? { ...p, isMuted: nextMuted, isSpeaking: !nextMuted, role: nextMuted ? p.role : "speaker" }
-          : p
-      )
+          ? {
+              ...p,
+              isMuted: nextMuted,
+              isSpeaking: !nextMuted,
+              role: nextMuted ? p.role : "speaker",
+            }
+          : p,
+      ),
     );
 
     try {
@@ -333,7 +359,7 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
 
   const promoteToSpeaker = (userId: string) => {
     setParticipants((prev) =>
-      prev.map((p) => (p.id === userId ? { ...p, role: "speaker", handRaised: false } : p))
+      prev.map((p) => (p.id === userId ? { ...p, role: "speaker", handRaised: false } : p)),
     );
     const target = getProfile(userId);
     void setSpeakerRole(userId, "speaker");
@@ -342,7 +368,9 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
 
   const demoteToListener = (userId: string) => {
     setParticipants((prev) =>
-      prev.map((p) => (p.id === userId ? { ...p, role: "listener", isSpeaking: false, isMuted: true } : p))
+      prev.map((p) =>
+        p.id === userId ? { ...p, role: "listener", isSpeaking: false, isMuted: true } : p,
+      ),
     );
     const target = getProfile(userId);
     void setSpeakerRole(userId, "listener");
@@ -363,7 +391,7 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
       const res = await summarizeSpaceAI(
         space.title,
         space.topic,
-        messages.map((m) => m.body)
+        messages.map((m) => m.body),
       );
       setSummary(res);
     } catch (err: any) {
@@ -421,7 +449,11 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                 disabled={summarizing}
                 className="flex items-center gap-1.5 rounded-full bg-foreground/5 hover:bg-foreground/10 px-2.5 sm:px-3 py-1.5 text-xs font-semibold transition-all disabled:opacity-50 min-h-[36px]"
               >
-                {summarizing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5 text-brand" />}
+                {summarizing ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="h-3.5 w-3.5 text-brand" />
+                )}
                 <span className="hidden xs:inline">AI Summary</span>
               </button>
               <button
@@ -462,13 +494,16 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
 
           {/* Space Title & Info */}
           <div className="px-4 sm:px-6 pt-3 sm:pt-4 pb-2">
-            <h2 className="text-lg sm:text-xl font-extrabold tracking-tight line-clamp-2">{space.title}</h2>
+            <h2 className="text-lg sm:text-xl font-extrabold tracking-tight line-clamp-2">
+              {space.title}
+            </h2>
             <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Shield className="h-3.5 w-3.5 text-brand" /> Hosted by {host.display_name}
               </span>
               <span className="flex items-center gap-1">
-                <Headphones className="h-3.5 w-3.5" /> {participants.length + space.listeners} in room
+                <Headphones className="h-3.5 w-3.5" /> {participants.length + space.listeners} in
+                room
               </span>
             </div>
           </div>
@@ -481,7 +516,7 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                 "flex items-center gap-2 pb-2 text-xs sm:text-sm font-bold border-b-2 transition-all min-h-[36px] cursor-pointer",
                 activeTab === "stage"
                   ? "border-brand text-brand"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
               )}
             >
               <Volume2 className="h-4 w-4" /> Stage ({speakers.length})
@@ -492,7 +527,7 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                 "flex items-center gap-2 pb-2 text-xs sm:text-sm font-bold border-b-2 transition-all min-h-[36px] cursor-pointer",
                 activeTab === "chat"
                   ? "border-brand text-brand"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
               )}
             >
               <MessageSquare className="h-4 w-4" /> Room Chat ({messages.length})
@@ -504,7 +539,7 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                   "flex items-center gap-1.5 pb-2 text-xs sm:text-sm font-bold border-b-2 transition-all min-h-[36px] cursor-pointer",
                   activeTab === "requests"
                     ? "border-brand text-brand"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground",
                 )}
               >
                 <Hand className="h-4 w-4" />
@@ -525,7 +560,10 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                 <span className="flex items-center gap-1">
                   <Sparkles className="h-3.5 w-3.5" /> Live AI Insights
                 </span>
-                <button onClick={() => setSummary(null)} className="text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={() => setSummary(null)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <X className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -561,20 +599,25 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                     <h3 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground">
                       Speakers & Hosts
                     </h3>
-                    <span className="text-[11px] text-muted-foreground">Tap speaker to tip or view</span>
+                    <span className="text-[11px] text-muted-foreground">
+                      Tap speaker to tip or view
+                    </span>
                   </div>
                   <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4">
                     {speakers.map((speaker, idx) => {
                       const isHost = speaker.id === space.host_id;
                       return (
-                        <div key={`stage-speaker-${speaker.id}-${idx}`} className="flex flex-col items-center text-center group relative">
+                        <div
+                          key={`stage-speaker-${speaker.id}-${idx}`}
+                          className="flex flex-col items-center text-center group relative"
+                        >
                           <div className="relative">
                             <div
                               className={cn(
                                 "rounded-full p-1 transition-all duration-500",
                                 speaker.isSpeaking
                                   ? "ring-4 ring-brand shadow-glow animate-pulse"
-                                  : "ring-1 ring-border"
+                                  : "ring-1 ring-border",
                               )}
                             >
                               <Avatar
@@ -664,7 +707,10 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                   </h3>
                   <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 gap-2.5 sm:gap-3">
                     {listeners.map((listener, idx) => (
-                      <div key={`stage-listener-${listener.id}-${idx}`} className="flex flex-col items-center text-center group">
+                      <div
+                        key={`stage-listener-${listener.id}-${idx}`}
+                        className="flex flex-col items-center text-center group"
+                      >
                         <div className="relative">
                           <Avatar
                             name={listener.display_name}
@@ -706,7 +752,7 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                         key={m.id}
                         className={cn(
                           "flex items-start gap-2.5 p-2 rounded-xl transition-all",
-                          m.isTip ? "bg-amber-500/10 border border-amber-500/30" : ""
+                          m.isTip ? "bg-amber-500/10 border border-amber-500/30" : "",
                         )}
                       >
                         <Avatar
@@ -716,7 +762,12 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                         />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-baseline gap-2">
-                            <span className={cn("text-xs font-bold", m.isTip && "text-amber-600 dark:text-amber-400")}>
+                            <span
+                              className={cn(
+                                "text-xs font-bold",
+                                m.isTip && "text-amber-600 dark:text-amber-400",
+                              )}
+                            >
                               {sender.display_name}
                             </span>
                             <span className="text-[10px] text-muted-foreground">{m.timestamp}</span>
@@ -726,7 +777,14 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                               </span>
                             )}
                           </div>
-                          <div className={cn("text-xs mt-0.5 leading-relaxed", m.isTip ? "font-semibold text-foreground" : "text-foreground/90 bg-foreground/5 p-2 rounded-xl")}>
+                          <div
+                            className={cn(
+                              "text-xs mt-0.5 leading-relaxed",
+                              m.isTip
+                                ? "font-semibold text-foreground"
+                                : "text-foreground/90 bg-foreground/5 p-2 rounded-xl",
+                            )}
+                          >
                             <ClampText text={m.body} lines={4} limit={240} />
                           </div>
                         </div>
@@ -765,40 +823,48 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                   <div className="p-8 text-center text-muted-foreground space-y-1">
                     <Hand className="h-8 w-8 mx-auto opacity-30" />
                     <p className="font-bold text-xs">No pending requests</p>
-                    <p className="text-[11px]">When listeners raise their hands to speak, they will appear here.</p>
+                    <p className="text-[11px]">
+                      When listeners raise their hands to speak, they will appear here.
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {listeners.filter((p) => p.handRaised).map((req) => (
-                      <div
-                        key={req.id}
-                        className="flex items-center justify-between p-3 rounded-2xl bg-card border border-border/80 shadow-xs"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <Avatar name={req.display_name} src={req.avatar_url} className="h-9 w-9 text-xs" />
-                          <div>
-                            <p className="text-xs font-bold">{req.display_name}</p>
-                            <p className="text-[10px] text-muted-foreground">@{req.username}</p>
+                    {listeners
+                      .filter((p) => p.handRaised)
+                      .map((req) => (
+                        <div
+                          key={req.id}
+                          className="flex items-center justify-between p-3 rounded-2xl bg-card border border-border/80 shadow-xs"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Avatar
+                              name={req.display_name}
+                              src={req.avatar_url}
+                              className="h-9 w-9 text-xs"
+                            />
+                            <div>
+                              <p className="text-xs font-bold">{req.display_name}</p>
+                              <p className="text-[10px] text-muted-foreground">@{req.username}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => demoteToListener(req.id)}
+                              className="px-3 py-1.5 rounded-xl border border-border text-xs font-semibold hover:bg-muted cursor-pointer"
+                            >
+                              Dismiss
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => promoteToSpeaker(req.id)}
+                              className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-brand to-brand-pink text-white text-xs font-bold shadow-soft hover:brightness-105 cursor-pointer flex items-center gap-1"
+                            >
+                              <UserPlus className="h-3.5 w-3.5" /> Bring to Stage
+                            </button>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => demoteToListener(req.id)}
-                            className="px-3 py-1.5 rounded-xl border border-border text-xs font-semibold hover:bg-muted cursor-pointer"
-                          >
-                            Dismiss
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => promoteToSpeaker(req.id)}
-                            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-brand to-brand-pink text-white text-xs font-bold shadow-soft hover:brightness-105 cursor-pointer flex items-center gap-1"
-                          >
-                            <UserPlus className="h-3.5 w-3.5" /> Bring to Stage
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
               </div>
@@ -807,7 +873,9 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
 
           {/* Quick Emoji Reaction Toolbar */}
           <div className="flex items-center justify-center gap-1.5 sm:gap-2 py-2 px-3 sm:px-4 border-t border-border/40 bg-foreground/[0.02] overflow-x-auto [scrollbar-width:none]">
-            <span className="text-[10px] font-semibold text-muted-foreground mr-1 shrink-0">React:</span>
+            <span className="text-[10px] font-semibold text-muted-foreground mr-1 shrink-0">
+              React:
+            </span>
             {["❤️", "🔥", "👏", "🚀", "💡", "💰", "💯"].map((emoji) => (
               <button
                 key={emoji}
@@ -829,7 +897,7 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                   "flex items-center gap-1.5 sm:gap-2 rounded-full px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs font-bold transition-all active:scale-95 shadow-soft min-h-[38px] sm:min-h-[40px] cursor-pointer",
                   isMuted
                     ? "bg-foreground/10 text-foreground hover:bg-foreground/15"
-                    : "bg-emerald-500 text-white hover:bg-emerald-600 shadow-glow"
+                    : "bg-emerald-500 text-white hover:bg-emerald-600 shadow-glow",
                 )}
               >
                 {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
@@ -842,11 +910,13 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
                   "flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs font-bold transition-all active:scale-95 min-h-[38px] sm:min-h-[40px] cursor-pointer",
                   handRaised
                     ? "bg-amber-500 text-white"
-                    : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+                    : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground",
                 )}
               >
                 <Hand className="h-4 w-4" />
-                <span className="hidden xs:inline">{handRaised ? "Hand Raised" : "Raise Hand"}</span>
+                <span className="hidden xs:inline">
+                  {handRaised ? "Hand Raised" : "Raise Hand"}
+                </span>
               </button>
             </div>
 
@@ -894,11 +964,14 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
               </span>
               <div>
                 <h3 className="text-base font-black">End Space for Everyone?</h3>
-                <p className="text-xs text-muted-foreground">The broadcast will stop immediately.</p>
+                <p className="text-xs text-muted-foreground">
+                  The broadcast will stop immediately.
+                </p>
               </div>
             </div>
             <p className="text-xs text-foreground/80 leading-relaxed">
-              All listeners will receive the AI replay summary. You can review tips and replay stats in your Analytics.
+              All listeners will receive the AI replay summary. You can review tips and replay stats
+              in your Analytics.
             </p>
             <div className="flex items-center gap-2 pt-2">
               <button

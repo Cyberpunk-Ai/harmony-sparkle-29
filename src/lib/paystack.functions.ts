@@ -22,7 +22,6 @@ function money(plan: PlanTier, cycle: BillingCycle) {
   return PRICES[plan][cycle];
 }
 
-
 function paystackKey() {
   const key = process.env["PAYSTACK_SECRET_KEY"];
   if (!key) throw new Error("Payments are not configured yet.");
@@ -254,7 +253,8 @@ export const confirmPaystackPayment = createServerFn({ method: "POST" })
       .update({
         status: success ? "success" : (tx.status ?? "failed"),
         raw: tx,
-        paid_at: success ? (tx.paid_at ?? new Date().toISOString()) : null,
+        // Never erase a previously recorded settlement timestamp.
+        ...(success ? { paid_at: tx.paid_at ?? new Date().toISOString() } : {}),
       })
       .eq("reference", data.reference);
 
@@ -264,6 +264,8 @@ export const confirmPaystackPayment = createServerFn({ method: "POST" })
 
     if (isTip) {
       if (!alreadySettled && meta.recipient_id) {
+        // The `t_tips_after` trigger emits the 'tip' notification, so we only
+        // record the tip row here and must not insert a second notification.
         const { error: tipErr } = await admin.from("tips").insert({
           from_user_id: profileId,
           to_user_id: meta.recipient_id,
@@ -272,12 +274,6 @@ export const confirmPaystackPayment = createServerFn({ method: "POST" })
           post_id: meta.post_id ?? null,
         });
         if (tipErr) console.error("Tip recording failed:", tipErr);
-        await admin.from("notifications").insert({
-          recipient_id: meta.recipient_id,
-          actor_id: profileId,
-          type: "tip",
-          body: `sent you a $${Number(meta.tip_usd ?? 0)} tip`,
-        });
       }
 
       return {
@@ -299,9 +295,7 @@ export const confirmPaystackPayment = createServerFn({ method: "POST" })
         status: "active",
         provider: "paystack",
         provider_customer_id: tx.customer?.customer_code ?? null,
-        renews_at: new Date(
-          Date.now() + (cycle === "annual" ? 365 : 30) * 86400000,
-        ).toISOString(),
+        renews_at: new Date(Date.now() + (cycle === "annual" ? 365 : 30) * 86400000).toISOString(),
         payment_method: tx.authorization
           ? {
               brand: tx.authorization.card_type ?? tx.authorization.channel ?? "card",

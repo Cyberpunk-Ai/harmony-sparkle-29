@@ -11,7 +11,7 @@ export function PostSkeleton({ className, hasMedia = false }: PostSkeletonProps)
     <div
       className={cn(
         "relative overflow-hidden rounded-2xl border border-border/50 bg-background/50 p-4 shadow-sm md:p-5",
-        className
+        className,
       )}
     >
       {/* Author Header */}
@@ -36,9 +36,7 @@ export function PostSkeleton({ className, hasMedia = false }: PostSkeletonProps)
       </div>
 
       {/* Optional Media Block */}
-      {hasMedia && (
-        <Skeleton className="mt-4 h-[240px] w-full rounded-2xl md:h-[320px]" />
-      )}
+      {hasMedia && <Skeleton className="mt-4 h-[240px] w-full rounded-2xl md:h-[320px]" />}
 
       {/* Action Buttons Footer */}
       <div className="mt-5 flex items-center justify-between border-t border-border/30 pt-3">

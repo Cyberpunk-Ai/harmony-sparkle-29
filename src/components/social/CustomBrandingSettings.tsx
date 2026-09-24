@@ -48,7 +48,8 @@ export function CustomBrandingSettings() {
       <div>
         <h2 className="text-xl font-black">Custom Branding & Aura</h2>
         <p className="text-xs text-muted-foreground">
-          Elevate your identity with custom neon gradients, signature profile borders, and creator badges.
+          Elevate your identity with custom neon gradients, signature profile borders, and creator
+          badges.
         </p>
       </div>
 
@@ -66,13 +67,13 @@ export function CustomBrandingSettings() {
           className={cn(
             "relative overflow-hidden rounded-3xl border-2 bg-card p-5 transition-all duration-300",
             activeTheme.borderClass,
-            activeTheme.glowClass
+            activeTheme.glowClass,
           )}
         >
           <div
             className={cn(
               "absolute top-0 left-0 right-0 h-20 bg-gradient-to-r opacity-90",
-              activeTheme.gradient
+              activeTheme.gradient,
             )}
           />
           <div className="relative pt-10 flex items-end justify-between gap-3">
@@ -84,7 +85,7 @@ export function CustomBrandingSettings() {
             <span
               className={cn(
                 "rounded-full px-3 py-1 text-xs font-extrabold tracking-wide uppercase shadow-xs",
-                activeTheme.badgeBg
+                activeTheme.badgeBg,
               )}
             >
               {isPro ? "👑 Pro Creator" : isPlus ? "✨ Plus Creator" : "Free Member"}
@@ -125,13 +126,13 @@ export function CustomBrandingSettings() {
                   "relative flex items-center gap-3 rounded-2xl border-2 p-3.5 text-left transition-all cursor-pointer",
                   isSelected
                     ? cn("border-foreground shadow-md bg-muted/30", t.borderClass)
-                    : "border-border/60 hover:border-border hover:bg-muted/10"
+                    : "border-border/60 hover:border-border hover:bg-muted/10",
                 )}
               >
                 <div
                   className={cn(
                     "h-9 w-9 shrink-0 rounded-full bg-gradient-to-br shadow-xs",
-                    t.gradient
+                    t.gradient,
                   )}
                 />
                 <div className="min-w-0 flex-1">
@@ -186,13 +187,13 @@ export function CustomBrandingSettings() {
               onClick={() => handleToggleAura(!showAuraOnPosts)}
               className={cn(
                 "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out",
-                showAuraOnPosts ? "bg-brand" : "bg-muted"
+                showAuraOnPosts ? "bg-brand" : "bg-muted",
               )}
             >
               <span
                 className={cn(
                   "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out",
-                  showAuraOnPosts ? "translate-x-5" : "translate-x-0"
+                  showAuraOnPosts ? "translate-x-5" : "translate-x-0",
                 )}
               />
             </button>
@@ -216,7 +217,7 @@ export function CustomBrandingSettings() {
             onClick={() => openUpgradeModal("Custom Branding")}
             className="rounded-full bg-gradient-to-r from-brand to-brand-pink px-5 py-2.5 text-xs font-bold text-white shadow-soft hover:brightness-105 transition-all cursor-pointer whitespace-nowrap"
           >
-            Upgrade to Plus ($7/mo)
+            Upgrade to Plus ($9/mo)
           </button>
         </div>
       )}

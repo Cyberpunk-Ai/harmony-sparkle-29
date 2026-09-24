@@ -93,8 +93,6 @@ export function updateProfileCache(profile: Profile) {
   notify();
 }
 
-export const defaultUserProfile = GUEST_PROFILE;
-
 export function getProfile(idOrUsername?: string | null): Profile {
   if (!idOrUsername || idOrUsername === "guest") return GUEST_PROFILE;
   const found = profileCache.get(idOrUsername);
@@ -143,11 +141,7 @@ export async function fetchProfile(id: string): Promise<Profile | null> {
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
       // Only UUIDs are valid row ids; anything else is looked up by username.
       const filter = isUuid ? `id.eq.${id},username.eq.${id}` : `username.eq.${id}`;
-      const { data: row } = await supabase
-        .from("profiles")
-        .select("*")
-        .or(filter)
-        .maybeSingle();
+      const { data: row } = await supabase.from("profiles").select("*").or(filter).maybeSingle();
 
       if (row) {
         const profile = rowToProfile(row as Record<string, unknown>);
@@ -171,7 +165,7 @@ export async function fetchProfile(id: string): Promise<Profile | null> {
 
 export function useProfile(idOrUsername?: string | null) {
   const [profile, setProfile] = useState<Profile | null>(() =>
-    idOrUsername ? profileCache.get(idOrUsername) ?? null : null,
+    idOrUsername ? (profileCache.get(idOrUsername) ?? null) : null,
   );
   const [loading, setLoading] = useState<boolean>(!profile && !!idOrUsername);
 

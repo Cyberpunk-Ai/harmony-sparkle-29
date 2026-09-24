@@ -12,10 +12,7 @@ export const Route = createFileRoute("/u/$username")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [
-          { title: "Profile unavailable — Spaces1" },
-          { name: "robots", content: "noindex" },
-        ],
+        meta: [{ title: "Profile unavailable — Spaces1" }, { name: "robots", content: "noindex" }],
       };
     }
     const title = `${loaderData.displayName} (@${loaderData.username}) — Spaces1`;

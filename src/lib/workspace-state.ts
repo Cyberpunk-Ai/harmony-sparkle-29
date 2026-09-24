@@ -83,7 +83,10 @@ async function hydrate(force = false) {
   const { data: memberRows } = await db
     .from("workspace_members")
     .select("*")
-    .in("workspace_id", rows.map((r) => r.id));
+    .in(
+      "workspace_id",
+      rows.map((r) => r.id),
+    );
   const members = (memberRows ?? []) as Record<string, any>[];
   const next: Workspace[] = rows.map((row) => ({
     id: String(row.id),

@@ -33,7 +33,10 @@ export const getMyTipEarnings = createServerFn({ method: "GET" })
         .select("id, display_name, username")
         .in("id", senderIds);
       names = Object.fromEntries(
-        (profiles ?? []).map((p: any) => [p.id, { display_name: p.display_name, username: p.username }]),
+        (profiles ?? []).map((p: any) => [
+          p.id,
+          { display_name: p.display_name, username: p.username },
+        ]),
       );
     }
 
@@ -88,7 +91,10 @@ export const requestTipPayout = createServerFn({ method: "POST" })
       .from("tips")
       .select("amount, fee_amount, net_amount")
       .eq("to_user_id", me.id);
-    const { data: paid } = await supabase.from("payouts").select("amount, status").eq("user_id", me.id);
+    const { data: paid } = await supabase
+      .from("payouts")
+      .select("amount, status")
+      .eq("user_id", me.id);
 
     const gross = (tips ?? []).reduce((s: number, t: any) => s + Number(t.amount ?? 0), 0);
     const feesTaken = (tips ?? []).reduce((s: number, t: any) => s + Number(t.fee_amount ?? 0), 0);
@@ -101,7 +107,8 @@ export const requestTipPayout = createServerFn({ method: "POST" })
       .reduce((s: number, p: any) => s + Number(p.amount ?? 0), 0);
     const available = Math.round((netEarned - withdrawn) * 100) / 100;
 
-    if (available < 10) throw new Error("You need at least $10 in tips before requesting a payout.");
+    if (available < 10)
+      throw new Error("You need at least $10 in tips before requesting a payout.");
 
     const { data: settings } = await supabase
       .from("monetization_settings")
@@ -119,7 +126,11 @@ export const requestTipPayout = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
 
-    return { amount: available, gross: Math.round(gross * 100) / 100, fees: Math.round(feesTaken * 100) / 100 };
+    return {
+      amount: available,
+      gross: Math.round(gross * 100) / 100,
+      fees: Math.round(feesTaken * 100) / 100,
+    };
   });
 
 /** Platform fee (in %) that applies to a creator's tips, from their current plan. */

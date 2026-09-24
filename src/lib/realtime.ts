@@ -28,7 +28,11 @@ function getChannel() {
       window.dispatchEvent(new CustomEvent(`rt:${event}`, { detail: payload }));
       window.dispatchEvent(
         new CustomEvent("rt:*", {
-          detail: { ...(payload && typeof payload === "object" ? payload : { payload }), type: event, event },
+          detail: {
+            ...(payload && typeof payload === "object" ? payload : { payload }),
+            type: event,
+            event,
+          },
         }),
       );
     });
@@ -73,7 +77,11 @@ export function emitRealtime(event: string, payload: any) {
     window.dispatchEvent(new CustomEvent(`rt:${event}`, { detail: payload }));
     window.dispatchEvent(
       new CustomEvent("rt:*", {
-        detail: { ...(payload && typeof payload === "object" ? payload : { payload }), type: event, event },
+        detail: {
+          ...(payload && typeof payload === "object" ? payload : { payload }),
+          type: event,
+          event,
+        },
       }),
     );
   } catch {
@@ -109,14 +117,18 @@ function ensureDbFeed() {
       const row = p.new;
       if (row?.id) dispatchLocal("message:created", { message: row, ...row });
     })
-    .on("postgres_changes", { event: "INSERT", schema: "public", table: "space_messages" }, (p: any) => {
-      const row = p.new;
-      if (!row?.id) return;
-      dispatchLocal("space:message", {
-        spaceId: row.space_id,
-        message: { id: row.id, userId: row.user_id, body: row.body, spaceId: row.space_id },
-      });
-    })
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "space_messages" },
+      (p: any) => {
+        const row = p.new;
+        if (!row?.id) return;
+        dispatchLocal("space:message", {
+          spaceId: row.space_id,
+          message: { id: row.id, userId: row.user_id, body: row.body, spaceId: row.space_id },
+        });
+      },
+    )
     .subscribe();
   // Rejoin with the user's token after sign-in so access rules apply.
   if (authHooked) return;

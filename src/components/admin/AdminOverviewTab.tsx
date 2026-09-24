@@ -93,7 +93,8 @@ export function AdminOverviewTab({ overview, activeRole, onNavigateTab }: AdminO
       value: stats.pending_reports_count.toString(),
       subtext: `${stats.suspended_users_count} suspended users`,
       icon: AlertCircle,
-      iconColor: stats.pending_reports_count > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600",
+      iconColor:
+        stats.pending_reports_count > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600",
       bgGradient: "from-amber-500/10 to-orange-500/10",
       borderColor: "border-amber-500/20",
       change: stats.pending_reports_count > 0 ? "Needs Triage" : "Clean",
@@ -125,7 +126,7 @@ export function AdminOverviewTab({ overview, activeRole, onNavigateTab }: AdminO
               className={cn(
                 "group glass-panel cursor-pointer rounded-3xl border p-5 transition-all duration-300 hover:shadow-soft hover:translate-y-[-2px]",
                 card.borderColor,
-                card.bgGradient
+                card.bgGradient,
               )}
             >
               <div className="flex items-start justify-between">
@@ -173,7 +174,7 @@ export function AdminOverviewTab({ overview, activeRole, onNavigateTab }: AdminO
                   "rounded-lg px-2.5 py-1 font-semibold transition-colors",
                   chartMetric === "impressions"
                     ? "bg-card text-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 Impressions
@@ -184,7 +185,7 @@ export function AdminOverviewTab({ overview, activeRole, onNavigateTab }: AdminO
                   "rounded-lg px-2.5 py-1 font-semibold transition-colors",
                   chartMetric === "engagement"
                     ? "bg-card text-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 Engagement
@@ -194,7 +195,10 @@ export function AdminOverviewTab({ overview, activeRole, onNavigateTab }: AdminO
 
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={charts.daily_impressions} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart
+                data={charts.daily_impressions}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
                 <defs>
                   <linearGradient id="impressionGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
@@ -291,7 +295,10 @@ export function AdminOverviewTab({ overview, activeRole, onNavigateTab }: AdminO
             {charts.engagement_distribution.map((item) => (
               <div key={item.name} className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
                   <span className="text-muted-foreground">{item.name}</span>
                 </div>
                 <span className="font-bold text-foreground">{item.value.toLocaleString()}</span>
@@ -313,7 +320,10 @@ export function AdminOverviewTab({ overview, activeRole, onNavigateTab }: AdminO
 
           <div className="h-56 w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={charts.hourly_traffic} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <BarChart
+                data={charts.hourly_traffic}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="opacity-10" />
                 <XAxis dataKey="hour" stroke="currentColor" className="text-[0.7rem] opacity-50" />
                 <YAxis stroke="currentColor" className="text-[0.7rem] opacity-50" />
@@ -337,11 +347,16 @@ export function AdminOverviewTab({ overview, activeRole, onNavigateTab }: AdminO
             <Activity className="h-4 w-4 text-emerald-500" />
             System Resource Timeline
           </h2>
-          <p className="text-xs text-muted-foreground mt-0.5">CPU utilization and memory footprint</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            CPU utilization and memory footprint
+          </p>
 
           <div className="h-56 w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={charts.system_load_timeline} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <LineChart
+                data={charts.system_load_timeline}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="opacity-10" />
                 <XAxis dataKey="time" stroke="currentColor" className="text-[0.7rem] opacity-50" />
                 <YAxis stroke="currentColor" className="text-[0.7rem] opacity-50" />
@@ -354,7 +369,13 @@ export function AdminOverviewTab({ overview, activeRole, onNavigateTab }: AdminO
                   }}
                 />
                 <Line type="monotone" dataKey="cpu" stroke="#f43f5e" strokeWidth={2} name="CPU %" />
-                <Line type="monotone" dataKey="memory" stroke="#3b82f6" strokeWidth={2} name="Memory (MB)" />
+                <Line
+                  type="monotone"
+                  dataKey="memory"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
+                  name="Memory (MB)"
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -371,7 +392,9 @@ export function AdminOverviewTab({ overview, activeRole, onNavigateTab }: AdminO
                 <Sparkles className="h-4 w-4 text-brand" />
                 Creator Engagement Leaderboard
               </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Top performing authors by verified impressions</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Top performing authors by verified impressions
+              </p>
             </div>
             <button
               onClick={() => onNavigateTab("users")}

@@ -123,7 +123,8 @@ export function StoryModal({
     } catch {
       // Local fallback
       currentStory.likedByMe = !currentStory.likedByMe;
-      currentStory.likes_count = (currentStory.likes_count || 0) + (currentStory.likedByMe ? 1 : -1);
+      currentStory.likes_count =
+        (currentStory.likes_count || 0) + (currentStory.likedByMe ? 1 : -1);
       onStoryLikeToggled?.(currentStory.id, !!currentStory.likedByMe, currentStory.likes_count);
     }
   }
@@ -156,7 +157,7 @@ export function StoryModal({
       // Send DM to the author referencing the story
       await sendMessage(
         author.id,
-        `Replied to your story "${(currentStory.text || currentStory.caption || "story").slice(0, 40)}...": ${replyText.trim()}`
+        `Replied to your story "${(currentStory.text || currentStory.caption || "story").slice(0, 40)}...": ${replyText.trim()}`,
       );
       toast.success(`Reply sent to ${author.display_name}! 💬`);
       setReplyText("");
@@ -197,7 +198,7 @@ export function StoryModal({
       <div
         className={cn(
           "relative flex flex-col justify-between h-[92vh] sm:h-[85vh] max-h-[680px] w-full max-w-sm overflow-hidden rounded-2xl sm:rounded-[32px] p-4 sm:p-5 shadow-2xl bg-gradient-to-b text-white border border-white/15 select-none transition-all",
-          !currentStory.media_url && gradientClass
+          !currentStory.media_url && gradientClass,
         )}
         style={
           currentStory.media_url
@@ -218,13 +219,16 @@ export function StoryModal({
         <div>
           <div className="flex items-center gap-1.5 w-full">
             {stories.map((s, idx) => (
-              <div key={s.id || idx} className="h-1 flex-1 rounded-full bg-white/25 overflow-hidden">
+              <div
+                key={s.id || idx}
+                className="h-1 flex-1 rounded-full bg-white/25 overflow-hidden"
+              >
                 <div
                   className={cn(
                     "h-full bg-white rounded-full transition-all duration-100 ease-linear",
                     idx < currentIndex && "w-full",
                     idx === currentIndex && "bg-white",
-                    idx > currentIndex && "w-0"
+                    idx > currentIndex && "w-0",
                   )}
                   style={idx === currentIndex ? { width: `${progress}%` } : {}}
                 />
@@ -283,7 +287,11 @@ export function StoryModal({
                   title="Delete Story"
                   className="rounded-full p-2 bg-black/30 hover:bg-rose-500/80 text-white/80 hover:text-white transition-colors"
                 >
-                  {deleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                  {deleting ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-3.5 w-3.5" />
+                  )}
                 </button>
               )}
               <button
@@ -342,7 +350,11 @@ export function StoryModal({
                 disabled={sendingReply}
                 className="rounded-full p-2.5 bg-brand text-white shadow-soft hover:opacity-90 transition-all active:scale-95"
               >
-                {sendingReply ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {sendingReply ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
               </button>
             ) : (
               <button
@@ -352,7 +364,7 @@ export function StoryModal({
                   "flex items-center gap-1.5 rounded-full px-3 py-2.5 backdrop-blur-md transition-all active:scale-90",
                   currentStory.likedByMe
                     ? "bg-rose-500 text-white shadow-soft"
-                    : "bg-white/15 text-white hover:bg-white/25"
+                    : "bg-white/15 text-white hover:bg-white/25",
                 )}
               >
                 <Heart className={cn("h-4 w-4", currentStory.likedByMe && "fill-current")} />

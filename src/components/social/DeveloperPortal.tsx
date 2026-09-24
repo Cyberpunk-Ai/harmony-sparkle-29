@@ -99,7 +99,8 @@ const { data: posts } = await spaces.posts.list({
             </span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Programmatically query posts, publish content, stream spaces, and subscribe to real-time events.
+            Programmatically query posts, publish content, stream spaces, and subscribe to real-time
+            events.
           </p>
         </div>
 
@@ -120,7 +121,7 @@ const { data: posts } = await spaces.posts.list({
             className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-xs font-bold text-white shadow-soft hover:brightness-105 transition-all cursor-pointer"
           >
             <Crown className="h-3.5 w-3.5" />
-            <span>Upgrade to Pro ($19/mo)</span>
+            <span>Upgrade to Pro ($29/mo)</span>
           </button>
         )}
       </div>
@@ -133,14 +134,15 @@ const { data: posts } = await spaces.posts.list({
               <h4 className="text-sm font-black">Developer API & Webhooks Require Pro</h4>
             </div>
             <p className="text-xs text-muted-foreground">
-              Generate production REST API keys, configure webhooks, and programmatically publish content with 500,000 monthly requests.
+              Generate production REST API keys, configure webhooks, and programmatically publish
+              content with 500,000 monthly requests.
             </p>
           </div>
           <button
             onClick={() => openUpgradeModal("Developer API & Webhooks")}
             className="rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-xs font-bold text-white shadow-soft hover:brightness-105 transition-all cursor-pointer whitespace-nowrap"
           >
-            Unlock Pro ($19/mo)
+            Unlock Pro ($29/mo)
           </button>
         </div>
       )}
@@ -286,7 +288,9 @@ const { data: posts } = await spaces.posts.list({
               onClick={() => setActiveCodeLang("typescript")}
               className={cn(
                 "rounded-full px-3 py-1 font-bold transition-all cursor-pointer",
-                activeCodeLang === "typescript" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
+                activeCodeLang === "typescript"
+                  ? "bg-card text-foreground shadow-xs"
+                  : "text-muted-foreground",
               )}
             >
               TypeScript
@@ -295,7 +299,9 @@ const { data: posts } = await spaces.posts.list({
               onClick={() => setActiveCodeLang("curl")}
               className={cn(
                 "rounded-full px-3 py-1 font-bold transition-all cursor-pointer",
-                activeCodeLang === "curl" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
+                activeCodeLang === "curl"
+                  ? "bg-card text-foreground shadow-xs"
+                  : "text-muted-foreground",
               )}
             >
               cURL
@@ -317,14 +323,15 @@ const { data: posts } = await spaces.posts.list({
               <h4 className="text-sm font-black">Developer API & Webhooks Require Pro</h4>
             </div>
             <p className="text-xs text-muted-foreground">
-              Unlock 500k monthly API requests, real-time webhooks, and full REST & WebSocket access.
+              Unlock 500k monthly API requests, real-time webhooks, and full REST & WebSocket
+              access.
             </p>
           </div>
           <button
             onClick={() => openUpgradeModal("API & Webhooks Access")}
             className="rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-xs font-bold text-white shadow-soft hover:brightness-105 transition-all cursor-pointer whitespace-nowrap"
           >
-            Upgrade to Pro ($19/mo)
+            Upgrade to Pro ($29/mo)
           </button>
         </div>
       )}
@@ -357,7 +364,9 @@ const { data: posts } = await spaces.posts.list({
                   Copy this key now. For your security, you will not be able to view it again.
                 </p>
                 <div className="rounded-2xl border border-amber-500/30 bg-muted/40 p-3 flex items-center justify-between gap-2">
-                  <span className="font-mono text-xs text-amber-500 break-all">{createdKeySecret}</span>
+                  <span className="font-mono text-xs text-amber-500 break-all">
+                    {createdKeySecret}
+                  </span>
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(createdKeySecret);

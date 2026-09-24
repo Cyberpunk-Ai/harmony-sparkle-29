@@ -114,7 +114,9 @@ export function TipModal({ isOpen, onClose, recipient, postId }: TipModalProps) 
                 </div>
                 <div>
                   <h3 className="text-base font-extrabold tracking-tight">Your Creator Tips</h3>
-                  <p className="text-xs text-muted-foreground">Monetization & Supporter Dashboard</p>
+                  <p className="text-xs text-muted-foreground">
+                    Monetization & Supporter Dashboard
+                  </p>
                 </div>
               </div>
               <button
@@ -148,7 +150,9 @@ export function TipModal({ isOpen, onClose, recipient, postId }: TipModalProps) 
             </div>
 
             <div className="space-y-2.5">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Recent Supporters</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Recent Supporters
+              </h4>
               <div className="space-y-2">
                 {(earnings?.recent ?? []).length === 0 ? (
                   <p className="rounded-2xl border border-dashed border-border/60 p-4 text-center text-xs text-muted-foreground">
@@ -156,7 +160,10 @@ export function TipModal({ isOpen, onClose, recipient, postId }: TipModalProps) 
                   </p>
                 ) : (
                   (earnings?.recent ?? []).map((s) => (
-                    <div key={s.id} className="flex items-center justify-between rounded-2xl bg-foreground/[0.03] p-3 text-xs border border-border/50">
+                    <div
+                      key={s.id}
+                      className="flex items-center justify-between rounded-2xl bg-foreground/[0.03] p-3 text-xs border border-border/50"
+                    >
                       <div>
                         <p className="font-bold text-foreground">{s.sender}</p>
                         {s.message ? (
@@ -182,7 +189,9 @@ export function TipModal({ isOpen, onClose, recipient, postId }: TipModalProps) 
                 onClick={async () => {
                   try {
                     const res = await payout({});
-                    toast.success(`Payout of $${res.amount.toFixed(2)} requested. Funds arrive in 1-2 business days.`);
+                    toast.success(
+                      `Payout of $${res.amount.toFixed(2)} requested. Funds arrive in 1-2 business days.`,
+                    );
                     onClose();
                   } catch (err) {
                     toast.error(err instanceof Error ? err.message : "Payout request failed.");
@@ -190,7 +199,8 @@ export function TipModal({ isOpen, onClose, recipient, postId }: TipModalProps) 
                 }}
                 className="w-full rounded-2xl bg-gradient-to-r from-brand to-brand-pink py-3 text-sm font-extrabold text-white shadow-soft hover:shadow-glow transition-all cursor-pointer active:scale-98 disabled:opacity-50"
               >
-                Request Payout ({"$"}{(earnings?.total ?? 0).toFixed(2)})
+                Request Payout ({"$"}
+                {(earnings?.total ?? 0).toFixed(2)})
               </button>
             </div>
           </div>
@@ -260,7 +270,7 @@ export function TipModal({ isOpen, onClose, recipient, postId }: TipModalProps) 
                         "rounded-xl py-2.5 text-center text-sm font-extrabold transition-all cursor-pointer",
                         isSelected
                           ? "bg-gradient-to-r from-brand to-brand-pink text-white shadow-soft"
-                          : "border border-border/80 bg-muted/40 hover:bg-muted text-foreground"
+                          : "border border-border/80 bg-muted/40 hover:bg-muted text-foreground",
                       )}
                     >
                       ${amt}
@@ -331,6 +341,6 @@ export function TipModal({ isOpen, onClose, recipient, postId }: TipModalProps) 
         )}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

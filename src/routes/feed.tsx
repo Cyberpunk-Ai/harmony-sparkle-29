@@ -52,7 +52,9 @@ function StoriesBar({ stories, onOpenStory, onOpenCreator }: StoriesBarProps) {
   const { user } = useAuth();
   const activeUser = user || currentUser;
   const myStories = stories.filter((s) => s.user_id === activeUser.id);
-  const storyUserIds = Array.from(new Set(stories.filter((s) => s.user_id && s.user_id !== activeUser.id).map((s) => s.user_id)));
+  const storyUserIds = Array.from(
+    new Set(stories.filter((s) => s.user_id && s.user_id !== activeUser.id).map((s) => s.user_id)),
+  );
   const otherUsers = useMemo(() => {
     const seen = new Set<string>();
     return storyUserIds
@@ -95,37 +97,40 @@ function StoriesBar({ stories, onOpenStory, onOpenCreator }: StoriesBarProps) {
         {/* Slot 1: Current User (Add / View Your Story) */}
         <div className="relative group flex w-16 shrink-0 flex-col items-center gap-2">
           {myStories.length > 0 ? (
-            <button
-              onClick={() => {
-                const entry = userStoryMap.get(activeUser.id);
-                if (entry) onOpenStory(entry.index);
-                else onOpenCreator();
-              }}
-              className="relative flex flex-col items-center cursor-pointer"
-            >
-              <span className="flex items-center justify-center h-16 w-16 aspect-square shrink-0 rounded-full p-[2.5px] bg-gradient-to-tr from-brand via-brand-pink to-brand-orange transition-transform duration-300 group-hover:scale-105 group-active:scale-95 shadow-soft">
-                <span className="flex items-center justify-center h-full w-full aspect-square shrink-0 rounded-full bg-card p-[2px]">
-                  <Avatar
-                    name={activeUser.display_name}
-                    src={activeUser.avatar_url}
-                    className="h-full w-full aspect-square rounded-full text-sm object-cover"
-                  />
+            <>
+              <button
+                onClick={() => {
+                  const entry = userStoryMap.get(activeUser.id);
+                  if (entry) onOpenStory(entry.index);
+                  else onOpenCreator();
+                }}
+                className="relative flex flex-col items-center cursor-pointer"
+              >
+                <span className="flex items-center justify-center h-16 w-16 aspect-square shrink-0 rounded-full p-[2.5px] bg-gradient-to-tr from-brand via-brand-pink to-brand-orange transition-transform duration-300 group-hover:scale-105 group-active:scale-95 shadow-soft">
+                  <span className="flex items-center justify-center h-full w-full aspect-square shrink-0 rounded-full bg-card p-[2px]">
+                    <Avatar
+                      name={activeUser.display_name}
+                      src={activeUser.avatar_url}
+                      className="h-full w-full aspect-square rounded-full text-sm object-cover"
+                    />
+                  </span>
                 </span>
-              </span>
+                <span className="mt-1.5 w-full truncate text-center text-[0.7rem] font-bold text-foreground">
+                  Your Story
+                </span>
+              </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onOpenCreator();
                 }}
                 title="Add new story"
+                aria-label="Add new story"
                 className="absolute bottom-6 right-0 rounded-full bg-brand text-white p-1 shadow-md hover:bg-brand-pink transition-colors ring-2 ring-card cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5 stroke-[3]" />
               </button>
-              <span className="mt-1.5 w-full truncate text-center text-[0.7rem] font-bold text-foreground">
-                Your Story
-              </span>
-            </button>
+            </>
           ) : (
             <button
               onClick={onOpenCreator}
@@ -167,7 +172,7 @@ function StoriesBar({ stories, onOpenStory, onOpenCreator }: StoriesBarProps) {
               }}
               className={cn(
                 "group flex w-16 shrink-0 flex-col items-center gap-2 transition-opacity cursor-pointer",
-                !hasStory && "opacity-75 hover:opacity-100"
+                !hasStory && "opacity-75 hover:opacity-100",
               )}
             >
               <span
@@ -175,7 +180,7 @@ function StoriesBar({ stories, onOpenStory, onOpenCreator }: StoriesBarProps) {
                   "flex items-center justify-center h-16 w-16 aspect-square shrink-0 rounded-full p-[2.5px] transition-transform duration-300 group-hover:scale-105 group-active:scale-95",
                   hasStory
                     ? "bg-gradient-to-tr from-brand via-brand-pink to-brand-orange shadow-soft animate-in fade-in"
-                    : "bg-border/60"
+                    : "bg-border/60",
                 )}
               >
                 <span className="flex items-center justify-center h-full w-full aspect-square shrink-0 rounded-full bg-card p-[2px]">
@@ -189,7 +194,7 @@ function StoriesBar({ stories, onOpenStory, onOpenCreator }: StoriesBarProps) {
               <span
                 className={cn(
                   "w-full truncate text-center text-[0.7rem]",
-                  hasStory ? "font-bold text-foreground" : "font-medium text-muted-foreground"
+                  hasStory ? "font-bold text-foreground" : "font-medium text-muted-foreground",
                 )}
               >
                 {user.display_name.split(" ")[0]}
@@ -205,17 +210,19 @@ function StoriesBar({ stories, onOpenStory, onOpenCreator }: StoriesBarProps) {
 function FeedPage() {
   const search = Route.useSearch();
   const [tab, setTab] = useState<(typeof tabs)[number]>("For you");
-  
+
   // Fast synchronous hydration from session memory SWR cache
   const initialCache = getCachedFeedData();
   const [posts, setPosts] = useState<Post[]>(
-    initialCache.foryou.length > 0 ? initialCache.foryou : []
+    initialCache.foryou.length > 0 ? initialCache.foryou : [],
   );
   const [stories, setStories] = useState<Story[]>(
-    initialCache.stories.length > 0 ? initialCache.stories : []
+    initialCache.stories.length > 0 ? initialCache.stories : [],
   );
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(initialCache.foryou.length === 0);
   const [pendingIncomingPosts, setPendingIncomingPosts] = useState<Post[]>([]);
+  // Guards against out-of-order responses when the user switches tabs quickly.
+  const feedReqId = useRef(0);
 
   // Progressive infinite scrolling for optimal DOM performance
   const [visibleCount, setVisibleCount] = useState(15);
@@ -234,7 +241,7 @@ function FeedPage() {
           setVisibleCount((prev) => prev + 15);
         }
       },
-      { rootMargin: "300px" }
+      { rootMargin: "300px" },
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -285,18 +292,22 @@ function FeedPage() {
   const [isCreatorOpen, setIsCreatorOpen] = useState(false);
 
   async function fetchFeed(silent = false) {
+    const reqId = ++feedReqId.current;
     if (!silent) setLoading(true);
     try {
       const filterKey = tab === "Following" ? "following" : tab === "Latest" ? "latest" : "foryou";
       const livePosts = await getPosts({ filter: filterKey });
+      // Ignore responses from a superseded request (user switched tabs).
+      if (reqId !== feedReqId.current) return;
       if (Array.isArray(livePosts)) {
         setPosts(livePosts);
         setPendingIncomingPosts([]);
       }
     } catch (err) {
-      console.warn("Falling back to cached seed posts:", err);
+      if (reqId !== feedReqId.current) return;
+      console.warn("Feed fetch failed, keeping current posts:", err);
     } finally {
-      if (!silent) setLoading(false);
+      if (reqId === feedReqId.current && !silent) setLoading(false);
     }
   }
 
@@ -319,7 +330,8 @@ function FeedPage() {
   // Realtime hook for incoming posts and story events
   useRealtime(
     (event) => {
-      const post = event.post || (event.type === "new_post" ? event.data || (event.id ? event : null) : null);
+      const post =
+        event.post || (event.type === "new_post" ? event.data || (event.id ? event : null) : null);
       if (event.type === "new_post" && post && post.id) {
         // If user is at the very top of the page, insert immediately
         if (window.scrollY < 200) {
@@ -349,12 +361,20 @@ function FeedPage() {
           prev.map((s) =>
             s.id === event.storyId
               ? { ...s, likedByMe: event.liked, likes_count: event.likesCount }
-              : s
-          )
+              : s,
+          ),
         );
       }
     },
-    ["new_post", "post_deleted", "like", "repost", "new_story", "story_like_updated", "story_deleted"]
+    [
+      "new_post",
+      "post_deleted",
+      "like",
+      "repost",
+      "new_story",
+      "story_like_updated",
+      "story_deleted",
+    ],
   );
 
   function handlePostCreated(newPost: Post) {
@@ -375,7 +395,7 @@ function FeedPage() {
 
   function handleStoryLikeToggled(storyId: string, liked: boolean, likesCount: number) {
     setStories((prev) =>
-      prev.map((s) => (s.id === storyId ? { ...s, likedByMe: liked, likes_count: likesCount } : s))
+      prev.map((s) => (s.id === storyId ? { ...s, likedByMe: liked, likes_count: likesCount } : s)),
     );
   }
 
@@ -398,7 +418,7 @@ function FeedPage() {
             "sticky top-[3.6rem] lg:top-2 z-20 transition-all duration-300 ease-out my-2",
             isHeaderVisible
               ? "translate-y-0 opacity-100 pointer-events-auto"
-              : "-translate-y-16 opacity-0 pointer-events-none"
+              : "-translate-y-16 opacity-0 pointer-events-none",
           )}
         >
           <div className="flex items-center justify-between gap-1 rounded-2xl sm:rounded-full p-1 sm:p-1.5 shadow-md backdrop-blur-xl bg-card/90 border border-border/80 overflow-hidden">
@@ -444,7 +464,10 @@ function FeedPage() {
               className="px-4 py-2 bg-gradient-to-r from-brand to-brand-pink text-white text-xs font-bold rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-1.5"
             >
               <ArrowUp className="w-3.5 h-3.5" />
-              <span>{pendingIncomingPosts.length} new {pendingIncomingPosts.length === 1 ? "post" : "posts"}</span>
+              <span>
+                {pendingIncomingPosts.length} new{" "}
+                {pendingIncomingPosts.length === 1 ? "post" : "posts"}
+              </span>
               <Sparkles className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -474,18 +497,16 @@ function FeedPage() {
         ) : (
           <div className="space-y-5">
             {posts.slice(0, visibleCount).map((p, i) => (
-              <PostCard
-                key={p.id}
-                post={p}
-                index={i}
-                onDeleted={handlePostDeleted}
-              />
+              <PostCard key={p.id} post={p} index={i} onDeleted={handlePostDeleted} />
             ))}
           </div>
         )}
 
         {visibleCount < posts.length && (
-          <div ref={loadMoreRef} className="flex items-center justify-center py-6 text-sm text-muted-foreground gap-2 font-medium">
+          <div
+            ref={loadMoreRef}
+            className="flex items-center justify-center py-6 text-sm text-muted-foreground gap-2 font-medium"
+          >
             <Loader2 className="h-4 w-4 animate-spin text-brand" />
             <span>Loading more posts...</span>
           </div>

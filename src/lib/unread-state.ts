@@ -19,7 +19,7 @@ function notify() {
   if (typeof window !== "undefined") {
     queueMicrotask(() => {
       window.dispatchEvent(
-        new CustomEvent("spaces:unread_updated", { detail: { ...globalUnread } })
+        new CustomEvent("spaces:unread_updated", { detail: { ...globalUnread } }),
       );
     });
   }
@@ -97,7 +97,7 @@ export function useUnreadCounts() {
         setUnreadMessagesCount((prev) => prev + 1);
       }
     },
-    ["notification", "like", "repost", "follow", "message"]
+    ["notification", "like", "repost", "follow", "message"],
   );
 
   return counts;

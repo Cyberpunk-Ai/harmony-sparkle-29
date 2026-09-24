@@ -65,17 +65,32 @@ export function AdminAuditLogsTab({ activeRole }: AdminAuditLogsTabProps) {
   });
 
   const exportAsJSON = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logs, null, 2));
+    const dataStr =
+      "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logs, null, 2));
     const downloadAnchor = document.createElement("a");
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `spaces_audit_logs_${new Date().toISOString().slice(0, 10)}.json`);
+    downloadAnchor.setAttribute(
+      "download",
+      `spaces_audit_logs_${new Date().toISOString().slice(0, 10)}.json`,
+    );
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
   };
 
   const exportAsCSV = () => {
-    const headers = ["ID", "Timestamp", "Actor", "Role", "Action", "Target Type", "Target ID", "Severity", "Details", "IP"];
+    const headers = [
+      "ID",
+      "Timestamp",
+      "Actor",
+      "Role",
+      "Action",
+      "Target Type",
+      "Target ID",
+      "Severity",
+      "Details",
+      "IP",
+    ];
     const rows = logs.map((l) => [
       l.id,
       l.created_at,
@@ -88,7 +103,9 @@ export function AdminAuditLogsTab({ activeRole }: AdminAuditLogsTabProps) {
       `"${l.details.replace(/"/g, '""')}"`,
       l.ip_address,
     ]);
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -107,7 +124,12 @@ export function AdminAuditLogsTab({ activeRole }: AdminAuditLogsTabProps) {
     }[severity || "info"];
 
     return (
-      <span className={cn("inline-flex items-center rounded-full border px-2 py-0.2 text-[0.65rem] font-extrabold uppercase tracking-wider", config)}>
+      <span
+        className={cn(
+          "inline-flex items-center rounded-full border px-2 py-0.2 text-[0.65rem] font-extrabold uppercase tracking-wider",
+          config,
+        )}
+      >
         {severity}
       </span>
     );
@@ -209,12 +231,12 @@ export function AdminAuditLogsTab({ activeRole }: AdminAuditLogsTabProps) {
                         second: "2-digit",
                       })}
                     </td>
-                    <td className="px-4 py-3.5 whitespace-nowrap">
-                      {severityBadge(log.severity)}
-                    </td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">{severityBadge(log.severity)}</td>
                     <td className="px-4 py-3.5 whitespace-nowrap font-sans font-semibold text-foreground">
                       <span>{log.actor_name}</span>
-                      <span className="text-[0.65rem] text-muted-foreground ml-1.5">({log.actor_role})</span>
+                      <span className="text-[0.65rem] text-muted-foreground ml-1.5">
+                        ({log.actor_role})
+                      </span>
                     </td>
                     <td className="px-4 py-3.5 font-bold text-foreground whitespace-nowrap">
                       {log.action}

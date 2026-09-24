@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { AlertCircle, AlertTriangle, CheckCircle2, Info, X, ChevronRight, ShieldAlert } from "lucide-react";
+import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle2,
+  Info,
+  X,
+  ChevronRight,
+  ShieldAlert,
+} from "lucide-react";
 import { getPublicSettings } from "@/lib/api-client";
 import { useRealtime } from "@/lib/realtime";
 import type { SystemSettings } from "@/lib/types";
@@ -65,19 +73,22 @@ export function AnnouncementBanner() {
     <div
       className={cn(
         "relative mb-4 flex items-center justify-between gap-3 overflow-hidden rounded-2xl border px-4 py-3 backdrop-blur-md transition-all shadow-soft",
-        typeConfig.bg
+        typeConfig.bg,
       )}
     >
       <div className="flex min-w-0 items-center gap-3">
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-background/60 shadow-xs">
           <Icon className={cn("h-4 w-4", typeConfig.iconColor)} />
         </span>
-        <span className={cn("hidden sm:inline-block rounded-full px-2 py-0.5 text-[0.7rem] font-bold uppercase tracking-wider", typeConfig.badgeColor)}>
+        <span
+          className={cn(
+            "hidden sm:inline-block rounded-full px-2 py-0.5 text-[0.7rem] font-bold uppercase tracking-wider",
+            typeConfig.badgeColor,
+          )}
+        >
           {typeConfig.badge}
         </span>
-        <p className="min-w-0 truncate text-sm font-medium">
-          {banner.message}
-        </p>
+        <p className="min-w-0 truncate text-sm font-medium">{banner.message}</p>
       </div>
 
       <div className="flex shrink-0 items-center gap-2">

@@ -16,13 +16,41 @@ interface ReportModalProps {
 }
 
 const REPORT_REASONS = [
-  { id: "spam", label: "Spam or automated scam", desc: "Commercial promotion, malicious links, or repetitive unsolicited posts" },
-  { id: "harassment", label: "Harassment or hate speech", desc: "Bullying, personal threats, hate symbols, or discriminatory content" },
-  { id: "misinformation", label: "Misinformation or deceit", desc: "Deliberately misleading claims, manipulated media, or fabricated events" },
-  { id: "inappropriate", label: "Inappropriate or sensitive media", desc: "Graphic violence, NSFW content without warning tags, or gore" },
-  { id: "impersonation", label: "Impersonation", desc: "Pretending to be another individual, organization, or brand" },
-  { id: "copyright", label: "Copyright infringement", desc: "Unauthorized use of copyrighted intellectual work" },
-  { id: "other", label: "Other platform violation", desc: "Any other violation of our community safety guidelines" },
+  {
+    id: "spam",
+    label: "Spam or automated scam",
+    desc: "Commercial promotion, malicious links, or repetitive unsolicited posts",
+  },
+  {
+    id: "harassment",
+    label: "Harassment or hate speech",
+    desc: "Bullying, personal threats, hate symbols, or discriminatory content",
+  },
+  {
+    id: "misinformation",
+    label: "Misinformation or deceit",
+    desc: "Deliberately misleading claims, manipulated media, or fabricated events",
+  },
+  {
+    id: "inappropriate",
+    label: "Inappropriate or sensitive media",
+    desc: "Graphic violence, NSFW content without warning tags, or gore",
+  },
+  {
+    id: "impersonation",
+    label: "Impersonation",
+    desc: "Pretending to be another individual, organization, or brand",
+  },
+  {
+    id: "copyright",
+    label: "Copyright infringement",
+    desc: "Unauthorized use of copyrighted intellectual work",
+  },
+  {
+    id: "other",
+    label: "Other platform violation",
+    desc: "Any other violation of our community safety guidelines",
+  },
 ] as const;
 
 export function ReportModal({
@@ -35,7 +63,13 @@ export function ReportModal({
   authorName,
 }: ReportModalProps) {
   const [selectedReason, setSelectedReason] = useState<
-    "spam" | "harassment" | "inappropriate" | "impersonation" | "copyright" | "misinformation" | "other"
+    | "spam"
+    | "harassment"
+    | "inappropriate"
+    | "impersonation"
+    | "copyright"
+    | "misinformation"
+    | "other"
   >("spam");
   const [details, setDetails] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -86,7 +120,8 @@ export function ReportModal({
             </div>
             <h3 className="text-xl font-extrabold">Report Submitted</h3>
             <p className="text-sm text-muted-foreground max-w-xs">
-              Thank you for keeping our community safe. Our trust & safety team will review this {targetType}.
+              Thank you for keeping our community safe. Our trust & safety team will review this{" "}
+              {targetType}.
             </p>
           </div>
         ) : (
@@ -134,7 +169,7 @@ export function ReportModal({
                         "w-full text-left rounded-xl p-2.5 border transition-all text-xs",
                         isSelected
                           ? "border-rose-500/60 bg-rose-500/10 text-foreground ring-1 ring-rose-500/30"
-                          : "border-border/60 hover:bg-foreground/5 text-muted-foreground"
+                          : "border-border/60 hover:bg-foreground/5 text-muted-foreground",
                       )}
                     >
                       <p className="font-bold text-foreground">{r.label}</p>
@@ -172,7 +207,11 @@ export function ReportModal({
                 disabled={submitting}
                 className="flex items-center gap-1.5 rounded-full bg-rose-600 hover:bg-rose-500 text-white px-5 py-2 text-xs font-bold shadow-soft transition-all active:scale-95 disabled:opacity-50"
               >
-                {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ShieldAlert className="h-3.5 w-3.5" />}
+                {submitting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <ShieldAlert className="h-3.5 w-3.5" />
+                )}
                 {submitting ? "Submitting..." : "Submit Report"}
               </button>
             </div>
@@ -180,6 +219,6 @@ export function ReportModal({
         )}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

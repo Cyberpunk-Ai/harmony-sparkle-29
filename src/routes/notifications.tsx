@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
   Heart,
@@ -77,6 +77,7 @@ const meta: Record<Notification["type"], { icon: typeof Heart; tint: string }> =
 const filters = ["All", "Mentions", "Follows", "Likes", "Tips", "Spaces"] as const;
 
 function NotificationsPage() {
+  const navigate = useNavigate();
   const [items, setItems] = useState<Notification[]>([]);
   const [filter, setFilter] = useState<(typeof filters)[number]>("All");
   const [loading, setLoading] = useState(false);
@@ -94,7 +95,9 @@ function NotificationsPage() {
   // Realtime hook for incoming notifications
   useRealtime(
     (event) => {
-      const notif = event.notification || (event.type === "notification" ? (event.data || (event.id ? event : null)) : null);
+      const notif =
+        event.notification ||
+        (event.type === "notification" ? event.data || (event.id ? event : null) : null);
       if (notif && notif.id) {
         setItems((prev) => {
           if (prev.some((n) => n.id === notif.id)) return prev;
@@ -103,7 +106,7 @@ function NotificationsPage() {
         if (notif.body) toast.info(notif.body);
       }
     },
-    ["notification", "like", "repost", "follow", "space_tip"]
+    ["notification", "like", "repost", "follow", "space_tip"],
   );
 
   async function handleMarkAllRead() {
@@ -124,6 +127,22 @@ function NotificationsPage() {
     try {
       await markNotificationRead(id);
     } catch {}
+  }
+
+  // Mark read, then route the user to the relevant destination for the type.
+  function handleOpen(n: Notification) {
+    void handleMarkRead(n.id);
+    if (n.type === "space") {
+      void navigate({ to: "/spaces" });
+      return;
+    }
+    if (n.type === "tip") {
+      void navigate({ to: "/settings", search: { section: "monetization" } });
+      return;
+    }
+    if (n.actor_id) {
+      void navigate({ to: "/profile", search: { user: n.actor_id } });
+    }
   }
 
   const visible = items.filter((n) => {
@@ -181,7 +200,7 @@ function NotificationsPage() {
               return (
                 <button
                   key={n.id}
-                  onClick={() => handleMarkRead(n.id)}
+                  onClick={() => handleOpen(n)}
                   style={{ animationDelay: `${i * 45}ms` }}
                   className={cn(
                     "glass-panel flex w-full animate-in items-start gap-3 rounded-3xl p-4 text-left shadow-soft transition-all duration-300 fade-in slide-in-from-bottom-3 hover:-translate-y-0.5 hover:shadow-lift cursor-pointer",

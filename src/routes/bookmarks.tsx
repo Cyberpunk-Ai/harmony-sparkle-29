@@ -62,7 +62,8 @@ function BookmarksPage() {
         p.tags.some((t) => t.toLowerCase() === collection.toLowerCase()) ||
         (collection === "Design" && p.content.toLowerCase().includes("design")) ||
         (collection === "Inspiration" && p.content.toLowerCase().includes("inspiration")) ||
-        (collection === "Generative AI" && (p.content.toLowerCase().includes("ai") || p.tags.includes("ai")));
+        (collection === "Generative AI" &&
+          (p.content.toLowerCase().includes("ai") || p.tags.includes("ai")));
       if (!matchCol) return false;
     }
 
@@ -147,4 +148,3 @@ function BookmarksPage() {
     </AppShell>
   );
 }
-

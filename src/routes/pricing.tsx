@@ -29,12 +29,14 @@ export const Route = createFileRoute("/pricing")({
       { title: "Plans & Perks — Spaces1" },
       {
         name: "description",
-        content: "Simple, transparent plans designed for creators, live audio hosts, and media teams.",
+        content:
+          "Simple, transparent plans designed for creators, live audio hosts, and media teams.",
       },
       { property: "og:title", content: "Plans & Perks — Spaces1" },
       {
         property: "og:description",
-        content: "Simple, transparent plans designed for creators, live audio hosts, and media teams.",
+        content:
+          "Simple, transparent plans designed for creators, live audio hosts, and media teams.",
       },
     ],
   }),
@@ -44,7 +46,7 @@ export const Route = createFileRoute("/pricing")({
 function PricingPage() {
   const [annual, setAnnual] = useState(false);
   const { isLoggedIn } = useAuth();
-  const { currentPlan } = usePlan();
+  const { currentPlan, cancelSubscription } = usePlan();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   useEffect(() => {
@@ -66,7 +68,8 @@ function PricingPage() {
       monthly: 0,
       features: ["Unlimited posts & stories", "Join communities", "Basic analytics"],
       cta: "Get Started",
-      style: "border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-muted/40 text-foreground",
+      style:
+        "border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-muted/40 text-foreground",
       popular: false,
     },
     {
@@ -81,7 +84,8 @@ function PricingPage() {
         "Custom branding",
       ],
       cta: "Get Started",
-      style: "border border-violet-200 dark:border-violet-500/30 text-violet-700 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-950/30",
+      style:
+        "border border-violet-200 dark:border-violet-500/30 text-violet-700 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-950/30",
       popular: true,
     },
     {
@@ -91,12 +95,13 @@ function PricingPage() {
       monthly: 29,
       features: ["Everything in Plus", "Team workspaces", "Priority support", "API access"],
       cta: "Contact Sales",
-      style: "border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-muted/40 text-foreground",
+      style:
+        "border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-muted/40 text-foreground",
       popular: false,
     },
   ];
 
-  const handlePlanAction = (tier: PlanTier) => {
+  const handlePlanAction = async (tier: PlanTier) => {
     if (!isLoggedIn) {
       window.location.href = "/auth";
       return;
@@ -108,8 +113,20 @@ function PricingPage() {
     }
 
     if (tier === "free") {
-      if (confirm("Are you sure you want to switch to the Free plan? You will retain all your past posts and followers.")) {
-        toast.success("Account set to Free plan.");
+      if (
+        confirm(
+          "Are you sure you want to switch to the Free plan? You will retain all your past posts and followers.",
+        )
+      ) {
+        try {
+          await cancelSubscription();
+          toast.success("Account set to Free plan.");
+        } catch (err) {
+          console.error("Failed to cancel subscription:", err);
+          toast.error(
+            err instanceof Error ? err.message : "Could not switch to Free. Please try again.",
+          );
+        }
       }
       return;
     }
@@ -237,7 +254,9 @@ function PricingPage() {
                 <div
                   key={p.name}
                   className={`glass-panel relative flex h-full flex-col rounded-3xl p-8 md:p-10 transition-all duration-300 ${
-                    p.popular ? "shadow-glow ring-2 ring-brand/30 border-violet-500/40" : "shadow-soft"
+                    p.popular
+                      ? "shadow-glow ring-2 ring-brand/30 border-violet-500/40"
+                      : "shadow-soft"
                   }`}
                 >
                   {p.popular && (
@@ -246,7 +265,9 @@ function PricingPage() {
                     </span>
                   )}
 
-                  <h3 className="mb-2 text-2xl font-bold tracking-tight text-foreground">{p.name}</h3>
+                  <h3 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
+                    {p.name}
+                  </h3>
                   <p className="mb-6 text-sm text-muted-foreground">{p.tagline}</p>
 
                   <p className="mb-8 text-5xl font-extrabold tracking-tight text-foreground">
@@ -319,8 +340,12 @@ function PricingPage() {
           {/* Simple Clean FAQ Accordion */}
           <div className="max-w-2xl mx-auto space-y-4 pt-2">
             <div className="text-center space-y-1 mb-6">
-              <h3 className="text-2xl font-bold tracking-tight text-foreground">Common Questions</h3>
-              <p className="text-xs text-muted-foreground">Everything you need to know about our plans.</p>
+              <h3 className="text-2xl font-bold tracking-tight text-foreground">
+                Common Questions
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Everything you need to know about our plans.
+              </p>
             </div>
 
             <div className="space-y-2.5">
@@ -361,7 +386,8 @@ function PricingPage() {
                 Start sharing your story today.
               </h3>
               <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                Join our vibrant creator network and unlock powerful audio, publishing, and community tools.
+                Join our vibrant creator network and unlock powerful audio, publishing, and
+                community tools.
               </p>
               <div className="pt-2 flex justify-center">
                 <button

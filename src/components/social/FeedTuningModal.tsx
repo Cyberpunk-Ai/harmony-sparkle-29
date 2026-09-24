@@ -1,5 +1,16 @@
 import { useState, useEffect } from "react";
-import { Sparkles, Sliders, X, Plus, Trash2, Check, Compass, Eye, ShieldAlert, RefreshCw } from "lucide-react";
+import {
+  Sparkles,
+  Sliders,
+  X,
+  Plus,
+  Trash2,
+  Check,
+  Compass,
+  Eye,
+  ShieldAlert,
+  RefreshCw,
+} from "lucide-react";
 import type { UserFeedPreferences } from "@/lib/types";
 import { getFeedPreferences, updateFeedPreferences } from "@/lib/api-client";
 import { toast } from "sonner";
@@ -168,7 +179,8 @@ export function FeedTuningModal({ isOpen, onClose, onPreferencesUpdated }: FeedT
                 </span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Choose how often the feed balances familiar accounts vs. introducing rising creators and unexpected ideas.
+                Choose how often the feed balances familiar accounts vs. introducing rising creators
+                and unexpected ideas.
               </p>
 
               <div className="grid grid-cols-3 gap-2 pt-1">
@@ -203,7 +215,9 @@ export function FeedTuningModal({ isOpen, onClose, onPreferencesUpdated }: FeedT
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className={`text-xs font-semibold ${isActive ? "text-primary" : "text-foreground"}`}>
+                        <span
+                          className={`text-xs font-semibold ${isActive ? "text-primary" : "text-foreground"}`}
+                        >
                           {tier.title}
                         </span>
                         {isActive && <Check className="w-3.5 h-3.5 text-primary" />}
@@ -275,7 +289,8 @@ export function FeedTuningModal({ isOpen, onClose, onPreferencesUpdated }: FeedT
             </div>
 
             {/* Muted Filters & Clean Content Shield */}
-            {((preferences.mutedTags || []).length > 0 || (preferences.mutedAuthors || []).length > 0) && (
+            {((preferences.mutedTags || []).length > 0 ||
+              (preferences.mutedAuthors || []).length > 0) && (
               <div className="space-y-3 pt-2 border-t border-border/60">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
@@ -284,7 +299,9 @@ export function FeedTuningModal({ isOpen, onClose, onPreferencesUpdated }: FeedT
 
                 {(preferences.mutedTags || []).length > 0 && (
                   <div className="space-y-1">
-                    <span className="text-[11px] text-muted-foreground font-medium">Muted Tags:</span>
+                    <span className="text-[11px] text-muted-foreground font-medium">
+                      Muted Tags:
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
                       {(preferences.mutedTags || []).map((tag) => (
                         <span
@@ -308,7 +325,9 @@ export function FeedTuningModal({ isOpen, onClose, onPreferencesUpdated }: FeedT
 
                 {(preferences.mutedAuthors || []).length > 0 && (
                   <div className="space-y-1">
-                    <span className="text-[11px] text-muted-foreground font-medium">Muted Creators:</span>
+                    <span className="text-[11px] text-muted-foreground font-medium">
+                      Muted Creators:
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
                       {(preferences.mutedAuthors || []).map((author) => (
                         <span

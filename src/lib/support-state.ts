@@ -5,7 +5,12 @@ import { insertOwnedRow, loadOwnedRows, signedInProfileId } from "@/lib/remote-s
 export interface SupportTicket {
   id: string;
   subject: string;
-  category: "Creator Studio" | "Billing & Payouts" | "Spaces & Audio" | "API & Webhooks" | "Account Security";
+  category:
+    | "Creator Studio"
+    | "Billing & Payouts"
+    | "Spaces & Audio"
+    | "API & Webhooks"
+    | "Account Security";
   priority: "Urgent (15 min SLA)" | "High (1 hr SLA)" | "Normal (4 hr SLA)";
   status: "open" | "in_progress" | "resolved";
   lastMessage: string;

@@ -139,7 +139,7 @@ function getSharedObserver() {
           }
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
   }
   return sharedObserver;
@@ -182,7 +182,11 @@ function Action({
           )}
         />
       </span>
-      {count !== undefined && <span className="tabular-nums text-[0.72rem] sm:text-xs font-semibold">{compact(count)}</span>}
+      {count !== undefined && (
+        <span className="tabular-nums text-[0.72rem] sm:text-xs font-semibold">
+          {compact(count)}
+        </span>
+      )}
     </button>
   );
 }
@@ -239,7 +243,15 @@ function PostCardBase({
     if (post.comments) {
       setCommentsList(post.comments);
     }
-  }, [post.id, post.likeCount, post.likedByMe, post.repostCount, post.repostedByMe, post.bookmarkedByMe, post.viewCount]);
+  }, [
+    post.id,
+    post.likeCount,
+    post.likedByMe,
+    post.repostCount,
+    post.repostedByMe,
+    post.bookmarkedByMe,
+    post.viewCount,
+  ]);
 
   // Record impression when post enters viewport using shared observer pool
   useEffect(() => {
@@ -270,36 +282,51 @@ function PostCardBase({
   }, [post.id]);
 
   // Listen to realtime updates for this specific post
-  useRealtime((event) => {
-    if (event.type === "post_like_updated" && event.postId === post.id && typeof event.likeCount === "number") {
-      const newLikes = event.likeCount;
-      setState((s) => ({ ...s, likes: newLikes }));
-    } else if (event.type === "post_repost_updated" && event.postId === post.id && typeof event.repostCount === "number") {
-      const newReposts = event.repostCount;
-      setState((s) => ({ ...s, reposts: newReposts }));
-    } else if (event.type === "post_view_updated" && event.postId === post.id && typeof event.viewCount === "number") {
-      const newViews = event.viewCount;
-      setState((s) => ({ ...s, views: newViews }));
-    } else if (event.type === "poll_updated" && event.postId === post.id && event.tallies) {
-      // Merge other people's counts without touching this viewer's own choice.
-      setPoll((prev) => {
-        if (!prev) return prev;
-        const counts = new Map<string, number>(
-          (event.tallies as any[]).map((t) => [t.id, t.votes]),
-        );
-        return {
-          ...prev,
-          options: prev.options.map((o) => ({ ...o, votes: counts.get(o.id) ?? o.votes })),
-          totalVotes: typeof event.totalVotes === "number" ? event.totalVotes : prev.totalVotes,
-        };
-      });
-    } else if (event.event === "new_comment" && event.data?.post_id === post.id) {
-      setCommentsList((prev) => {
-        if (prev.some((c) => c.id === event.data.id)) return prev;
-        return [...prev, event.data];
-      });
-    }
-  }, ["post_like_updated", "post_repost_updated", "post_view_updated", "poll_updated"]);
+  useRealtime(
+    (event) => {
+      if (
+        event.type === "post_like_updated" &&
+        event.postId === post.id &&
+        typeof event.likeCount === "number"
+      ) {
+        const newLikes = event.likeCount;
+        setState((s) => ({ ...s, likes: newLikes }));
+      } else if (
+        event.type === "post_repost_updated" &&
+        event.postId === post.id &&
+        typeof event.repostCount === "number"
+      ) {
+        const newReposts = event.repostCount;
+        setState((s) => ({ ...s, reposts: newReposts }));
+      } else if (
+        event.type === "post_view_updated" &&
+        event.postId === post.id &&
+        typeof event.viewCount === "number"
+      ) {
+        const newViews = event.viewCount;
+        setState((s) => ({ ...s, views: newViews }));
+      } else if (event.type === "poll_updated" && event.postId === post.id && event.tallies) {
+        // Merge other people's counts without touching this viewer's own choice.
+        setPoll((prev) => {
+          if (!prev) return prev;
+          const counts = new Map<string, number>(
+            (event.tallies as any[]).map((t) => [t.id, t.votes]),
+          );
+          return {
+            ...prev,
+            options: prev.options.map((o) => ({ ...o, votes: counts.get(o.id) ?? o.votes })),
+            totalVotes: typeof event.totalVotes === "number" ? event.totalVotes : prev.totalVotes,
+          };
+        });
+      } else if (event.event === "new_comment" && event.data?.post_id === post.id) {
+        setCommentsList((prev) => {
+          if (prev.some((c) => c.id === event.data.id)) return prev;
+          return [...prev, event.data];
+        });
+      }
+    },
+    ["post_like_updated", "post_repost_updated", "post_view_updated", "poll_updated"],
+  );
 
   // Comments state
   const [showComments, setShowComments] = useState(false);
@@ -333,7 +360,7 @@ function PostCardBase({
       },
       {
         threshold: 0.3, // Play when 30% of the video card is visible
-      }
+      },
     );
 
     observer.observe(videoEl);
@@ -361,9 +388,7 @@ function PostCardBase({
         ...prev,
         totalVotes: prev.totalVotes + 1,
         options: prev.options.map((opt) =>
-          opt.id === optionId
-            ? { ...opt, votes: opt.votes + 1, votedByMe: true }
-            : opt
+          opt.id === optionId ? { ...opt, votes: opt.votes + 1, votedByMe: true } : opt,
         ),
       };
     });
@@ -478,7 +503,10 @@ function PostCardBase({
 
   const isMine = post.user_id === currentUser.id;
 
-  async function handleSendFeedback(action: "interested" | "not_interested" | "mute_author", tag?: string) {
+  async function handleSendFeedback(
+    action: "interested" | "not_interested" | "mute_author",
+    tag?: string,
+  ) {
     setShowMenu(false);
     try {
       if (action === "interested") {
@@ -508,7 +536,11 @@ function PostCardBase({
           search={{ id: author.id, user: author.username }}
           className="shrink-0 rounded-full transition-transform duration-200 hover:scale-105 active:scale-95"
         >
-          <Avatar name={author.display_name} src={author.avatar_url} className="h-11 w-11 text-xs shrink-0" />
+          <Avatar
+            name={author.display_name}
+            src={author.avatar_url}
+            className="h-11 w-11 text-xs shrink-0"
+          />
         </Link>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -542,10 +574,12 @@ function PostCardBase({
             }
             return (
               <div className="mt-2 text-[0.975rem] leading-relaxed [overflow-wrap:anywhere]">
-                <p className={cn(
-                  "whitespace-pre-wrap transition-all duration-300 pr-1",
-                  !isExpanded && "line-clamp-3 overflow-hidden"
-                )}>
+                <p
+                  className={cn(
+                    "whitespace-pre-wrap transition-all duration-300 pr-1",
+                    !isExpanded && "line-clamp-3 overflow-hidden",
+                  )}
+                >
                   {renderContentWithLinks(post.content)}
                 </p>
                 <button
@@ -592,7 +626,8 @@ function PostCardBase({
                   }}
                   className="flex w-full items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold hover:bg-foreground/5 transition-colors"
                 >
-                  <Bookmark className="h-3.5 w-3.5" /> {state.saved ? "Remove bookmark" : "Bookmark post"}
+                  <Bookmark className="h-3.5 w-3.5" />{" "}
+                  {state.saved ? "Remove bookmark" : "Bookmark post"}
                 </button>
               </div>
 
@@ -650,26 +685,24 @@ function PostCardBase({
       {(() => {
         // Gather and flatten all possible sources into a unique, cleaned array
         const candidateUrls: string[] = [];
-        const sources = [
-          mediaSrc,
-          (post as any).media_urls,
-          (post as any).images
-        ];
+        const sources = [mediaSrc, (post as any).media_urls, (post as any).images];
 
         for (const src of sources) {
           if (!src) continue;
           if (Array.isArray(src)) {
-            candidateUrls.push(...src.filter(s => typeof s === "string"));
+            candidateUrls.push(...src.filter((s) => typeof s === "string"));
           } else if (typeof src === "string") {
             if (src.includes(",")) {
-              candidateUrls.push(...src.split(",").map(s => s.trim()));
+              candidateUrls.push(...src.split(",").map((s) => s.trim()));
             } else {
               candidateUrls.push(src.trim());
             }
           }
         }
 
-        const allMedia = Array.from(new Set(candidateUrls.filter(u => typeof u === "string" && u.trim() !== "")));
+        const allMedia = Array.from(
+          new Set(candidateUrls.filter((u) => typeof u === "string" && u.trim() !== "")),
+        );
 
         if (allMedia.length === 0 || imageError) return null;
 
@@ -693,7 +726,11 @@ function PostCardBase({
                     key={`${url}_${idx}`}
                     className={cn(
                       "relative overflow-hidden rounded-2xl border border-border/70 bg-neutral-950/20 aspect-[4/3] group/card cursor-pointer shadow-xs shrink-0 snap-start",
-                      hasVideo ? "w-full" : (allMedia.length === 2 ? "w-[calc(50%-5px)]" : "w-[85%] sm:w-[48%]")
+                      hasVideo
+                        ? "w-full"
+                        : allMedia.length === 2
+                          ? "w-[calc(50%-5px)]"
+                          : "w-[85%] sm:w-[48%]",
                     )}
                     onClick={() => {
                       setPreviewMediaUrl(url);
@@ -754,27 +791,33 @@ function PostCardBase({
       })()}
 
       {/* Image Full-screen Lightbox Modal */}
-      {showImagePreview && (previewMediaUrl || mediaSrc) && typeof document !== "undefined" && createPortal(
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200"
-          onClick={() => setShowImagePreview(false)}
-        >
-          <div className="relative max-w-5xl max-h-[92vh] overflow-hidden rounded-3xl" onClick={(e) => e.stopPropagation()}>
-            <img
-              src={previewMediaUrl || mediaSrc || ""}
-              alt="Full preview"
-              className="max-h-[85vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"
-            />
-            <button
-              onClick={() => setShowImagePreview(false)}
-              className="absolute top-4 right-4 rounded-full bg-black/70 p-2 text-white hover:bg-black/90 transition-colors cursor-pointer"
+      {showImagePreview &&
+        (previewMediaUrl || mediaSrc) &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200"
+            onClick={() => setShowImagePreview(false)}
+          >
+            <div
+              className="relative max-w-5xl max-h-[92vh] overflow-hidden rounded-3xl"
+              onClick={(e) => e.stopPropagation()}
             >
-              ✕
-            </button>
-          </div>
-        </div>,
-        document.body
-      )}
+              <img
+                src={previewMediaUrl || mediaSrc || ""}
+                alt="Full preview"
+                className="max-h-[85vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"
+              />
+              <button
+                onClick={() => setShowImagePreview(false)}
+                className="absolute top-4 right-4 rounded-full bg-black/70 p-2 text-white hover:bg-black/90 transition-colors cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+          </div>,
+          document.body,
+        )}
 
       {post.image_gradient && !mediaSrc && (
         <div className="mt-4 overflow-hidden rounded-2xl">
@@ -809,7 +852,7 @@ function PostCardBase({
                     hasVotedInPoll
                       ? "cursor-default border-border/60 bg-foreground/5"
                       : "cursor-pointer border-border hover:border-brand/60 hover:bg-brand/5 active:scale-[0.99]",
-                    isSelected && "border-brand bg-brand/10 ring-1 ring-brand"
+                    isSelected && "border-brand bg-brand/10 ring-1 ring-brand",
                   )}
                 >
                   {/* Animated Fill Bar */}
@@ -820,7 +863,7 @@ function PostCardBase({
                         "absolute inset-y-0 left-0 transition-all duration-700 ease-out",
                         isSelected
                           ? "bg-gradient-to-r from-brand/25 to-brand-pink/25"
-                          : "bg-foreground/10"
+                          : "bg-foreground/10",
                       )}
                     />
                   )}
@@ -944,12 +987,22 @@ function PostCardBase({
                         className="font-bold inline-flex items-center gap-1 hover:text-brand transition-colors"
                       >
                         {cAuthor.display_name}
-                        <UserBadge plan={cAuthor.plan} verified={cAuthor.verified} isMe={c.user_id === currentUser.id} size="xs" />
+                        <UserBadge
+                          plan={cAuthor.plan}
+                          verified={cAuthor.verified}
+                          isMe={c.user_id === currentUser.id}
+                          size="xs"
+                        />
                       </Link>
                       <TimeAgo iso={c.created_at} className="text-[10px] text-muted-foreground" />
                     </div>
                     <div className="mt-1 text-foreground/90 leading-relaxed">
-                      <ClampText text={c.content} lines={4} limit={240} render={renderContentWithLinks} />
+                      <ClampText
+                        text={c.content}
+                        lines={4}
+                        limit={240}
+                        render={renderContentWithLinks}
+                      />
                     </div>
                   </div>
                 </div>
@@ -1042,6 +1095,8 @@ function PostCardBase({
 }
 
 /** Memoised so a feed re-render only re-renders the cards whose data changed. */
-export const PostCard = memo(PostCardBase, (prev, next) =>
-  prev.post === next.post && prev.index === next.index && prev.onDeleted === next.onDeleted,
+export const PostCard = memo(
+  PostCardBase,
+  (prev, next) =>
+    prev.post === next.post && prev.index === next.index && prev.onDeleted === next.onDeleted,
 );

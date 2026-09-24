@@ -265,7 +265,11 @@ export function MonetizationHub() {
                   className="flex items-center justify-between p-3 rounded-2xl bg-foreground/5 hover:bg-foreground/10 transition-all text-xs"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <Avatar name={t.senderName} src={t.senderAvatar} className="h-8 w-8 text-xs shrink-0" />
+                    <Avatar
+                      name={t.senderName}
+                      src={t.senderAvatar}
+                      className="h-8 w-8 text-xs shrink-0"
+                    />
                     <div className="min-w-0">
                       <p className="font-bold truncate">{t.senderName}</p>
                       <p className="text-[10px] text-muted-foreground truncate">{t.timestamp}</p>

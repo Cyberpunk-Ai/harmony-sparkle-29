@@ -43,13 +43,11 @@ import { PaymentHistory } from "@/components/social/PaymentHistory";
 import { cn } from "@/lib/utils";
 
 import { toast } from "sonner";
-import {
-  updateUserProfile,
-  uploadMedia,
-} from "@/lib/api-client";
+import { updateUserProfile, uploadMedia } from "@/lib/api-client";
 
-
-const AnalyticsDashboard = lazy(() => import("@/components/social/AnalyticsDashboard").then((m) => ({ default: m.AnalyticsDashboard })));
+const AnalyticsDashboard = lazy(() =>
+  import("@/components/social/AnalyticsDashboard").then((m) => ({ default: m.AnalyticsDashboard })),
+);
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -63,11 +61,15 @@ export const Route = createFileRoute("/settings")({
       { property: "og:title", content: "Settings — Spaces1" },
       {
         property: "og:description",
-        content: "Profile, notifications, privacy, appearance, and creator controls for your Spaces1 account.",
+        content:
+          "Profile, notifications, privacy, appearance, and creator controls for your Spaces1 account.",
       },
     ],
   }),
   component: SettingsPage,
+  validateSearch: (search: Record<string, unknown>): { section?: string } => ({
+    section: typeof search.section === "string" ? search.section : undefined,
+  }),
 });
 
 const sections: Array<{
@@ -164,10 +166,35 @@ function Toggle({
 
 function SettingsPage() {
   const navigate = useNavigate();
+  const { section } = Route.useSearch();
   const { user } = useAuth();
-  const { currentPlan, planDetails, billingCycle, isPro, isUltra, usage, updateBillingCycle, upgradePlan, cancelSubscription } = usePlan();
-  const { mode, setMode, accent, setAccent, reduceMotion, setReduceMotion, largerText, setLargerText } = useTheme();
-  const [active, setActive] = useState<SectionId>("profile");
+  const {
+    currentPlan,
+    planDetails,
+    billingCycle,
+    isPro,
+    isUltra,
+    usage,
+    updateBillingCycle,
+    upgradePlan,
+    cancelSubscription,
+  } = usePlan();
+  const {
+    mode,
+    setMode,
+    accent,
+    setAccent,
+    reduceMotion,
+    setReduceMotion,
+    largerText,
+    setLargerText,
+  } = useTheme();
+  const validSection = (id?: string): id is SectionId =>
+    Boolean(id) && sections.some((s) => s.id === id);
+  const [active, setActive] = useState<SectionId>(validSection(section) ? section : "profile");
+  useEffect(() => {
+    if (validSection(section)) setActive(section);
+  }, [section]);
   const [saved, setSaved] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -206,7 +233,14 @@ function SettingsPage() {
         avatar_url: activeUser.avatar_url || "",
       });
     }
-  }, [activeUser.display_name, activeUser.username, activeUser.bio, activeUser.location, activeUser.website, activeUser.avatar_url]);
+  }, [
+    activeUser.display_name,
+    activeUser.username,
+    activeUser.bio,
+    activeUser.location,
+    activeUser.website,
+    activeUser.avatar_url,
+  ]);
 
   async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -218,7 +252,7 @@ function SettingsPage() {
       const res = await uploadMedia(file, "avatars");
       const newAvatarUrl = res.url;
       setForm((prev) => ({ ...prev, avatar_url: newAvatarUrl }));
-      
+
       // Update backend profile immediately
       await updateUserProfile({
         avatar_url: newAvatarUrl,
@@ -227,12 +261,13 @@ function SettingsPage() {
       toast.success("Profile photo updated!", { id: "avatar-upload" });
     } catch (err: any) {
       console.error("Avatar upload failed:", err);
-      toast.error(err?.message || "Could not upload photo. Please try again.", { id: "avatar-upload" });
+      toast.error(err?.message || "Could not upload photo. Please try again.", {
+        id: "avatar-upload",
+      });
     } finally {
       e.target.value = "";
       setUploadingPhoto(false);
     }
-
   }
 
   async function save() {
@@ -251,18 +286,9 @@ function SettingsPage() {
       toast.success("Profile settings saved successfully");
       setTimeout(() => setSaved(false), 1800);
     } catch (err) {
-      const updatedData = {
-        display_name: form.name,
-        username: form.username,
-        bio: form.bio,
-        location: form.location,
-        website: form.website,
-        avatar_url: form.avatar_url,
-      };
-      updateUserSession(updatedData);
-      setSaved(true);
-      toast.success("Profile settings saved");
-      setTimeout(() => setSaved(false), 1800);
+      console.error("Failed to save profile settings:", err);
+      const message = err instanceof Error ? err.message : undefined;
+      toast.error(message || "Could not save your settings. Please try again.");
     }
   }
 
@@ -314,7 +340,10 @@ function SettingsPage() {
             </nav>
           </Panel>
 
-          <Panel className="min-w-0 animate-in fade-in slide-in-from-bottom-2 duration-300 md:max-h-[calc(100vh-8.5rem)] md:overflow-y-auto custom-scrollbar" key={active}>
+          <Panel
+            className="min-w-0 animate-in fade-in slide-in-from-bottom-2 duration-300 md:max-h-[calc(100vh-8.5rem)] md:overflow-y-auto custom-scrollbar"
+            key={active}
+          >
             {active === "profile" && (
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
@@ -337,7 +366,11 @@ function SettingsPage() {
                       disabled={uploadingPhoto}
                       className="mt-1.5 flex items-center gap-1.5 rounded-full border border-border px-4 py-1.5 text-xs font-bold transition-all duration-300 hover:bg-foreground/5 active:scale-95 disabled:opacity-50"
                     >
-                      {uploadingPhoto ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Camera className="h-3.5 w-3.5" />}
+                      {uploadingPhoto ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Camera className="h-3.5 w-3.5" />
+                      )}
                       {uploadingPhoto ? "Uploading..." : "Upload new"}
                     </button>
                   </div>
@@ -474,10 +507,15 @@ function SettingsPage() {
                             "flex flex-col items-center justify-center gap-2 rounded-2xl border p-4 transition-all duration-200",
                             isSelected
                               ? "border-brand bg-brand/10 text-brand shadow-xs font-bold"
-                              : "border-border bg-card hover:bg-foreground/5 text-muted-foreground hover:text-foreground font-medium"
+                              : "border-border bg-card hover:bg-foreground/5 text-muted-foreground hover:text-foreground font-medium",
                           )}
                         >
-                          <Icon className={cn("h-5 w-5", isSelected ? "text-brand" : "text-muted-foreground")} />
+                          <Icon
+                            className={cn(
+                              "h-5 w-5",
+                              isSelected ? "text-brand" : "text-muted-foreground",
+                            )}
+                          />
                           <span className="text-xs">{m.label}</span>
                         </button>
                       );
@@ -502,17 +540,22 @@ function SettingsPage() {
                             "flex items-center gap-3 rounded-2xl border p-3 text-left transition-all duration-200",
                             isSelected
                               ? "border-brand bg-brand/10 shadow-xs"
-                              : "border-border bg-card hover:bg-foreground/5"
+                              : "border-border bg-card hover:bg-foreground/5",
                           )}
                         >
                           <span
                             className={cn(
                               "h-7 w-7 shrink-0 rounded-full bg-gradient-to-br shadow-xs",
-                              palette.gradientClass
+                              palette.gradientClass,
                             )}
                           />
                           <div className="min-w-0 flex-1">
-                            <p className={cn("text-xs font-bold truncate", isSelected ? "text-brand" : "text-foreground")}>
+                            <p
+                              className={cn(
+                                "text-xs font-bold truncate",
+                                isSelected ? "text-brand" : "text-foreground",
+                              )}
+                            >
                               {palette.name}
                             </p>
                           </div>
@@ -551,7 +594,11 @@ function SettingsPage() {
                     description="Require a code at every new sign-in."
                     defaultOn
                   />
-                  <Toggle label="Login alerts" description="Email me about new devices." defaultOn />
+                  <Toggle
+                    label="Login alerts"
+                    description="Email me about new devices."
+                    defaultOn
+                  />
                 </div>
 
                 <div className="rounded-2xl bg-foreground/5 p-5">
@@ -559,7 +606,9 @@ function SettingsPage() {
                     <div>
                       <p className="text-sm font-bold text-foreground">Active Session</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Logged in as <strong className="text-foreground">{currentUser.display_name}</strong> (@{currentUser.username})
+                        Logged in as{" "}
+                        <strong className="text-foreground">{currentUser.display_name}</strong> (@
+                        {currentUser.username})
                       </p>
                     </div>
                     <button
@@ -652,11 +701,18 @@ function SettingsPage() {
                         <div className="flex items-center justify-between">
                           <h4 className="text-lg font-black">{plan.name}</h4>
                           {plan.badge ? (
-                            <span className={cn("text-[0.65rem] px-2 py-0.5 rounded-full", plan.badgeColor)}>
+                            <span
+                              className={cn(
+                                "text-[0.65rem] px-2 py-0.5 rounded-full",
+                                plan.badgeColor,
+                              )}
+                            >
                               {plan.badge}
                             </span>
                           ) : (
-                            <span className="text-[0.65rem] text-muted-foreground font-semibold">Standard</span>
+                            <span className="text-[0.65rem] text-muted-foreground font-semibold">
+                              Standard
+                            </span>
                           )}
                         </div>
                         <p className="mt-0.5 text-xs text-muted-foreground">{plan.tagline}</p>
@@ -690,7 +746,9 @@ function SettingsPage() {
                                 cancelSubscription();
                               }
                             } else {
-                              openUpgradeModal(tier === "plus" ? "Upgrade to Plus" : "Upgrade to Pro");
+                              openUpgradeModal(
+                                tier === "plus" ? "Upgrade to Plus" : "Upgrade to Pro",
+                              );
                             }
                           }}
                           className={cn(
@@ -702,7 +760,11 @@ function SettingsPage() {
                                 : "border border-border bg-foreground/5 hover:bg-foreground/10 text-foreground",
                           )}
                         >
-                          {isCurrent ? "Current Plan" : tier === "free" ? "Switch to Free" : `Get ${plan.name}`}
+                          {isCurrent
+                            ? "Current Plan"
+                            : tier === "free"
+                              ? "Switch to Free"
+                              : `Get ${plan.name}`}
                         </button>
                       </div>
                     );
@@ -714,7 +776,9 @@ function SettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="text-sm font-bold">Active Tier Quotas</h4>
-                      <p className="text-xs text-muted-foreground">Daily and monthly allowance for your current plan.</p>
+                      <p className="text-xs text-muted-foreground">
+                        Daily and monthly allowance for your current plan.
+                      </p>
                     </div>
                     <Link
                       to="/pricing"
@@ -727,9 +791,14 @@ function SettingsPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="rounded-2xl bg-foreground/[0.03] p-3.5 border border-border/50">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground font-semibold">Gemini AI Drafts</span>
+                        <span className="text-muted-foreground font-semibold">
+                          Gemini AI Drafts
+                        </span>
                         <span className="font-bold">
-                          {usage.aiDraftsToday || 0} / {planDetails.limits.aiDraftsPerDay > 1000 ? "∞" : planDetails.limits.aiDraftsPerDay}
+                          {usage.aiDraftsToday || 0} /{" "}
+                          {planDetails.limits.aiDraftsPerDay > 1000
+                            ? "∞"
+                            : planDetails.limits.aiDraftsPerDay}
                         </span>
                       </div>
                       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-foreground/10">
@@ -745,7 +814,9 @@ function SettingsPage() {
                     <div className="rounded-2xl bg-foreground/[0.03] p-3.5 border border-border/50">
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground font-semibold">Spaces Audience</span>
-                        <span className="font-bold">{planDetails.limits.spacesMaxListeners} max</span>
+                        <span className="font-bold">
+                          {planDetails.limits.spacesMaxListeners} max
+                        </span>
                       </div>
                       <p className="mt-2 text-[0.7rem] text-emerald-600 dark:text-emerald-400 font-medium truncate">
                         {planDetails.limits.spacesAudioQuality}
@@ -755,7 +826,9 @@ function SettingsPage() {
                     <div className="rounded-2xl bg-foreground/[0.03] p-3.5 border border-border/50">
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground font-semibold">Upload Limit</span>
-                        <span className="font-bold">{planDetails.limits.mediaUploadMaxMb}MB Media</span>
+                        <span className="font-bold">
+                          {planDetails.limits.mediaUploadMaxMb}MB Media
+                        </span>
                       </div>
                       <p className="mt-2 text-[0.7rem] text-muted-foreground font-medium">
                         {planDetails.limits.supportLevel}
@@ -766,7 +839,6 @@ function SettingsPage() {
 
                 <PaymentHistory />
               </div>
-
             )}
 
             {active === "analytics" && (

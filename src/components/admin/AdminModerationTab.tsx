@@ -63,9 +63,7 @@ export function AdminModerationTab({ activeRole, currentUserId }: AdminModeratio
       setReports((prev) => [newReport, ...prev]);
     },
     "report:updated": (updatedReport: ModerationReport) => {
-      setReports((prev) =>
-        prev.map((r) => (r.id === updatedReport.id ? updatedReport : r))
-      );
+      setReports((prev) => prev.map((r) => (r.id === updatedReport.id ? updatedReport : r)));
     },
   });
 
@@ -78,7 +76,7 @@ export function AdminModerationTab({ activeRole, currentUserId }: AdminModeratio
   const handleUpdateReport = async (
     reportId: string,
     status: ModerationReport["status"],
-    actionTaken: string
+    actionTaken: string,
   ) => {
     try {
       const updated = await updateReportStatus(reportId, status, actionTaken, currentUserId);
@@ -98,14 +96,14 @@ export function AdminModerationTab({ activeRole, currentUserId }: AdminModeratio
         report.id,
         "resolved",
         `Content removed by moderator (${activeRole}).`,
-        currentUserId
+        currentUserId,
       );
       setReports((prev) =>
         prev.map((r) =>
           r.id === report.id
             ? { ...r, status: "resolved", action_taken: "Content removed by moderator." }
-            : r
-        )
+            : r,
+        ),
       );
       showToast(`Content purged and report marked resolved.`);
     } catch (err: any) {
@@ -124,7 +122,7 @@ export function AdminModerationTab({ activeRole, currentUserId }: AdminModeratio
         report.id,
         "resolved",
         `Official warning issued to author.`,
-        currentUserId
+        currentUserId,
       );
       showToast(`Warning issued to author and report resolved.`);
     } catch (err: any) {
@@ -158,7 +156,12 @@ export function AdminModerationTab({ activeRole, currentUserId }: AdminModeratio
     }[status];
 
     return (
-      <span className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.68rem] font-bold capitalize", config)}>
+      <span
+        className={cn(
+          "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.68rem] font-bold capitalize",
+          config,
+        )}
+      >
         {status}
       </span>
     );
@@ -185,7 +188,7 @@ export function AdminModerationTab({ activeRole, currentUserId }: AdminModeratio
                 "rounded-2xl px-3.5 py-2 text-xs font-bold capitalize transition-colors",
                 selectedStatus === tab
                   ? "bg-brand text-white shadow-soft"
-                  : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+                  : "bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground",
               )}
             >
               {tab}
@@ -262,9 +265,15 @@ export function AdminModerationTab({ activeRole, currentUserId }: AdminModeratio
                     {/* Reported Target Preview */}
                     <div className="rounded-2xl border border-border/80 bg-foreground/5 p-3.5">
                       <div className="flex items-center justify-between text-[0.72rem] text-muted-foreground mb-1">
-                        <span>Target Preview (ID: <code className="font-mono text-foreground">{report.target_id}</code>)</span>
+                        <span>
+                          Target Preview (ID:{" "}
+                          <code className="font-mono text-foreground">{report.target_id}</code>)
+                        </span>
                         {report.author_name && (
-                          <span>Author: <strong className="text-foreground">{report.author_name}</strong></span>
+                          <span>
+                            Author:{" "}
+                            <strong className="text-foreground">{report.author_name}</strong>
+                          </span>
                         )}
                       </div>
                       <p className="text-xs font-medium text-foreground italic">
@@ -274,16 +283,23 @@ export function AdminModerationTab({ activeRole, currentUserId }: AdminModeratio
 
                     {/* Reporter context & notes */}
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span>Reported by: <strong className="text-foreground">{report.reporter_name}</strong></span>
+                      <span>
+                        Reported by:{" "}
+                        <strong className="text-foreground">{report.reporter_name}</strong>
+                      </span>
                       {report.details && (
-                        <span>· Reason detail: <span className="text-foreground">{report.details}</span></span>
+                        <span>
+                          · Reason detail: <span className="text-foreground">{report.details}</span>
+                        </span>
                       )}
                     </div>
 
                     {report.action_taken && (
                       <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-                        <span><strong>Resolution:</strong> {report.action_taken}</span>
+                        <span>
+                          <strong>Resolution:</strong> {report.action_taken}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -315,7 +331,13 @@ export function AdminModerationTab({ activeRole, currentUserId }: AdminModeratio
 
                       {report.status === "pending" && (
                         <button
-                          onClick={() => handleUpdateReport(report.id, "investigating", "Investigating by moderator")}
+                          onClick={() =>
+                            handleUpdateReport(
+                              report.id,
+                              "investigating",
+                              "Investigating by moderator",
+                            )
+                          }
                           className="flex items-center justify-center gap-1.5 rounded-2xl border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground hover:bg-foreground/5"
                         >
                           <Eye className="h-3.5 w-3.5 text-blue-500" />
@@ -325,7 +347,13 @@ export function AdminModerationTab({ activeRole, currentUserId }: AdminModeratio
 
                       {report.status !== "dismissed" && (
                         <button
-                          onClick={() => handleUpdateReport(report.id, "dismissed", "Dismissed as false report / non-violative")}
+                          onClick={() =>
+                            handleUpdateReport(
+                              report.id,
+                              "dismissed",
+                              "Dismissed as false report / non-violative",
+                            )
+                          }
                           className="flex items-center justify-center gap-1.5 rounded-2xl border border-border/60 bg-transparent px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
                         >
                           <XCircle className="h-3.5 w-3.5" />

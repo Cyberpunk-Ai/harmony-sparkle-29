@@ -1,5 +1,18 @@
 import { useState, useRef, useEffect } from "react";
-import { Image as ImageIcon, Video, Smile, MapPin, Sparkles, Loader2, X, Palette, BarChart2, Plus, Trash2, Hash } from "lucide-react";
+import {
+  Image as ImageIcon,
+  Video,
+  Smile,
+  MapPin,
+  Sparkles,
+  Loader2,
+  X,
+  Palette,
+  BarChart2,
+  Plus,
+  Trash2,
+  Hash,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Avatar } from "@/components/social/Avatar";
 import type { Post, Poll } from "@/lib/types";
@@ -11,9 +24,29 @@ import { cn } from "@/lib/utils";
 
 const LIMIT = 1000;
 
-const sampleLocations = ["San Francisco, CA", "New York, NY", "Tokyo, Japan", "Berlin, DE", "Design Studio Loft", "Remote 🌿"];
+const sampleLocations = [
+  "San Francisco, CA",
+  "New York, NY",
+  "Tokyo, Japan",
+  "Berlin, DE",
+  "Design Studio Loft",
+  "Remote 🌿",
+];
 const popularEmojis = ["✨", "🚀", "💡", "🎨", "❤️", "🔥", "🙌", "🌊", "☕", "🧠", "🎯", "⚡"];
-const popularHashtags = ["design", "build", "tech", "creators", "photography", "ai", "webdev", "minimalism", "art", "music", "startup", "inspiration"];
+const popularHashtags = [
+  "design",
+  "build",
+  "tech",
+  "creators",
+  "photography",
+  "ai",
+  "webdev",
+  "minimalism",
+  "art",
+  "music",
+  "startup",
+  "inspiration",
+];
 
 const gradientThemes = [
   { name: "Neon Sunset", value: "from-fuchsia-600 via-pink-600 to-amber-500" },
@@ -83,7 +116,14 @@ export function Composer({
   const remaining = LIMIT - draft.length;
   const pct = Math.min(draft.length / LIMIT, 1);
   const hasValidPoll = showPollBuilder && pollOptions.filter((o) => o.trim()).length >= 2;
-  const canPost = (draft.trim().length > 0 || attachedMedia.length > 0 || selectedGradient || hasValidPoll || customTags.length > 0) && remaining >= 0 && !posting;
+  const canPost =
+    (draft.trim().length > 0 ||
+      attachedMedia.length > 0 ||
+      selectedGradient ||
+      hasValidPoll ||
+      customTags.length > 0) &&
+    remaining >= 0 &&
+    !posting;
 
   function handleAddTag(tagRaw: string) {
     const clean = tagRaw.trim().replace(/^#+/, "").toLowerCase();
@@ -126,7 +166,9 @@ export function Composer({
       }
       setAttachedMedia((prev) => [...prev, ...uploadedUrls]);
       setSelectedGradient(null);
-      toast.success(`${files.length} ${files.length === 1 ? "media file" : "media files"} attached`);
+      toast.success(
+        `${files.length} ${files.length === 1 ? "media file" : "media files"} attached`,
+      );
     } catch (err: any) {
       console.error("Upload failed:", err);
       toast.error(err?.message || "Upload failed. Please try again.");
@@ -139,7 +181,6 @@ export function Composer({
   function handleRemoveMediaItem(indexToRemove: number) {
     setAttachedMedia((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   }
-
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -219,11 +260,15 @@ export function Composer({
         className={cn(
           "glass-panel rounded-3xl p-3.5 sm:p-5 transition-all duration-500 relative",
           focused ? "shadow-lift ring-1 ring-brand/25" : "shadow-soft",
-          compact && "p-3 sm:p-4"
+          compact && "p-3 sm:p-4",
         )}
       >
         <div className="flex gap-2.5 sm:gap-3">
-          <Avatar name={activeUser.display_name} src={activeUser.avatar_url} className="h-9 w-9 sm:h-11 sm:w-11 text-xs shrink-0" />
+          <Avatar
+            name={activeUser.display_name}
+            src={activeUser.avatar_url}
+            className="h-9 w-9 sm:h-11 sm:w-11 text-xs shrink-0"
+          />
           <div className="min-w-0 flex-1">
             <textarea
               ref={textareaRef}
@@ -263,7 +308,8 @@ export function Composer({
                 <div className="flex items-center justify-between text-xs font-bold text-muted-foreground px-1">
                   <span className="flex items-center gap-1.5">
                     <ImageIcon className="h-3.5 w-3.5 text-brand" />
-                    {attachedMedia.length} {attachedMedia.length === 1 ? "Attachment" : "Attachments"}
+                    {attachedMedia.length}{" "}
+                    {attachedMedia.length === 1 ? "Attachment" : "Attachments"}
                   </span>
                   <span className="text-[10px] font-mono text-muted-foreground uppercase bg-foreground/5 px-2 py-0.5 rounded-full">
                     Scroll ➔
@@ -275,10 +321,18 @@ export function Composer({
                       key={`${url}_${idx}`}
                       className="relative shrink-0 snap-start h-36 w-36 sm:h-44 sm:w-44 overflow-hidden rounded-2xl border border-border/80 bg-neutral-950 shadow-md group flex items-center justify-center p-1"
                     >
-                      {url && (url.includes(".mp4") || url.includes(".webm") || url.includes(".mov") || url.startsWith("data:video")) ? (
+                      {url &&
+                      (url.includes(".mp4") ||
+                        url.includes(".webm") ||
+                        url.includes(".mov") ||
+                        url.startsWith("data:video")) ? (
                         <video src={url} className="h-full w-full rounded-xl object-cover" />
                       ) : url ? (
-                        <img src={url} alt={`Attachment ${idx + 1}`} className="h-full w-full rounded-xl object-cover" />
+                        <img
+                          src={url}
+                          alt={`Attachment ${idx + 1}`}
+                          className="h-full w-full rounded-xl object-cover"
+                        />
                       ) : null}
                       <div className="absolute top-2 left-2 rounded-full bg-black/70 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
                         {idx + 1}
@@ -354,7 +408,9 @@ export function Composer({
 
                 <div className="flex items-center gap-2">
                   <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">#</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
+                      #
+                    </span>
                     <input
                       type="text"
                       placeholder="Type custom hashtag..."
@@ -380,7 +436,9 @@ export function Composer({
                 </div>
 
                 <div>
-                  <p className="text-[11px] font-semibold text-muted-foreground mb-1.5">Popular topics</p>
+                  <p className="text-[11px] font-semibold text-muted-foreground mb-1.5">
+                    Popular topics
+                  </p>
                   <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
                     {popularHashtags.map((tag) => {
                       const isSelected = customTags.includes(tag);
@@ -393,7 +451,7 @@ export function Composer({
                             "rounded-full px-2.5 py-1 text-xs font-medium transition-all",
                             isSelected
                               ? "bg-brand text-white shadow-xs font-semibold"
-                              : "bg-card border border-border/80 text-foreground/80 hover:border-brand/40 hover:text-brand"
+                              : "bg-card border border-border/80 text-foreground/80 hover:border-brand/40 hover:text-brand",
                           )}
                         >
                           #{tag}
@@ -452,7 +510,7 @@ export function Composer({
                     }}
                     className={cn(
                       "h-10 rounded-xl bg-gradient-to-r p-2 text-left text-xs font-bold text-white shadow-xs transition-transform hover:scale-[1.02] active:scale-95",
-                      theme.value
+                      theme.value,
                     )}
                   >
                     {theme.name}
@@ -556,7 +614,7 @@ export function Composer({
                   }}
                   className={cn(
                     "rounded-full p-2 transition-all duration-200 hover:bg-brand/10 active:scale-90 min-h-[38px] min-w-[38px] flex items-center justify-center shrink-0",
-                    (showHashtagPicker || customTags.length > 0) && "bg-brand/15 text-brand"
+                    (showHashtagPicker || customTags.length > 0) && "bg-brand/15 text-brand",
                   )}
                 >
                   <Hash className="h-[1.1rem] w-[1.1rem]" />
@@ -575,7 +633,7 @@ export function Composer({
                   }}
                   className={cn(
                     "rounded-full p-2 transition-all duration-200 hover:bg-brand/10 active:scale-90 min-h-[38px] min-w-[38px] flex items-center justify-center shrink-0",
-                    showPollBuilder && "bg-brand/15 text-brand"
+                    showPollBuilder && "bg-brand/15 text-brand",
                   )}
                 >
                   <BarChart2 className="h-[1.1rem] w-[1.1rem]" />
@@ -663,7 +721,7 @@ export function Composer({
                             ? "stroke-destructive"
                             : remaining < 100
                               ? "stroke-amber-500"
-                              : "stroke-brand"
+                              : "stroke-brand",
                         )}
                       />
                     </svg>
@@ -671,7 +729,7 @@ export function Composer({
                       <span
                         className={cn(
                           "absolute inset-0 flex items-center justify-center text-[0.6rem] font-bold tabular-nums",
-                          remaining < 0 ? "text-destructive" : "text-muted-foreground"
+                          remaining < 0 ? "text-destructive" : "text-muted-foreground",
                         )}
                       >
                         {remaining}
@@ -703,4 +761,3 @@ export function Composer({
     </>
   );
 }
-

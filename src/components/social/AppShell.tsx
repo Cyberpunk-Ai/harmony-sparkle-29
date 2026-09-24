@@ -106,7 +106,8 @@ function Sidebar({
       label: "Notifications",
       to: "/notifications",
       icon: Bell,
-      badge: unreadNotifications > 0 ? (unreadNotifications > 9 ? "9+" : unreadNotifications) : null,
+      badge:
+        unreadNotifications > 0 ? (unreadNotifications > 9 ? "9+" : unreadNotifications) : null,
     },
     { label: "Bookmarks", to: "/bookmarks", icon: Bookmark },
     { label: "Plans & Perks", to: "/pricing", icon: Zap },
@@ -131,7 +132,11 @@ function Sidebar({
           aria-label="Toggle theme"
           className="rounded-xl p-2 text-muted-foreground hover:bg-foreground/5 hover:text-foreground transition-colors cursor-pointer"
         >
-          {isDark ? <Sun className="h-4.5 w-4.5 text-amber-400" /> : <Moon className="h-4.5 w-4.5" />}
+          {isDark ? (
+            <Sun className="h-4.5 w-4.5 text-amber-400" />
+          ) : (
+            <Moon className="h-4.5 w-4.5" />
+          )}
         </button>
       </div>
 
@@ -150,7 +155,9 @@ function Sidebar({
               className={cn(
                 "h-4.5 w-4.5 rounded-full bg-gradient-to-r transition-transform hover:scale-125 cursor-pointer shrink-0",
                 item.gradientClass,
-                isSelected ? "ring-2 ring-foreground ring-offset-1 ring-offset-card scale-110" : "opacity-70 hover:opacity-100",
+                isSelected
+                  ? "ring-2 ring-foreground ring-offset-1 ring-offset-card scale-110"
+                  : "opacity-70 hover:opacity-100",
               )}
             />
           );
@@ -190,7 +197,7 @@ function Sidebar({
             onClick={() => openUpgradeModal("Sidebar Upgrade")}
             className="mt-2.5 w-full rounded-xl bg-gradient-to-r from-brand to-brand-pink py-1.5 text-center font-extrabold text-white shadow-xs hover:brightness-105 transition-all text-[0.72rem]"
           >
-            Upgrade for $7/mo
+            Upgrade for $9/mo
           </button>
         </div>
       ) : (
@@ -199,12 +206,19 @@ function Sidebar({
             <span className="text-[0.68rem] font-bold uppercase tracking-wider text-muted-foreground">
               Active Tier
             </span>
-            <span className={cn("text-[0.65rem] font-black px-2 py-0.5 rounded-full", planInfo.badgeColor)}>
+            <span
+              className={cn(
+                "text-[0.65rem] font-black px-2 py-0.5 rounded-full",
+                planInfo.badgeColor,
+              )}
+            >
               {planInfo.badge || "Free"}
             </span>
           </div>
           <div className="mt-1.5 flex items-center justify-between text-[0.72rem]">
-            <span className="text-muted-foreground">{isPro ? "Studio Audio & Teams" : "HD Audio & AI Perks"}</span>
+            <span className="text-muted-foreground">
+              {isPro ? "Studio Audio & Teams" : "HD Audio & AI Perks"}
+            </span>
             <Link to="/pricing" className="font-bold text-brand hover:underline">
               Perks
             </Link>
@@ -223,7 +237,11 @@ function Sidebar({
             src={activeUser.avatar_url}
             className={cn(
               "h-10 w-10 text-xs",
-              isPro ? "ring-2 ring-amber-400" : isPlus ? "ring-2 ring-violet-500" : "ring-1 ring-border",
+              isPro
+                ? "ring-2 ring-amber-400"
+                : isPlus
+                  ? "ring-2 ring-violet-500"
+                  : "ring-1 ring-border",
             )}
           />
           <div className="min-w-0 flex-1">
@@ -254,7 +272,6 @@ function Sidebar({
           </Link>
         )}
       </div>
-
     </div>
   );
 }
@@ -309,7 +326,8 @@ export function AppShell({
       label: "Alerts",
       to: "/notifications",
       icon: Bell,
-      badge: unreadNotifications > 0 ? (unreadNotifications > 9 ? "9+" : unreadNotifications) : null,
+      badge:
+        unreadNotifications > 0 ? (unreadNotifications > 9 ? "9+" : unreadNotifications) : null,
     },
     { label: "Profile", to: "/profile", icon: User },
   ];
@@ -332,7 +350,10 @@ export function AppShell({
           >
             <Menu className="h-5 w-5" />
           </button>
-          <Link to="/profile" className="flex items-center gap-1.5 transition-transform active:scale-95">
+          <Link
+            to="/profile"
+            className="flex items-center gap-1.5 transition-transform active:scale-95"
+          >
             <Avatar
               name={activeUser.display_name}
               src={activeUser.avatar_url}
@@ -403,10 +424,7 @@ export function AppShell({
 
       <div className="relative z-10 mx-auto flex w-full max-w-[90rem] gap-6 px-3 sm:px-4 pb-28 lg:px-6 lg:pb-0 lg:h-screen lg:overflow-hidden">
         <aside className="hidden h-screen w-[17rem] shrink-0 overflow-y-auto custom-scrollbar py-6 lg:block">
-          <Sidebar
-            unreadMessages={unreadMessages}
-            unreadNotifications={unreadNotifications}
-          />
+          <Sidebar unreadMessages={unreadMessages} unreadNotifications={unreadNotifications} />
         </aside>
 
         <main className="min-w-0 flex-1 py-4 sm:py-6 lg:h-full lg:overflow-y-auto custom-scrollbar lg:pr-1.5">
@@ -435,7 +453,7 @@ export function AppShell({
           "fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] right-4 sm:right-6 z-40 flex h-13 w-13 min-h-[48px] min-w-[48px] aspect-square items-center justify-center rounded-full bg-gradient-to-r from-brand to-brand-pink text-white shadow-glow transition-all duration-300 hover:scale-105 active:scale-95 lg:hidden cursor-pointer shrink-0",
           isFabVisible
             ? "translate-y-0 opacity-100 scale-100 pointer-events-auto"
-            : "translate-y-12 opacity-0 scale-75 pointer-events-none"
+            : "translate-y-12 opacity-0 scale-75 pointer-events-none",
         )}
       >
         <Feather className="h-5.5 w-5.5" />

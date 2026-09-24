@@ -32,11 +32,7 @@ export const getSharedPost = createServerFn({ method: "GET" })
   .inputValidator((input: { id: string }) => ({ id: String(input?.id ?? "") }))
   .handler(async ({ data }): Promise<SharedPost> => {
     const supabase = publicClient() as any;
-    const { data: post } = await supabase
-      .from("posts")
-      .select("*")
-      .eq("id", data.id)
-      .maybeSingle();
+    const { data: post } = await supabase.from("posts").select("*").eq("id", data.id).maybeSingle();
     if (!post) return null;
 
     const { data: author } = await supabase

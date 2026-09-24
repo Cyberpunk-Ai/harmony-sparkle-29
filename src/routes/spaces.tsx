@@ -1,6 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { Radio, Mic, Calendar, Headphones, Play, Plus, Search, X, Loader2, Sparkles, Check } from "lucide-react";
+import {
+  Radio,
+  Mic,
+  Calendar,
+  Headphones,
+  Play,
+  Plus,
+  Search,
+  X,
+  Loader2,
+  Sparkles,
+  Check,
+} from "lucide-react";
 import { AppShell, Panel, PageHeader } from "@/components/social/AppShell";
 import { RailFooter } from "@/components/social/RightRail";
 import { Avatar } from "@/components/social/Avatar";
@@ -214,7 +226,13 @@ function SpaceCard({
             ) : (
               <Calendar className="h-4 w-4" />
             )}
-            {space.live ? "Join Space" : isRecorded ? "Listen Replay" : isReminded ? "Reminder Set" : "Remind me"}
+            {space.live
+              ? "Join Space"
+              : isRecorded
+                ? "Listen Replay"
+                : isReminded
+                  ? "Reminder Set"
+                  : "Remind me"}
           </button>
         </div>
       </div>
@@ -279,7 +297,6 @@ function SpacesPage() {
     ["space:created", "space:ended", "space:listeners"],
   );
 
-
   // Auto-open space if spaceId is provided in URL
   // Open only once per link; list refreshes must not reopen a closed room.
   const autoOpened = useRef<string | null>(null);
@@ -295,7 +312,9 @@ function SpacesPage() {
   function handleRemind(spaceId: string) {
     setReminders((prev) => {
       const next = !prev[spaceId];
-      toast(next ? "Reminder set! We'll notify you when this Space goes live." : "Reminder removed");
+      toast(
+        next ? "Reminder set! We'll notify you when this Space goes live." : "Reminder removed",
+      );
       return { ...prev, [spaceId]: next };
     });
   }
@@ -328,7 +347,7 @@ function SpacesPage() {
       setAllSpaces((prev) => [newSpace, ...prev]);
       setShowCreateModal(false);
       setTitleDraft("");
-      
+
       if (isScheduled) {
         toast.success(`Space scheduled for ${startsInText}! Added to your Upcoming calendar.`);
         setTab("Upcoming");
@@ -343,9 +362,13 @@ function SpacesPage() {
     }
   }
 
+  const isRecordedSpace = (s: (typeof allSpaces)[number]) =>
+    Boolean(s.recorded || (!s.live && !s.startsIn));
+
   const filtered = allSpaces.filter((s) => {
     if (tab === "Live now" && !s.live) return false;
-    if (tab === "Upcoming" && s.live) return false;
+    if (tab === "Upcoming" && (s.live || isRecordedSpace(s))) return false;
+    if (tab === "Recorded" && !isRecordedSpace(s)) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       return s.title.toLowerCase().includes(q) || s.topic.toLowerCase().includes(q);
@@ -490,7 +513,7 @@ function SpacesPage() {
                       "flex items-center justify-center gap-2 rounded-2xl py-2.5 text-xs font-bold transition-all border",
                       scheduleMode === "live"
                         ? "bg-gradient-to-r from-brand to-brand-pink text-white border-transparent shadow-soft"
-                        : "border-border/80 bg-foreground/5 text-muted-foreground hover:text-foreground"
+                        : "border-border/80 bg-foreground/5 text-muted-foreground hover:text-foreground",
                     )}
                   >
                     <Radio className="h-3.5 w-3.5" /> Go Live Now
@@ -502,7 +525,7 @@ function SpacesPage() {
                       "flex items-center justify-center gap-2 rounded-2xl py-2.5 text-xs font-bold transition-all border",
                       scheduleMode === "scheduled"
                         ? "bg-gradient-to-r from-brand to-brand-pink text-white border-transparent shadow-soft"
-                        : "border-border/80 bg-foreground/5 text-muted-foreground hover:text-foreground"
+                        : "border-border/80 bg-foreground/5 text-muted-foreground hover:text-foreground",
                     )}
                   >
                     <Calendar className="h-3.5 w-3.5" /> Schedule for Later
@@ -583,7 +606,9 @@ function SpacesPage() {
                       className={cn(
                         "h-10 rounded-xl bg-gradient-to-r p-2 text-left text-xs font-bold text-white shadow-xs transition-all",
                         g.value,
-                        gradientDraft === g.value ? "ring-2 ring-foreground ring-offset-2 scale-102" : "opacity-75 hover:opacity-100"
+                        gradientDraft === g.value
+                          ? "ring-2 ring-foreground ring-offset-2 scale-102"
+                          : "opacity-75 hover:opacity-100",
                       )}
                     >
                       {g.name}
@@ -596,12 +621,19 @@ function SpacesPage() {
               <div className="rounded-2xl border border-border/80 bg-foreground/5 p-3 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-muted-foreground">Broadcast Audio Quality</span>
-                  <span className={cn("text-[0.65rem] font-black px-1.5 py-0.5 rounded", planDetails.badgeColor)}>
+                  <span
+                    className={cn(
+                      "text-[0.65rem] font-black px-1.5 py-0.5 rounded",
+                      planDetails.badgeColor,
+                    )}
+                  >
                     {planDetails.limits.spacesAudioQuality}
                   </span>
                 </div>
                 <div className="mt-1.5 flex items-center justify-between text-muted-foreground text-[0.72rem]">
-                  <span>Max Audience: <strong>{planDetails.limits.spacesMaxListeners} listeners</strong></span>
+                  <span>
+                    Max Audience: <strong>{planDetails.limits.spacesMaxListeners} listeners</strong>
+                  </span>
                   {currentPlan === "free" ? (
                     <button
                       type="button"
@@ -646,4 +678,3 @@ function SpacesPage() {
     </AppShell>
   );
 }
-

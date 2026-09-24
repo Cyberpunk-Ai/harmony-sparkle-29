@@ -1,21 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Heart, MessageCircle, Eye } from "lucide-react";
 import { AppShell, Panel } from "@/components/social/AppShell";
 import { Avatar } from "@/components/social/Avatar";
 import { TimeAgo } from "@/components/social/TimeAgo";
 import { DefaultRail } from "@/components/social/RightRail";
+import { PostCard } from "@/components/social/PostCard";
 import { compact } from "@/lib/formatters";
 import { getSharedPost } from "@/lib/share.functions";
+import { getPostById } from "@/lib/api-client";
+import type { Post } from "@/lib/types";
 
 export const Route = createFileRoute("/post/$id")({
   loader: ({ params }) => getSharedPost({ data: { id: params.id } }),
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [
-          { title: "Post unavailable — Spaces1" },
-          { name: "robots", content: "noindex" },
-        ],
+        meta: [{ title: "Post unavailable — Spaces1" }, { name: "robots", content: "noindex" }],
       };
     }
     const snippet = loaderData.content.slice(0, 150) || "A post on Spaces1";
@@ -36,6 +37,22 @@ export const Route = createFileRoute("/post/$id")({
 
 function PostPage() {
   const post = Route.useLoaderData();
+  const { id } = Route.useParams();
+  // In-app viewers get the full interactive card (like/comment/repost/save);
+  // the loader's share DTO is only the crawler/anonymous fallback.
+  const [fullPost, setFullPost] = useState<Post | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    getPostById(id)
+      .then((p) => {
+        if (active && p) setFullPost(p);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [id]);
 
   return (
     <AppShell title="Post" right={<DefaultRail />}>
@@ -47,7 +64,9 @@ function PostPage() {
           <ArrowLeft className="h-4 w-4" /> Back to feed
         </Link>
 
-        {!post ? (
+        {fullPost ? (
+          <PostCard post={fullPost} />
+        ) : !post ? (
           <Panel className="flex flex-col items-center gap-3 py-14 text-center">
             <p className="text-lg font-bold">This post isn't available</p>
             <p className="text-sm text-muted-foreground">

@@ -48,10 +48,12 @@ export function UserBadge({
   let title = "Verified Account";
 
   if (effectivePlan === "pro") {
-    gradientClasses = "bg-gradient-to-tr from-amber-500 via-amber-400 to-orange-500 text-white shadow-sm ring-1 ring-amber-300/40";
+    gradientClasses =
+      "bg-gradient-to-tr from-amber-500 via-amber-400 to-orange-500 text-white shadow-sm ring-1 ring-amber-300/40";
     title = "👑 Pro Studio Creator";
   } else if (effectivePlan === "plus") {
-    gradientClasses = "bg-gradient-to-tr from-violet-600 via-purple-500 to-pink-500 text-white shadow-sm ring-1 ring-pink-300/30";
+    gradientClasses =
+      "bg-gradient-to-tr from-violet-600 via-purple-500 to-pink-500 text-white shadow-sm ring-1 ring-pink-300/30";
     title = "✨ Plus Creator";
   }
 
@@ -61,7 +63,7 @@ export function UserBadge({
         "inline-flex shrink-0 items-center justify-center rounded-full select-none transition-transform hover:scale-110",
         sizeMap[size] || sizeMap.sm,
         gradientClasses,
-        className
+        className,
       )}
       title={showTooltip ? title : undefined}
       aria-label={title}

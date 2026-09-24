@@ -1,15 +1,5 @@
 import { useState } from "react";
-import {
-  Users,
-  UserPlus,
-  Shield,
-  Trash2,
-  Lock,
-  Crown,
-  Check,
-  Mail,
-  Building,
-} from "lucide-react";
+import { Users, UserPlus, Shield, Trash2, Lock, Crown, Check, Mail, Building } from "lucide-react";
 import { useWorkspace, type WorkspaceRole } from "@/lib/workspace-state";
 import { usePlan, openUpgradeModal } from "@/lib/plan-state";
 import { Avatar } from "@/components/social/Avatar";
@@ -105,7 +95,7 @@ export function TeamWorkspaceManager() {
             className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-xs font-bold text-white shadow-soft hover:brightness-105 transition-all cursor-pointer"
           >
             <Crown className="h-3.5 w-3.5" />
-            <span>Upgrade to Pro ($19/mo)</span>
+            <span>Upgrade to Pro ($29/mo)</span>
           </button>
         )}
       </div>
@@ -118,14 +108,15 @@ export function TeamWorkspaceManager() {
               <h4 className="text-sm font-black">Team Workspaces Require Pro Plan</h4>
             </div>
             <p className="text-xs text-muted-foreground">
-              Invite up to 10 team members, assign Editor/Analyst/Admin permissions, and manage shared social accounts.
+              Invite up to 10 team members, assign Editor/Analyst/Admin permissions, and manage
+              shared social accounts.
             </p>
           </div>
           <button
             onClick={() => openUpgradeModal("Team Workspaces & Roles")}
             className="rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-xs font-bold text-white shadow-soft hover:brightness-105 transition-all cursor-pointer whitespace-nowrap"
           >
-            Unlock Pro ($19/mo)
+            Unlock Pro ($29/mo)
           </button>
         </div>
       )}
@@ -209,9 +200,7 @@ export function TeamWorkspaceManager() {
                   <select
                     value={member.role}
                     disabled={!isPro}
-                    onChange={(e) =>
-                      updateMemberRole(member.id, e.target.value as WorkspaceRole)
-                    }
+                    onChange={(e) => updateMemberRole(member.id, e.target.value as WorkspaceRole)}
                     className="rounded-xl border border-border bg-muted/40 px-2.5 py-1 text-xs font-semibold outline-none focus:border-amber-500"
                   >
                     <option value="Admin">Admin</option>
@@ -247,14 +236,15 @@ export function TeamWorkspaceManager() {
               <h4 className="text-sm font-black">Team Workspaces Require Pro</h4>
             </div>
             <p className="text-xs text-muted-foreground">
-              Add up to 10 team seats, manage collaborative multi-author spaces, and assign fine-grained roles.
+              Add up to 10 team seats, manage collaborative multi-author spaces, and assign
+              fine-grained roles.
             </p>
           </div>
           <button
             onClick={() => openUpgradeModal("Team Workspaces")}
             className="rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-xs font-bold text-white shadow-soft hover:brightness-105 transition-all cursor-pointer whitespace-nowrap"
           >
-            Upgrade to Pro ($19/mo)
+            Upgrade to Pro ($29/mo)
           </button>
         </div>
       )}
@@ -311,7 +301,7 @@ export function TeamWorkspaceManager() {
                         "rounded-xl border p-2.5 text-left text-xs font-bold transition-all cursor-pointer",
                         inviteRole === r
                           ? "border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-300"
-                          : "border-border/60 bg-muted/20 text-muted-foreground hover:bg-muted"
+                          : "border-border/60 bg-muted/20 text-muted-foreground hover:bg-muted",
                       )}
                     >
                       <div>{r}</div>

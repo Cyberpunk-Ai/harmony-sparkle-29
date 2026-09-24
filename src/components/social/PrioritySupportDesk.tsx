@@ -49,7 +49,8 @@ export function PrioritySupportDesk() {
             </span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Direct access to senior engineers and dedicated account concierge with guaranteed 15-minute SLA.
+            Direct access to senior engineers and dedicated account concierge with guaranteed
+            15-minute SLA.
           </p>
         </div>
 
@@ -67,7 +68,7 @@ export function PrioritySupportDesk() {
             className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-xs font-bold text-white shadow-soft hover:brightness-105 transition-all cursor-pointer"
           >
             <Crown className="h-3.5 w-3.5" />
-            <span>Upgrade to Pro ($19/mo)</span>
+            <span>Upgrade to Pro ($29/mo)</span>
           </button>
         )}
       </div>
@@ -77,17 +78,25 @@ export function PrioritySupportDesk() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Avatar name={conciergeAssigned?.name || "VIP Concierge"} src={conciergeAssigned?.avatar} className="h-12 w-12 text-sm" />
+              <Avatar
+                name={conciergeAssigned?.name || "VIP Concierge"}
+                src={conciergeAssigned?.avatar}
+                className="h-12 w-12 text-sm"
+              />
               <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 ring-2 ring-card" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm">{conciergeAssigned?.name || "Dedicated VIP Concierge"}</span>
+                <span className="font-bold text-sm">
+                  {conciergeAssigned?.name || "Dedicated VIP Concierge"}
+                </span>
                 <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[0.65rem] font-extrabold text-emerald-600 dark:text-emerald-400">
                   Online Now
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">{conciergeAssigned?.title || "Spaces Priority Executive Support"}</p>
+              <p className="text-xs text-muted-foreground">
+                {conciergeAssigned?.title || "Spaces Priority Executive Support"}
+              </p>
             </div>
           </div>
 
@@ -111,7 +120,9 @@ export function PrioritySupportDesk() {
             <Headphones className="h-4 w-4 text-amber-500" />
             <span>Active Priority Tickets</span>
           </h3>
-          <span className="text-xs text-muted-foreground font-semibold">{tickets.length} Tickets</span>
+          <span className="text-xs text-muted-foreground font-semibold">
+            {tickets.length} Tickets
+          </span>
         </div>
 
         <div className="divide-y divide-border/60 max-h-[280px] overflow-y-auto custom-scrollbar pr-1">
@@ -119,7 +130,9 @@ export function PrioritySupportDesk() {
             <div key={t.id} className="py-3.5 space-y-2 text-xs">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-amber-600 dark:text-amber-400">{t.id}</span>
+                  <span className="font-mono font-bold text-amber-600 dark:text-amber-400">
+                    {t.id}
+                  </span>
                   <span className="font-bold text-foreground">{t.subject}</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -154,14 +167,15 @@ export function PrioritySupportDesk() {
               <h4 className="text-sm font-black">24/7 Priority Support Requires Pro</h4>
             </div>
             <p className="text-xs text-muted-foreground">
-              Get direct VIP ticket routing, 15-minute SLA guarantees, and dedicated audio space hosting assistance.
+              Get direct VIP ticket routing, 15-minute SLA guarantees, and dedicated audio space
+              hosting assistance.
             </p>
           </div>
           <button
             onClick={() => openUpgradeModal("24/7 Priority Support")}
             className="rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-xs font-bold text-white shadow-soft hover:brightness-105 transition-all cursor-pointer whitespace-nowrap"
           >
-            Upgrade to Pro ($19/mo)
+            Upgrade to Pro ($29/mo)
           </button>
         </div>
       )}

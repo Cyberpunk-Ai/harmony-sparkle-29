@@ -34,7 +34,10 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [syncingDb, setSyncingDb] = useState(false);
-  const [syncResult, setSyncResult] = useState<{ counts: Record<string, number>; durationMs: number } | null>(null);
+  const [syncResult, setSyncResult] = useState<{
+    counts: Record<string, number>;
+    durationMs: number;
+  } | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleSyncDatabase = async () => {
@@ -143,9 +146,7 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
               type="checkbox"
               disabled={!canEditSettings}
               checked={settings.maintenance_mode}
-              onChange={(e) =>
-                setSettings({ ...settings, maintenance_mode: e.target.checked })
-              }
+              onChange={(e) => setSettings({ ...settings, maintenance_mode: e.target.checked })}
               className="h-5 w-5 rounded accent-rose-600 cursor-pointer disabled:opacity-50"
             />
           </div>
@@ -165,9 +166,7 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
               type="checkbox"
               disabled={!canEditSettings}
               checked={settings.registration_enabled}
-              onChange={(e) =>
-                setSettings({ ...settings, registration_enabled: e.target.checked })
-              }
+              onChange={(e) => setSettings({ ...settings, registration_enabled: e.target.checked })}
               className="h-5 w-5 rounded accent-brand cursor-pointer disabled:opacity-50"
             />
           </div>
@@ -209,9 +208,7 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
               type="checkbox"
               disabled={!canEditSettings}
               checked={settings.spaces_audio_enabled}
-              onChange={(e) =>
-                setSettings({ ...settings, spaces_audio_enabled: e.target.checked })
-              }
+              onChange={(e) => setSettings({ ...settings, spaces_audio_enabled: e.target.checked })}
               className="h-5 w-5 rounded accent-brand cursor-pointer disabled:opacity-50"
             />
           </div>
@@ -232,9 +229,7 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-border bg-foreground/5 p-4">
-            <label className="text-xs font-bold text-foreground block">
-              Max Upload Size (MB)
-            </label>
+            <label className="text-xs font-bold text-foreground block">Max Upload Size (MB)</label>
             <p className="text-[0.7rem] text-muted-foreground mt-0.5 mb-2">
               Maximum allowed payload for media attachments
             </p>
@@ -271,9 +266,7 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
           </div>
 
           <div className="rounded-2xl border border-border bg-foreground/5 p-4">
-            <label className="text-xs font-bold text-foreground block">
-              Auto-Mod Strictness
-            </label>
+            <label className="text-xs font-bold text-foreground block">Auto-Mod Strictness</label>
             <p className="text-[0.7rem] text-muted-foreground mt-0.5 mb-2">
               Heuristic severity for automated content flagging
             </p>
@@ -306,7 +299,8 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
               Database Drivers & Supabase Cloud Sync
             </h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Live database synchronization with remote Supabase PostgreSQL tables, Auth, and Storage
+              Live database synchronization with remote Supabase PostgreSQL tables, Auth, and
+              Storage
             </p>
           </div>
 
@@ -315,7 +309,9 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
             disabled={syncingDb}
             className="flex items-center gap-2 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 px-4 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/25 transition-all shadow-xs disabled:opacity-50 cursor-pointer"
           >
-            <RefreshCw className={cn("h-3.5 w-3.5", syncingDb && "animate-spin text-emerald-500")} />
+            <RefreshCw
+              className={cn("h-3.5 w-3.5", syncingDb && "animate-spin text-emerald-500")}
+            />
             <span>{syncingDb ? "Synchronizing..." : "Sync Remote Database"}</span>
           </button>
         </div>
@@ -329,9 +325,7 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
             <p className="text-sm font-black text-emerald-600 dark:text-emerald-400 capitalize">
               Supabase PostgreSQL
             </p>
-            <p className="text-[0.7rem] text-muted-foreground">
-              13 tables verified & operational
-            </p>
+            <p className="text-[0.7rem] text-muted-foreground">13 tables verified & operational</p>
           </div>
 
           <div className="rounded-2xl border border-border bg-foreground/5 p-4 space-y-1">
@@ -339,9 +333,7 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
               <Server className="h-4 w-4 text-brand" />
               <span className="text-xs font-bold text-foreground">Storage Buckets</span>
             </div>
-            <p className="text-sm font-black text-foreground">
-              Supabase Storage
-            </p>
+            <p className="text-sm font-black text-foreground">Supabase Storage</p>
             <p className="text-[0.7rem] text-muted-foreground">
               avatars, posts, media, spaces, public-assets
             </p>
@@ -352,12 +344,8 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
               <Radio className="h-4 w-4 text-violet-500" />
               <span className="text-xs font-bold text-foreground">Realtime Engine</span>
             </div>
-            <p className="text-sm font-black text-foreground">
-              Supabase Broadcast & SSE
-            </p>
-            <p className="text-[0.7rem] text-muted-foreground">
-              Sub-millisecond pub/sub channel
-            </p>
+            <p className="text-sm font-black text-foreground">Supabase Broadcast & SSE</p>
+            <p className="text-[0.7rem] text-muted-foreground">Sub-millisecond pub/sub channel</p>
           </div>
         </div>
 
@@ -373,7 +361,9 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[0.75rem]">
               {Object.entries(syncResult.counts).map(([table, count]) => (
                 <div key={table} className="rounded-xl bg-card/80 p-2 border border-border/60">
-                  <span className="text-muted-foreground uppercase text-[0.65rem] font-bold block">{table}</span>
+                  <span className="text-muted-foreground uppercase text-[0.65rem] font-bold block">
+                    {table}
+                  </span>
                   <span className="text-sm font-black text-foreground">{count} records</span>
                 </div>
               ))}
@@ -397,7 +387,9 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
         <div className="space-y-4">
           <div className="flex items-center justify-between rounded-2xl border border-border bg-foreground/5 p-4">
             <div>
-              <span className="text-xs font-bold text-foreground">Activate Global Announcement</span>
+              <span className="text-xs font-bold text-foreground">
+                Activate Global Announcement
+              </span>
               <p className="text-[0.7rem] text-muted-foreground mt-0.5">
                 Displays the alert at the top of every page for all signed-in and guest users
               </p>
@@ -491,16 +483,19 @@ export function AdminSystemSettingsTab({ activeRole, currentUserId }: AdminSyste
                 {
                   info: "bg-violet-500/15 border-violet-500/30 text-violet-900 dark:text-violet-100",
                   warning: "bg-amber-500/15 border-amber-500/30 text-amber-900 dark:text-amber-100",
-                  success: "bg-emerald-500/15 border-emerald-500/30 text-emerald-900 dark:text-emerald-100",
+                  success:
+                    "bg-emerald-500/15 border-emerald-500/30 text-emerald-900 dark:text-emerald-100",
                   critical: "bg-rose-500/15 border-rose-500/30 text-rose-900 dark:text-rose-100",
-                }[banner.type || "info"]
+                }[banner.type || "info"],
               )}
             >
               <div className="flex items-center gap-2">
                 <span className="font-bold uppercase text-[0.65rem] px-2 py-0.5 rounded-full bg-background/50">
                   {banner.type}
                 </span>
-                <span className="font-medium">{banner.message || "Enter a broadcast message above"}</span>
+                <span className="font-medium">
+                  {banner.message || "Enter a broadcast message above"}
+                </span>
               </div>
               {banner.link && (
                 <span className="flex items-center gap-0.5 rounded-xl bg-background/80 px-2 py-0.5 text-[0.65rem] font-bold">

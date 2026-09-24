@@ -54,7 +54,14 @@ const STOCK_PHOTOS = [
   },
 ];
 
-const MOODS = ["✨ Inspired", "☕ Cozy", "🚀 Building", "🌅 Golden Hour", "🎧 In the Zone", "⚡️ Flow State"];
+const MOODS = [
+  "✨ Inspired",
+  "☕ Cozy",
+  "🚀 Building",
+  "🌅 Golden Hour",
+  "🎧 In the Zone",
+  "⚡️ Flow State",
+];
 const STICKER_OPTIONS = ["✨", "🔥", "☕", "📸", "🎵", "💡", "🚀", "✍️", "🎬", "🤖", "❤️", "🌿"];
 
 const AI_PROMPT_CHIPS = [
@@ -171,7 +178,9 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                 </div>
                 <div>
                   <h2 className="text-base sm:text-lg font-bold text-foreground">Create Story</h2>
-                  <p className="text-[11px] sm:text-xs text-muted-foreground">Share a 24-hour visual moment or thought</p>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">
+                    Share a 24-hour visual moment or thought
+                  </p>
                 </div>
               </div>
               <button
@@ -190,7 +199,7 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                   "flex-1 min-w-[100px] flex items-center justify-center gap-1.5 py-1.5 sm:py-2 rounded-full text-xs font-bold transition-all min-h-[36px]",
                   tab === "text"
                     ? "bg-card text-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <Type className="h-3.5 w-3.5" /> Text & Gradient
@@ -201,7 +210,7 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                   "flex-1 min-w-[100px] flex items-center justify-center gap-1.5 py-1.5 sm:py-2 rounded-full text-xs font-bold transition-all min-h-[36px]",
                   tab === "media"
                     ? "bg-card text-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <ImageIcon className="h-3.5 w-3.5" /> Photo / Media
@@ -212,7 +221,7 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                   "flex-1 min-w-[90px] flex items-center justify-center gap-1.5 py-1.5 sm:py-2 rounded-full text-xs font-bold transition-all min-h-[36px]",
                   tab === "ai"
                     ? "bg-gradient-to-r from-brand to-brand-pink text-white shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <Wand2 className="h-3.5 w-3.5" /> AI Sparks
@@ -251,10 +260,12 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                             g.class,
                             selectedGradient === g.class
                               ? "ring-2 ring-brand ring-offset-2 scale-105"
-                              : "opacity-80 hover:opacity-100 hover:scale-102"
+                              : "opacity-80 hover:opacity-100 hover:scale-102",
                           )}
                         >
-                          {selectedGradient === g.class && <Check className="h-4 w-4 drop-shadow" />}
+                          {selectedGradient === g.class && (
+                            <Check className="h-4 w-4 drop-shadow" />
+                          )}
                         </button>
                       ))}
                     </div>
@@ -272,7 +283,7 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                           "rounded-lg px-2.5 py-1 text-xs font-bold uppercase transition-colors",
                           fontSize === s
                             ? "bg-brand text-white"
-                            : "bg-foreground/5 text-muted-foreground hover:text-foreground"
+                            : "bg-foreground/5 text-muted-foreground hover:text-foreground",
                         )}
                       >
                         {s}
@@ -302,13 +313,17 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                       {uploading ? (
                         <div className="flex flex-col items-center gap-2">
                           <Loader2 className="h-6 w-6 animate-spin text-brand" />
-                          <p className="text-xs font-medium text-muted-foreground">Uploading image...</p>
+                          <p className="text-xs font-medium text-muted-foreground">
+                            Uploading image...
+                          </p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center gap-2">
                           <Upload className="h-6 w-6 text-muted-foreground" />
                           <p className="text-xs font-bold text-foreground">Click to upload image</p>
-                          <p className="text-[11px] text-muted-foreground">PNG, JPG, WebP up to 10MB</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            PNG, JPG, WebP up to 10MB
+                          </p>
                         </div>
                       )}
                     </div>
@@ -327,7 +342,7 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                             "group relative h-20 overflow-hidden rounded-xl cursor-pointer border transition-all",
                             mediaUrl === photo.url
                               ? "border-brand ring-2 ring-brand ring-offset-2"
-                              : "border-border hover:border-brand/50"
+                              : "border-border hover:border-brand/50",
                           )}
                         >
                           <img
@@ -336,7 +351,9 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                             className="h-full w-full object-cover transition-transform group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-2 flex items-end">
-                            <span className="text-[10px] font-bold text-white truncate">{photo.name}</span>
+                            <span className="text-[10px] font-bold text-white truncate">
+                              {photo.name}
+                            </span>
                           </div>
                           {mediaUrl === photo.url && (
                             <div className="absolute top-1.5 right-1.5 rounded-full bg-brand p-0.5 text-white">
@@ -398,13 +415,19 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                         disabled={aiGenerating}
                         className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-brand to-brand-pink px-4 py-2 text-xs font-bold text-white shadow-soft hover:opacity-90 disabled:opacity-50"
                       >
-                        {aiGenerating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                        {aiGenerating ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Sparkles className="h-3.5 w-3.5" />
+                        )}
                         Generate
                       </button>
                     </div>
 
                     <div className="space-y-1.5">
-                      <p className="text-[10px] font-bold uppercase text-muted-foreground">Quick Inspiration:</p>
+                      <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                        Quick Inspiration:
+                      </p>
                       <div className="flex flex-wrap gap-1.5">
                         {AI_PROMPT_CHIPS.map((chip) => (
                           <button
@@ -471,7 +494,7 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                         "h-8 w-8 rounded-full text-sm flex items-center justify-center transition-all",
                         selectedStickers.includes(st)
                           ? "bg-brand text-white shadow-soft scale-110 ring-2 ring-brand ring-offset-1"
-                          : "bg-foreground/5 hover:bg-foreground/10 text-foreground"
+                          : "bg-foreground/5 hover:bg-foreground/10 text-foreground",
                       )}
                     >
                       {st}
@@ -512,7 +535,7 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
           <div
             className={cn(
               "relative flex flex-col justify-between h-[480px] w-[260px] overflow-hidden rounded-[28px] p-4 shadow-2xl bg-gradient-to-b text-white border border-white/20 transition-all",
-              !mediaUrl && selectedGradient
+              !mediaUrl && selectedGradient,
             )}
             style={
               mediaUrl
@@ -537,8 +560,12 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                   className="h-7 w-7 text-[10px] ring-2 ring-white/50"
                 />
                 <div className="min-w-0">
-                  <p className="truncate text-[11px] font-bold leading-tight">{currentUser.display_name}</p>
-                  <p className="truncate text-[9px] text-white/70">{location || "Online"} · Just now</p>
+                  <p className="truncate text-[11px] font-bold leading-tight">
+                    {currentUser.display_name}
+                  </p>
+                  <p className="truncate text-[9px] text-white/70">
+                    {location || "Online"} · Just now
+                  </p>
                 </div>
               </div>
             </div>
@@ -556,7 +583,7 @@ export function StoryCreatorModal({ isOpen, onClose, onStoryCreated }: StoryCrea
                   "font-bold leading-relaxed text-white drop-shadow-md",
                   fontSize === "sm" && "text-xs",
                   fontSize === "md" && "text-sm",
-                  fontSize === "lg" && "text-base font-extrabold"
+                  fontSize === "lg" && "text-base font-extrabold",
                 )}
               >
                 {text || "Your story preview will appear here..."}

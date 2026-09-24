@@ -53,7 +53,9 @@ export function CallModal({
   const [inCallNotes, setInCallNotes] = useState<string[]>([]);
   const [noteDraft, setNoteDraft] = useState("");
   const [seconds, setSeconds] = useState(0);
-  const [reactions, setReactions] = useState<Array<{ id: string; emoji: string; left: number }>>([]);
+  const [reactions, setReactions] = useState<Array<{ id: string; emoji: string; left: number }>>(
+    [],
+  );
   const [noiseSuppression, setNoiseSuppression] = useState(true);
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -112,7 +114,6 @@ export function CallModal({
     onClose();
   };
 
-
   if (!isOpen || !partner) return null;
 
   const formattedTime = `${Math.floor(seconds / 60)
@@ -131,7 +132,6 @@ export function CallModal({
           : "Connecting…";
 
   const hasRemoteVideo = (session.remoteStream?.getVideoTracks().length ?? 0) > 0;
-
 
   function triggerReaction(emoji: string) {
     const id = `react_${Date.now()}_${Math.random()}`;
@@ -227,7 +227,11 @@ export function CallModal({
                 <span
                   className={cn(
                     "relative inline-flex h-2 w-2 rounded-full",
-                    connected ? "bg-emerald-400" : session.connection === "failed" ? "bg-rose-400" : "bg-amber-400",
+                    connected
+                      ? "bg-emerald-400"
+                      : session.connection === "failed"
+                        ? "bg-rose-400"
+                        : "bg-amber-400",
                   )}
                 />
               </span>
@@ -237,7 +241,9 @@ export function CallModal({
               <Wifi className="h-3 w-3 text-emerald-400" /> {type === "video" ? "Video" : "Audio"}
             </span>
           </div>
-          <span className="font-mono text-xs font-semibold text-white/95 bg-white/20 px-2.5 py-1 rounded-full">{formattedTime}</span>
+          <span className="font-mono text-xs font-semibold text-white/95 bg-white/20 px-2.5 py-1 rounded-full">
+            {formattedTime}
+          </span>
         </div>
 
         {/* Center Calling Area */}
@@ -280,7 +286,6 @@ export function CallModal({
               </p>
             </div>
           )}
-
 
           {/* Self Camera Inset (if video active) */}
           {!videoOff && session.localStream && (
@@ -336,10 +341,7 @@ export function CallModal({
                   placeholder="Type a message..."
                   className="flex-1 bg-white/20 rounded-full px-3 py-1.5 text-xs text-white placeholder:text-white/70 outline-none"
                 />
-                <button
-                  onClick={handleSendNote}
-                  className="p-1.5 rounded-full bg-brand text-white"
-                >
+                <button onClick={handleSendNote} className="p-1.5 rounded-full bg-brand text-white">
                   <Send className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -375,7 +377,9 @@ export function CallModal({
             aria-label={muted ? "Unmute microphone" : "Mute microphone"}
             className={cn(
               "rounded-full p-3.5 backdrop-blur-md transition-all active:scale-95 shadow-md cursor-pointer",
-              muted ? "bg-rose-500 text-white" : "bg-white/25 text-white ring-1 ring-white/40 hover:bg-white/40"
+              muted
+                ? "bg-rose-500 text-white"
+                : "bg-white/25 text-white ring-1 ring-white/40 hover:bg-white/40",
             )}
             title={muted ? "Unmute" : "Mute"}
           >
@@ -388,7 +392,9 @@ export function CallModal({
             aria-label={videoOff ? "Turn on camera" : "Turn off camera"}
             className={cn(
               "rounded-full p-3.5 backdrop-blur-md transition-all active:scale-95 shadow-md cursor-pointer",
-              videoOff ? "bg-rose-500 text-white" : "bg-white/25 text-white ring-1 ring-white/40 hover:bg-white/40"
+              videoOff
+                ? "bg-rose-500 text-white"
+                : "bg-white/25 text-white ring-1 ring-white/40 hover:bg-white/40",
             )}
             title={videoOff ? "Turn on video" : "Turn off video"}
           >
@@ -401,7 +407,9 @@ export function CallModal({
             aria-label="Share screen"
             className={cn(
               "rounded-full p-3.5 backdrop-blur-md transition-all active:scale-95 shadow-md cursor-pointer",
-              isScreenSharing ? "bg-indigo-600 text-white" : "bg-white/25 text-white ring-1 ring-white/40 hover:bg-white/40"
+              isScreenSharing
+                ? "bg-indigo-600 text-white"
+                : "bg-white/25 text-white ring-1 ring-white/40 hover:bg-white/40",
             )}
             title={isScreenSharing ? "Stop sharing" : "Share screen"}
           >
@@ -414,7 +422,9 @@ export function CallModal({
             aria-label="Open in-call chat"
             className={cn(
               "rounded-full p-3.5 backdrop-blur-md transition-all active:scale-95 shadow-md cursor-pointer",
-              showInCallChat ? "bg-brand text-white" : "bg-white/25 text-white ring-1 ring-white/40 hover:bg-white/40"
+              showInCallChat
+                ? "bg-brand text-white"
+                : "bg-white/25 text-white ring-1 ring-white/40 hover:bg-white/40",
             )}
             title="In-call chat"
           >
@@ -430,7 +440,9 @@ export function CallModal({
             aria-label="Toggle speaker"
             className={cn(
               "rounded-full p-3.5 backdrop-blur-md transition-all active:scale-95 shadow-md cursor-pointer",
-              !isSpeakerOn ? "bg-amber-500 text-white" : "bg-white/25 text-white ring-1 ring-white/40 hover:bg-white/40"
+              !isSpeakerOn
+                ? "bg-amber-500 text-white"
+                : "bg-white/25 text-white ring-1 ring-white/40 hover:bg-white/40",
             )}
             title={isSpeakerOn ? "Speaker ON" : "Speaker OFF"}
           >
@@ -451,4 +463,3 @@ export function CallModal({
     </div>
   );
 }
-

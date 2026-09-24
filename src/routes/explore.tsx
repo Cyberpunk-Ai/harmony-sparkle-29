@@ -1,6 +1,20 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useMemo } from "react";
-import { Flame, TrendingUp, Users, Hash, Search, X, Loader2, Sparkles, Image as ImageIcon, Heart, MessageCircle, Repeat2, ArrowUpRight } from "lucide-react";
+import {
+  Flame,
+  TrendingUp,
+  Users,
+  Hash,
+  Search,
+  X,
+  Loader2,
+  Sparkles,
+  Image as ImageIcon,
+  Heart,
+  MessageCircle,
+  Repeat2,
+  ArrowUpRight,
+} from "lucide-react";
 import { AppShell, Panel, PageHeader } from "@/components/social/AppShell";
 import { PostCard } from "@/components/social/PostCard";
 import { FeedSkeleton } from "@/components/social/PostSkeleton";
@@ -14,7 +28,9 @@ import { getPosts, getUsers, globalSearch, getTopics, getTrendingTags } from "@/
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/explore")({
-  validateSearch: (search: Record<string, unknown>): { tag?: string; q?: string; tab?: string } => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { tag?: string; q?: string; tab?: string } => ({
     tag: search.tag ? String(search.tag) : undefined,
     q: search.q ? String(search.q) : undefined,
     tab: search.tab ? String(search.tab) : undefined,
@@ -112,6 +128,15 @@ function ExplorePage() {
   useEffect(() => {
     const term = debouncedQuery.trim();
     if (!term) {
+      // Query cleared: restore the full feed and people list rather than
+      // leaving the previous search's results on screen.
+      setLoading(true);
+      getPosts()
+        .then((data) => {
+          if (Array.isArray(data)) setAllPosts(data);
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
       getUsers()
         .then((res) => {
           if (res?.profiles && res.profiles.length > 0) {
@@ -158,7 +183,7 @@ function ExplorePage() {
       (p) =>
         p.username.toLowerCase().includes(q) ||
         p.display_name.toLowerCase().includes(q) ||
-        (p.bio && p.bio.toLowerCase().includes(q))
+        (p.bio && p.bio.toLowerCase().includes(q)),
     );
   }, [matchedPeople, searchQuery]);
 
@@ -194,7 +219,9 @@ function ExplorePage() {
       }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        return p.content.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q));
+        return (
+          p.content.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q))
+        );
       }
       return true;
     });
@@ -229,7 +256,7 @@ function ExplorePage() {
                         "flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition-all cursor-pointer",
                         isSelected
                           ? "bg-brand/15 text-brand font-bold shadow-xs"
-                          : "hover:bg-foreground/5 text-foreground"
+                          : "hover:bg-foreground/5 text-foreground",
                       )}
                     >
                       <span className="w-4 text-sm font-bold text-muted-foreground">{i + 1}</span>
@@ -238,7 +265,9 @@ function ExplorePage() {
                         <p className="text-xs text-muted-foreground">{t.count}</p>
                       </div>
                       {isSelected && (
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-brand/20 text-brand">Active</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-brand/20 text-brand">
+                          Active
+                        </span>
                       )}
                     </button>
                   </li>
@@ -251,7 +280,10 @@ function ExplorePage() {
       }
     >
       <div className="mx-auto max-w-3xl space-y-6">
-        <PageHeader title="Explore" subtitle="What the community is creating and talking about right now." />
+        <PageHeader
+          title="Explore"
+          subtitle="What the community is creating and talking about right now."
+        />
 
         {/* Search Bar */}
         <div className="group relative">
@@ -366,7 +398,9 @@ function ExplorePage() {
                       <span className="text-lg font-bold text-white tracking-tight">{t.name}</span>
                       <ArrowUpRight className="h-4 w-4 text-white/70 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </span>
-                    <span className="block text-xs font-medium text-white/80 mt-1">{t.posts} active posts</span>
+                    <span className="block text-xs font-medium text-white/80 mt-1">
+                      {t.posts} active posts
+                    </span>
                   </span>
                 </button>
               ))}
@@ -379,7 +413,8 @@ function ExplorePage() {
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="flex items-center gap-2 text-lg font-bold">
-                <Users className="h-4 w-4 text-brand" /> {filter === "People" ? "All Creators & Designers" : "Rising creators"}
+                <Users className="h-4 w-4 text-brand" />{" "}
+                {filter === "People" ? "All Creators & Designers" : "Rising creators"}
               </h2>
               {filter === "Top" && filteredCreators.length > 4 && (
                 <button
@@ -411,7 +446,11 @@ function ExplorePage() {
                           search={{ id: p.id, user: p.username }}
                           className="shrink-0 transition-transform hover:scale-105 active:scale-95"
                         >
-                          <Avatar name={p.display_name} src={p.avatar_url} className="h-12 w-12 text-sm" />
+                          <Avatar
+                            name={p.display_name}
+                            src={p.avatar_url}
+                            className="h-12 w-12 text-sm"
+                          />
                         </Link>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5 truncate">
@@ -498,13 +537,12 @@ function ExplorePage() {
                             decoding="async"
                             className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
                           />
-
                         </div>
                       ) : p.image_gradient ? (
                         <div
                           className={cn(
                             "relative aspect-video w-full flex items-center justify-center p-6 bg-gradient-to-br text-white text-center font-bold text-base shadow-inner",
-                            p.image_gradient
+                            p.image_gradient,
                           )}
                         >
                           <span className="line-clamp-3">{p.content}</span>
@@ -516,7 +554,11 @@ function ExplorePage() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <Link to="/profile" search={{ id: author.id, user: author.username }}>
-                              <Avatar name={author.display_name} src={author.avatar_url} className="h-7 w-7 text-xs" />
+                              <Avatar
+                                name={author.display_name}
+                                src={author.avatar_url}
+                                className="h-7 w-7 text-xs"
+                              />
                             </Link>
                             <Link
                               to="/profile"
@@ -533,13 +575,16 @@ function ExplorePage() {
                         <div className="flex items-center justify-between pt-2 border-t border-border/50 text-[11px] text-muted-foreground font-semibold">
                           <div className="flex items-center gap-3">
                             <span className="flex items-center gap-1">
-                              <Heart className="h-3.5 w-3.5 text-rose-500 fill-rose-500/20" /> {compact(p.likeCount || 0)}
+                              <Heart className="h-3.5 w-3.5 text-rose-500 fill-rose-500/20" />{" "}
+                              {compact(p.likeCount || 0)}
                             </span>
                             <span className="flex items-center gap-1">
-                              <MessageCircle className="h-3.5 w-3.5 text-brand" /> {compact(p.commentCount || 0)}
+                              <MessageCircle className="h-3.5 w-3.5 text-brand" />{" "}
+                              {compact(p.commentCount || 0)}
                             </span>
                             <span className="flex items-center gap-1">
-                              <Repeat2 className="h-3.5 w-3.5 text-emerald-500" /> {compact(p.repostCount || 0)}
+                              <Repeat2 className="h-3.5 w-3.5 text-emerald-500" />{" "}
+                              {compact(p.repostCount || 0)}
                             </span>
                           </div>
                           {p.tags.length > 0 && (
@@ -581,7 +626,9 @@ function ExplorePage() {
                   ))}
                   {sortedTopPosts.length === 0 && (
                     <Panel className="text-center py-10">
-                      <p className="text-sm text-muted-foreground">No posts matching your criteria.</p>
+                      <p className="text-sm text-muted-foreground">
+                        No posts matching your criteria.
+                      </p>
                     </Panel>
                   )}
                 </>
@@ -593,4 +640,3 @@ function ExplorePage() {
     </AppShell>
   );
 }
-

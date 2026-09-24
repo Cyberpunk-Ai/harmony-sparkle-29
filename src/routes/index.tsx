@@ -200,7 +200,10 @@ function Nav() {
         }`}
       >
         <div className="flex items-center justify-between">
-          <a href="#top" className="flex items-center gap-2 group text-xl sm:text-2xl font-black tracking-tight text-foreground">
+          <a
+            href="#top"
+            className="flex items-center gap-2 group text-xl sm:text-2xl font-black tracking-tight text-foreground"
+          >
             <span className="flex h-8 w-8 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand via-brand-pink to-brand-orange text-white shadow-soft group-hover:scale-105 transition-transform">
               <Sparkles className="h-4 w-4" />
             </span>
@@ -241,13 +244,20 @@ function Nav() {
                     <span className="max-w-[100px] truncate text-sm font-bold text-foreground">
                       {user.display_name.split(" ")[0]}
                     </span>
-                    <ChevronDown className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform duration-200", profileOpen && "rotate-180")} />
+                    <ChevronDown
+                      className={cn(
+                        "h-3.5 w-3.5 text-muted-foreground transition-transform duration-200",
+                        profileOpen && "rotate-180",
+                      )}
+                    />
                   </button>
 
                   {profileOpen && (
                     <div className="glass-panel absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl bg-card p-2 shadow-2xl ring-1 ring-black/5 animate-in fade-in-50 zoom-in-95 duration-150 z-50">
                       <div className="border-b border-border/60 px-3 py-2.5">
-                        <p className="truncate text-sm font-extrabold text-foreground">{user.display_name}</p>
+                        <p className="truncate text-sm font-extrabold text-foreground">
+                          {user.display_name}
+                        </p>
                         <p className="truncate text-xs text-muted-foreground">@{user.username}</p>
                       </div>
 
@@ -344,7 +354,9 @@ function Nav() {
                     className="h-10 w-10 text-xs ring-2 ring-brand/30 shrink-0"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-extrabold text-foreground">{user.display_name}</p>
+                    <p className="truncate text-sm font-extrabold text-foreground">
+                      {user.display_name}
+                    </p>
                     <p className="truncate text-xs text-muted-foreground">@{user.username}</p>
                   </div>
                   <Link

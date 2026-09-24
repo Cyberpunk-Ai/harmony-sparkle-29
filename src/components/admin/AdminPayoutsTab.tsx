@@ -50,7 +50,9 @@ export function AdminPayoutsTab() {
     try {
       await reviewPayout({ data: { id: row.id, decision, note } });
       toast.success(
-        decision === "paid" ? "Marked as paid out." : "Withdrawal declined and the creator notified.",
+        decision === "paid"
+          ? "Marked as paid out."
+          : "Withdrawal declined and the creator notified.",
       );
       await load();
     } catch (err: any) {
@@ -83,7 +85,10 @@ export function AdminPayoutsTab() {
         <div className="flex items-center gap-2 rounded-2xl border border-rose-500/30 bg-rose-500/5 p-4 text-xs text-rose-600 dark:text-rose-400">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{error}</span>
-          <button onClick={() => void load()} className="ml-auto font-bold underline cursor-pointer">
+          <button
+            onClick={() => void load()}
+            className="ml-auto font-bold underline cursor-pointer"
+          >
             Try again
           </button>
         </div>

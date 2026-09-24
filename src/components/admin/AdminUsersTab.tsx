@@ -56,7 +56,9 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
       } catch {
         roleMap = {};
       }
-      setUsers(res.map((u: Profile) => ({ ...u, role: (roleMap[u.id] as UserRole) ?? u.role ?? "user" })));
+      setUsers(
+        res.map((u: Profile) => ({ ...u, role: (roleMap[u.id] as UserRole) ?? u.role ?? "user" })),
+      );
     } catch (err) {
       console.error("Failed to load admin users", err);
     } finally {
@@ -70,9 +72,7 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
 
   useRealtime({
     "user:updated": (updatedUser: Profile) => {
-      setUsers((prev) =>
-        prev.map((u) => (u.id === updatedUser.id ? { ...u, ...updatedUser } : u))
-      );
+      setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? { ...u, ...updatedUser } : u)));
     },
   });
 
@@ -104,7 +104,7 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
       showNotice(
         updated.verified
           ? `Granted verified creator badge to @${user.username}`
-          : `Revoked verification from @${user.username}`
+          : `Revoked verification from @${user.username}`,
       );
     } catch (err: any) {
       toast.error(err.message || "Failed to update verified badge");
@@ -255,9 +255,12 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
                   const isCurrentUser = user.id === currentUserId;
 
                   const statusConfig = {
-                    active: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30",
-                    flagged: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30",
-                    suspended: "bg-orange-500/15 text-orange-700 dark:text-orange-300 border-orange-500/30",
+                    active:
+                      "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30",
+                    flagged:
+                      "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30",
+                    suspended:
+                      "bg-orange-500/15 text-orange-700 dark:text-orange-300 border-orange-500/30",
                     banned: "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30",
                   }[user.status || "active"];
 
@@ -266,11 +269,17 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
                       {/* Identity */}
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <Avatar name={user.display_name} src={user.avatar_url} className="h-9 w-9 text-xs" />
+                          <Avatar
+                            name={user.display_name}
+                            src={user.avatar_url}
+                            className="h-9 w-9 text-xs"
+                          />
                           <div className="min-w-0">
                             <div className="flex items-center gap-1.5 font-bold text-foreground">
                               <span className="truncate">{user.display_name}</span>
-                              {user.verified && <Award className="h-3.5 w-3.5 text-brand shrink-0" />}
+                              {user.verified && (
+                                <Award className="h-3.5 w-3.5 text-brand shrink-0" />
+                              )}
                               {isCurrentUser && (
                                 <span className="rounded-md bg-brand/15 px-1.5 py-0.2 text-[0.6rem] text-brand font-bold">
                                   You
@@ -288,12 +297,15 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
                       {/* Role Badge */}
                       <td className="px-4 py-3.5">
                         <button
-                          disabled={!canManageRoles || (user.role === "superadmin" && activeRole !== "superadmin")}
+                          disabled={
+                            !canManageRoles ||
+                            (user.role === "superadmin" && activeRole !== "superadmin")
+                          }
                           onClick={() => setEditingUser(user)}
                           className={cn(
                             "inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1 text-[0.72rem] font-bold transition-all shadow-2xs",
                             roleMeta.badgeBg,
-                            canManageRoles && "hover:brightness-95 cursor-pointer"
+                            canManageRoles && "hover:brightness-95 cursor-pointer",
                           )}
                           title={canManageRoles ? "Click to change role" : undefined}
                         >
@@ -305,7 +317,12 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
 
                       {/* Status */}
                       <td className="px-4 py-3.5">
-                        <span className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.68rem] font-bold capitalize", statusConfig)}>
+                        <span
+                          className={cn(
+                            "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[0.68rem] font-bold capitalize",
+                            statusConfig,
+                          )}
+                        >
                           {user.status || "active"}
                         </span>
                       </td>
@@ -313,10 +330,14 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
                       {/* Warnings */}
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-1.5">
-                          <span className={cn(
-                            "rounded-md px-1.5 py-0.5 text-[0.7rem] font-bold",
-                            (user.warning_count || 0) > 0 ? "bg-amber-500/20 text-amber-800 dark:text-amber-300" : "text-muted-foreground"
-                          )}>
+                          <span
+                            className={cn(
+                              "rounded-md px-1.5 py-0.5 text-[0.7rem] font-bold",
+                              (user.warning_count || 0) > 0
+                                ? "bg-amber-500/20 text-amber-800 dark:text-amber-300"
+                                : "text-muted-foreground",
+                            )}
+                          >
                             {user.warning_count || 0}
                           </span>
                           {canBanUsers && (
@@ -357,7 +378,7 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
                             user.verified
                               ? "border-brand/30 bg-brand/10 text-brand"
                               : "border-border bg-foreground/5 text-muted-foreground hover:text-foreground",
-                            !canVerifyCreators && "opacity-60 cursor-not-allowed"
+                            !canVerifyCreators && "opacity-60 cursor-not-allowed",
                           )}
                         >
                           <Award className="h-3 w-3" />
@@ -399,15 +420,17 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
                               Unban
                             </button>
                           )}
-                          {canBanUsers && user.status !== "suspended" && user.status !== "banned" && (
-                            <button
-                              onClick={() => handleUpdateStatus(user.id, "suspended")}
-                              className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[0.7rem] font-bold text-amber-800 dark:text-amber-300 hover:bg-amber-500/20"
-                              title="Temporary suspension"
-                            >
-                              Suspend
-                            </button>
-                          )}
+                          {canBanUsers &&
+                            user.status !== "suspended" &&
+                            user.status !== "banned" && (
+                              <button
+                                onClick={() => handleUpdateStatus(user.id, "suspended")}
+                                className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[0.7rem] font-bold text-amber-800 dark:text-amber-300 hover:bg-amber-500/20"
+                                title="Temporary suspension"
+                              >
+                                Suspend
+                              </button>
+                            )}
                           {user.status === "suspended" && (
                             <button
                               onClick={() => handleUpdateStatus(user.id, "active")}
@@ -455,7 +478,7 @@ export function AdminUsersTab({ activeRole, currentUserId }: AdminUsersTabProps)
                       "flex w-full items-start gap-3 rounded-2xl border p-3 text-left transition-all",
                       isCurrent
                         ? "border-brand bg-brand/10 shadow-xs"
-                        : "border-border hover:bg-foreground/5"
+                        : "border-border hover:bg-foreground/5",
                     )}
                   >
                     <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", meta.color)} />

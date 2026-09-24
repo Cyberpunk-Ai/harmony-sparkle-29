@@ -44,7 +44,14 @@ export interface ModerationReport {
   author_name?: string;
   reporter_id: string;
   reporter_name: string;
-  reason: "spam" | "harassment" | "inappropriate" | "impersonation" | "copyright" | "misinformation" | "other";
+  reason:
+    | "spam"
+    | "harassment"
+    | "inappropriate"
+    | "impersonation"
+    | "copyright"
+    | "misinformation"
+    | "other";
   details: string;
   status: "pending" | "investigating" | "resolved" | "dismissed";
   created_at: string;
@@ -220,7 +227,6 @@ export interface Message {
   is_edited?: boolean;
 }
 
-
 export interface Conversation {
   id: string;
   participant_id: string;
@@ -231,7 +237,8 @@ export interface Conversation {
   messages?: Message[];
 }
 
-export type NotificationType = "like" | "repost" | "comment" | "reply" | "follow" | "mention" | "space" | "tip";
+export type NotificationType =
+  "like" | "repost" | "comment" | "reply" | "follow" | "mention" | "space" | "tip";
 
 export interface Notification {
   id: string;

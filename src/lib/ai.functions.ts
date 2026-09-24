@@ -11,9 +11,7 @@ function today() {
   return new Date().toISOString().slice(0, 10);
 }
 
-type AdminClient = Awaited<
-  typeof import("@/integrations/supabase/client.server")
->["supabaseAdmin"];
+type AdminClient = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
 async function getAdmin(): Promise<AdminClient> {
   const mod = await import("@/integrations/supabase/client.server");
@@ -102,7 +100,6 @@ async function chat(system: string, user: string): Promise<string> {
   if (res.status === 400) throw new Error(`The AI model "${model}" isn't available.`);
   if (!res.ok) throw new Error(`AI request failed (${res.status})`);
 
-
   const json = (await res.json()) as {
     choices?: Array<{ message?: { content?: string } }>;
   };
@@ -141,7 +138,7 @@ export const aiDraftPost = createServerFn({ method: "POST" })
 
     const raw = await chat(
       "You write short, high-signal social posts for a creator network. " +
-        "Reply ONLY with JSON: {\"content\": string, \"suggestedTags\": string[]}. " +
+        'Reply ONLY with JSON: {"content": string, "suggestedTags": string[]}. ' +
         "content is at most 280 characters, human, specific, no hashtags inside the text, no emoji spam. " +
         "suggestedTags is 2-4 lowercase single-word tags without the # symbol.",
       data.currentDraft

@@ -110,9 +110,12 @@ export async function triggerFeedPreload(force = false): Promise<PreloadBundleRe
 if (typeof window !== "undefined") {
   const schedulePrewarm = () => {
     if ("requestIdleCallback" in window) {
-      (window as any).requestIdleCallback(() => {
-        triggerFeedPreload();
-      }, { timeout: 2000 });
+      (window as any).requestIdleCallback(
+        () => {
+          triggerFeedPreload();
+        },
+        { timeout: 2000 },
+      );
     } else {
       setTimeout(() => {
         triggerFeedPreload();

@@ -14,9 +14,12 @@ interface EditProfileModalProps {
   onProfileUpdated?: (updated: Profile) => void;
 }
 
-export function EditProfileModal({ isOpen, onClose, initialProfile, onProfileUpdated }: EditProfileModalProps) {
-  if (!isOpen) return null;
-
+export function EditProfileModal({
+  isOpen,
+  onClose,
+  initialProfile,
+  onProfileUpdated,
+}: EditProfileModalProps) {
   const base = initialProfile || currentUser;
   const [form, setForm] = useState({
     display_name: base.display_name,
@@ -45,7 +48,6 @@ export function EditProfileModal({ isOpen, onClose, initialProfile, onProfileUpd
       setUploadingAvatar(false);
       e.target.value = "";
     }
-
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -59,16 +61,14 @@ export function EditProfileModal({ isOpen, onClose, initialProfile, onProfileUpd
       toast.success("Profile saved successfully!");
       onClose();
     } catch (err: any) {
-      console.warn("Saving profile fallback:", err);
-      const updatedUser = { ...currentUser, ...form };
-      updateUserSession(updatedUser);
-      onProfileUpdated?.(updatedUser as Profile);
-      toast.success("Profile saved!");
-      onClose();
+      console.error("Saving profile failed:", err);
+      toast.error(err?.message || "Could not save your profile. Please try again.");
     } finally {
       setSaving(false);
     }
   }
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
@@ -99,7 +99,11 @@ export function EditProfileModal({ isOpen, onClose, initialProfile, onProfileUpd
                 htmlFor="avatar-upload"
                 className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
               >
-                {uploadingAvatar ? <Loader2 className="h-5 w-5 animate-spin" /> : <Camera className="h-5 w-5" />}
+                {uploadingAvatar ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Camera className="h-5 w-5" />
+                )}
               </label>
               <input
                 id="avatar-upload"
@@ -181,7 +185,11 @@ export function EditProfileModal({ isOpen, onClose, initialProfile, onProfileUpd
               disabled={saving}
               className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-brand to-brand-pink px-6 py-2.5 text-xs font-bold text-white shadow-soft hover:shadow-glow transition-all active:scale-95 disabled:opacity-50"
             >
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+              {saving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Check className="h-4 w-4" />
+              )}
               Save Changes
             </button>
           </div>

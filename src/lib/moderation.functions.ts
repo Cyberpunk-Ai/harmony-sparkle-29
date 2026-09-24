@@ -33,7 +33,8 @@ async function assertStaff(context: any) {
     admin,
     isAdmin: !!isAdmin,
     actorId: (profile?.id as string | undefined) ?? null,
-    actorName: (profile?.display_name as string | undefined) || (profile?.username as string) || "Staff",
+    actorName:
+      (profile?.display_name as string | undefined) || (profile?.username as string) || "Staff",
     actorRole: isAdmin ? "admin" : "moderator",
   };
 }
@@ -129,8 +130,6 @@ export const moderateUser = createServerFn({ method: "POST" })
       });
     }
 
-
-
     const what = Object.entries(patch)
       .map(([k, v]) => `${k}: ${String(v)}`)
       .join(", ");
@@ -150,7 +149,9 @@ export const moderateUser = createServerFn({ method: "POST" })
 export const moderatePost = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ postId: z.string().uuid(), action: z.enum(["hide", "unhide", "delete"]) }).parse(input),
+    z
+      .object({ postId: z.string().uuid(), action: z.enum(["hide", "unhide", "delete"]) })
+      .parse(input),
   )
   .handler(async ({ data, context }) => {
     const staff = await assertStaff(context);
@@ -158,7 +159,14 @@ export const moderatePost = createServerFn({ method: "POST" })
     if (data.action === "delete") {
       const { error } = await staff.admin.from("posts").delete().eq("id", data.postId);
       if (error) throw new Error(error.message);
-      await writeAudit(staff, "post.force_delete", "post", data.postId, "Post removed by moderator", "danger");
+      await writeAudit(
+        staff,
+        "post.force_delete",
+        "post",
+        data.postId,
+        "Post removed by moderator",
+        "danger",
+      );
       return { ok: true, hidden: true, deleted: true };
     }
 
@@ -217,9 +225,19 @@ export const terminateSpace = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => z.object({ spaceId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const staff = await assertStaff(context);
-    const { error } = await staff.admin.from("spaces").update({ live: false }).eq("id", data.spaceId);
+    const { error } = await staff.admin
+      .from("spaces")
+      .update({ live: false })
+      .eq("id", data.spaceId);
     if (error) throw new Error(error.message);
-    await writeAudit(staff, "space.terminate", "space", data.spaceId, "Space ended by staff", "danger");
+    await writeAudit(
+      staff,
+      "space.terminate",
+      "space",
+      data.spaceId,
+      "Space ended by staff",
+      "danger",
+    );
     return { ok: true };
   });
 
@@ -255,6 +273,13 @@ export const saveSystemSettings = createServerFn({ method: "POST" })
       .upsert({ id: 1, ...data, updated_at: new Date().toISOString() }, { onConflict: "id" });
     if (error) throw new Error(error.message);
 
-    await writeAudit(staff, "settings.update", "system", "settings", "System settings updated", "warning");
+    await writeAudit(
+      staff,
+      "settings.update",
+      "system",
+      "settings",
+      "System settings updated",
+      "warning",
+    );
     return data;
   });

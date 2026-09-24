@@ -95,7 +95,9 @@ export const Route = createFileRoute("/api/public/paystack/webhook")({
           .update({
             status: succeeded ? "success" : (tx.status ?? "failed"),
             raw: tx as Record<string, unknown>,
-            paid_at: succeeded ? (tx.paid_at ?? new Date().toISOString()) : null,
+            // Only ever set paid_at forward; never erase a previously recorded
+            // settlement timestamp on a duplicate/failed delivery.
+            ...(succeeded ? { paid_at: tx.paid_at ?? new Date().toISOString() } : {}),
           })
           .eq("reference", tx.reference);
 
@@ -106,18 +108,14 @@ export const Route = createFileRoute("/api/public/paystack/webhook")({
 
         if (isTip) {
           if (meta.recipient_id) {
+            // The `t_tips_after` trigger already emits the 'tip' notification,
+            // so we must not insert a second one here.
             await admin.from("tips").insert({
               from_user_id: payment.user_id,
               to_user_id: meta.recipient_id,
               amount: Number(meta.tip_usd ?? 0),
               message: String(meta.note ?? "").slice(0, 240),
               post_id: meta.post_id ?? null,
-            });
-            await admin.from("notifications").insert({
-              recipient_id: meta.recipient_id,
-              actor_id: payment.user_id,
-              type: "tip",
-              body: `sent you a $${Number(meta.tip_usd ?? 0)} tip`,
             });
           }
           return new Response("ok");

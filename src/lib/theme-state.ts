@@ -85,13 +85,38 @@ const DEFAULT_THEME: ThemeSettings = {
 
 let inMemoryTheme: ThemeSettings = { ...DEFAULT_THEME };
 
-// Theme lives only in the account's saved preferences on the backend.
+// The signed-in account's preferences (backend) are the source of truth, but we
+// also mirror the choice to localStorage so logged-out visitors keep their look
+// across reloads and the correct theme applies before hydration.
 function readPersistedTheme(): ThemeSettings {
-  return { ...inMemoryTheme };
+  if (typeof window === "undefined") return { ...inMemoryTheme };
+  try {
+    const raw = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (!raw) return { ...inMemoryTheme };
+    const parsed = JSON.parse(raw) as Partial<ThemeSettings>;
+    return {
+      mode:
+        parsed.mode === "light" || parsed.mode === "dark" || parsed.mode === "system"
+          ? parsed.mode
+          : inMemoryTheme.mode,
+      accent: (parsed.accent && parsed.accent in ACCENT_PALETTES
+        ? parsed.accent
+        : inMemoryTheme.accent) as ThemeAccent,
+      reduceMotion: Boolean(parsed.reduceMotion),
+      largerText: Boolean(parsed.largerText),
+    };
+  } catch {
+    return { ...inMemoryTheme };
+  }
 }
 
-function persistTheme(_settings: ThemeSettings) {
-  /* saved via user_preferences on the backend */
+function persistTheme(settings: ThemeSettings) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(settings));
+  } catch {
+    /* storage unavailable (private mode / quota) — in-memory theme still applies */
+  }
 }
 
 export function getStoredThemeSettings(): ThemeSettings {
@@ -109,8 +134,7 @@ export function applyThemeToDOM(settings: ThemeSettings) {
   // 1. Dark mode
   const isDark =
     settings.mode === "dark" ||
-    (settings.mode === "system" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
+    (settings.mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   if (isDark) {
     root.classList.add("dark");
@@ -259,8 +283,7 @@ export function useTheme() {
   const isDark =
     typeof window !== "undefined" &&
     (settings.mode === "dark" ||
-      (settings.mode === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches));
+      (settings.mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches));
 
   return {
     ...settings,

@@ -74,18 +74,14 @@ export const PLAN_DETAILS: Record<PlanTier, PlanDetails> = {
     tagline: "For growing creators",
     badge: "✨ Plus",
     badgeText: "Plus",
-    badgeColor: "bg-gradient-to-r from-violet-500 to-pink-500 text-white font-bold border-0 shadow-xs",
+    badgeColor:
+      "bg-gradient-to-r from-violet-500 to-pink-500 text-white font-bold border-0 shadow-xs",
     priceMonthly: 9,
     priceAnnual: 7, // 20% off $9 = ~$7.2 -> $7
     annualBilledTotal: 84,
     popular: true,
     ctaText: "Upgrade to Plus",
-    features: [
-      "Everything in Free",
-      "Advanced analytics",
-      "Monetization tools",
-      "Custom branding",
-    ],
+    features: ["Everything in Free", "Advanced analytics", "Monetization tools", "Custom branding"],
     limits: {
       aiDraftsPerDay: 100,
       spacesMaxListeners: 250,
@@ -116,18 +112,14 @@ export const PLAN_DETAILS: Record<PlanTier, PlanDetails> = {
     tagline: "For serious teams",
     badge: "👑 Pro",
     badgeText: "Pro",
-    badgeColor: "bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold border-0 shadow-xs",
+    badgeColor:
+      "bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold border-0 shadow-xs",
     priceMonthly: 29,
     priceAnnual: 23, // 20% off $29 = ~$23.2 -> $23
     annualBilledTotal: 276,
     popular: false,
     ctaText: "Upgrade to Pro",
-    features: [
-      "Everything in Plus",
-      "Team workspaces",
-      "Priority support",
-      "API access",
-    ],
+    features: ["Everything in Plus", "Team workspaces", "Priority support", "API access"],
     limits: {
       aiDraftsPerDay: 9999,
       spacesMaxListeners: 1000,
@@ -157,7 +149,8 @@ export const PLAN_DETAILS: Record<PlanTier, PlanDetails> = {
 export interface ComparisonPerk {
   name: string;
   description: string;
-  category: "Core Features" | "Analytics & Growth" | "Monetization" | "Spaces & Media" | "Badges & Support";
+  category:
+    "Core Features" | "Analytics & Growth" | "Monetization" | "Spaces & Media" | "Badges & Support";
   free: string | boolean;
   plus: string | boolean;
   pro: string | boolean;

@@ -1,5 +1,14 @@
 import { useState, useRef, useEffect } from "react";
-import { Play, Pause, Volume2, VolumeX, Maximize, Minimize, Loader2, PictureInPicture } from "lucide-react";
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize,
+  Minimize,
+  Loader2,
+  PictureInPicture,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ModernVideoPlayerProps {
@@ -9,7 +18,12 @@ interface ModernVideoPlayerProps {
   autoPlayOnScroll?: boolean;
 }
 
-export function ModernVideoPlayer({ src, poster, className, autoPlayOnScroll = true }: ModernVideoPlayerProps) {
+export function ModernVideoPlayer({
+  src,
+  poster,
+  className,
+  autoPlayOnScroll = true,
+}: ModernVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -50,7 +64,7 @@ export function ModernVideoPlayer({ src, poster, className, autoPlayOnScroll = t
           }
         });
       },
-      { threshold: 0.6 }
+      { threshold: 0.6 },
     );
 
     observer.observe(containerRef.current);
@@ -124,9 +138,15 @@ export function ModernVideoPlayer({ src, poster, className, autoPlayOnScroll = t
     e?.stopPropagation();
     if (!containerRef.current) return;
     if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+      containerRef.current
+        .requestFullscreen()
+        .then(() => setIsFullscreen(true))
+        .catch(() => {});
     } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+      document
+        .exitFullscreen()
+        .then(() => setIsFullscreen(false))
+        .catch(() => {});
     }
   };
 
@@ -166,7 +186,7 @@ export function ModernVideoPlayer({ src, poster, className, autoPlayOnScroll = t
       onClick={togglePlay}
       className={cn(
         "relative overflow-hidden rounded-2xl bg-black shadow-md border border-border/60 group select-none cursor-pointer",
-        className
+        className,
       )}
     >
       {src && !hasError ? (
@@ -249,7 +269,9 @@ export function ModernVideoPlayer({ src, poster, className, autoPlayOnScroll = t
         onClick={(e) => e.stopPropagation()}
         className={cn(
           "absolute bottom-0 left-0 right-0 z-20 flex flex-col gap-2.5 p-3.5 bg-gradient-to-t from-black/95 via-black/70 to-transparent transition-all duration-300",
-          showControls || !isPlaying || isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 pointer-events-none"
+          showControls || !isPlaying || isHovered
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-3 pointer-events-none",
         )}
       >
         {/* Timeline Seek Bar */}
@@ -298,12 +320,17 @@ export function ModernVideoPlayer({ src, poster, className, autoPlayOnScroll = t
               className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/20 transition-all duration-200 active:scale-90 cursor-pointer"
               title={isPlaying ? "Pause" : "Play"}
             >
-              {isPlaying ? <Pause className="h-4.5 w-4.5 fill-white" /> : <Play className="h-4.5 w-4.5 fill-white ml-0.5" />}
+              {isPlaying ? (
+                <Pause className="h-4.5 w-4.5 fill-white" />
+              ) : (
+                <Play className="h-4.5 w-4.5 fill-white ml-0.5" />
+              )}
             </button>
 
             {/* Time display */}
             <span className="text-[11px] font-mono tracking-tight text-white/90">
-              {formatTime(currentTime)} <span className="text-white/40">/</span> {formatTime(duration)}
+              {formatTime(currentTime)} <span className="text-white/40">/</span>{" "}
+              {formatTime(duration)}
             </span>
           </div>
 
@@ -316,7 +343,11 @@ export function ModernVideoPlayer({ src, poster, className, autoPlayOnScroll = t
                 className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/20 transition-all duration-200 active:scale-90 cursor-pointer"
                 title={isMuted ? "Unmute" : "Mute"}
               >
-                {isMuted || volume === 0 ? <VolumeX className="h-4.5 w-4.5 text-rose-400" /> : <Volume2 className="h-4.5 w-4.5" />}
+                {isMuted || volume === 0 ? (
+                  <VolumeX className="h-4.5 w-4.5 text-rose-400" />
+                ) : (
+                  <Volume2 className="h-4.5 w-4.5" />
+                )}
               </button>
               <div className="w-0 group-hover/vol:w-16 group-hover/vol:mr-1 overflow-hidden transition-all duration-300 ease-out hidden sm:block">
                 <input

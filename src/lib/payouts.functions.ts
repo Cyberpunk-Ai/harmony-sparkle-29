@@ -200,7 +200,9 @@ export const listPayoutRequests = createServerFn({ method: "GET" })
 
     const { data } = await staff.admin
       .from("payouts")
-      .select("id, user_id, amount, currency, status, reference, failure_reason, destination, created_at")
+      .select(
+        "id, user_id, amount, currency, status, reference, failure_reason, destination, created_at",
+      )
       .order("created_at", { ascending: false })
       .limit(100);
 

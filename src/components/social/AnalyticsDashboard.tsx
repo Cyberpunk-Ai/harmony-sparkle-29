@@ -292,7 +292,9 @@ export function AnalyticsDashboard() {
                   <span className="text-2xl font-black tracking-tight">
                     {totals.impressions.toLocaleString()}
                   </span>
-                  <p className="text-[0.7rem] text-muted-foreground">Total post views across feeds</p>
+                  <p className="text-[0.7rem] text-muted-foreground">
+                    Total post views across feeds
+                  </p>
                 </div>
 
                 <div className="rounded-2xl border border-border/80 bg-card p-4 space-y-1 shadow-xs">
@@ -360,7 +362,10 @@ export function AnalyticsDashboard() {
 
                 <div className="h-64 w-full pt-2">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <AreaChart
+                      data={chartData}
+                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    >
                       <defs>
                         <linearGradient id="impressionGrad" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.35} />
@@ -567,9 +572,7 @@ export function AnalyticsDashboard() {
                   </span>
                   <p className="text-3xl font-black">
                     {money(
-                      data.revenue.tipCount > 0
-                        ? data.revenue.tipTotal / data.revenue.tipCount
-                        : 0,
+                      data.revenue.tipCount > 0 ? data.revenue.tipTotal / data.revenue.tipCount : 0,
                       data.revenue.currency,
                     )}
                   </p>

@@ -1,10 +1,10 @@
 /**
  * Official Paystack Client Integration
- * 
+ *
  * In compliance with PCI-DSS Level 1 security standards, this application
  * NEVER collects, stores, or handles credit card numbers, CVVs, expiry dates,
  * or banking PINs.
- * 
+ *
  * All payment processing is 100% delegated to Paystack's official secure infrastructure
  * (Paystack Inline Popup iframe or Paystack Hosted Checkout page).
  */
@@ -19,7 +19,12 @@ declare global {
         currency?: string;
         ref?: string;
         metadata?: any;
-        callback?: (response: { reference: string; status: string; trans: string; message: string }) => void;
+        callback?: (response: {
+          reference: string;
+          status: string;
+          trans: string;
+          message: string;
+        }) => void;
         onClose?: () => void;
       }) => {
         openIframe: () => void;

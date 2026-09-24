@@ -99,7 +99,9 @@ export async function getPosts(
     try {
       const { getForYouPosts } = await import("@/lib/recommendations.functions");
       const res: any = await getForYouPosts({
-        data: { limit: Math.min(options.limit ?? appConfig.feed.pageSize, appConfig.feed.maxPageSize) },
+        data: {
+          limit: Math.min(options.limit ?? appConfig.feed.pageSize, appConfig.feed.maxPageSize),
+        },
       });
       const ranked = (res?.posts ?? []).map((row: any) => rowToPost(row));
       if (ranked.length > 0) {
@@ -144,7 +146,10 @@ export async function getPosts(
     function score(p: Post) {
       const ageHours = Math.max(1, (now - new Date(p.created_at).getTime()) / 3_600_000);
       const engagement =
-        (p.likeCount ?? 0) * 3 + (p.commentCount ?? 0) * 4 + (p.repostCount ?? 0) * 5 + (p.viewCount ?? 0) * 0.1;
+        (p.likeCount ?? 0) * 3 +
+        (p.commentCount ?? 0) * 4 +
+        (p.repostCount ?? 0) * 5 +
+        (p.viewCount ?? 0) * 0.1;
       return (engagement + 5) / Math.pow(ageHours, 0.6);
     }
   }
@@ -153,7 +158,6 @@ export async function getPosts(
   await hydrateEngagement(posts);
   return posts;
 }
-
 
 /** Posts the signed-in user has bookmarked, fetched by join instead of client filtering. */
 export async function getBookmarkedPosts(limit = 50): Promise<Post[]> {
@@ -177,9 +181,7 @@ export async function getBookmarkedPosts(limit = 50): Promise<Post[]> {
  * the true counts and only their own choice.
  */
 async function hydratePolls(posts: Post[]) {
-  const withPolls = posts.filter(
-    (p) => p.poll && (p.poll as any).options?.length && isDbId(p.id),
-  );
+  const withPolls = posts.filter((p) => p.poll && (p.poll as any).options?.length && isDbId(p.id));
   if (withPolls.length === 0) return;
   const viewer = me();
   const { data } = await db
@@ -265,12 +267,22 @@ export async function createPost(input: {
   return { ...post, post } as Post & { post: Post };
 }
 
+export async function getPostById(id: string): Promise<Post | null> {
+  if (!isDbId(id)) return null;
+  const { data, error } = await db.from("posts").select("*").eq("id", id).maybeSingle();
+  if (error || !data) return null;
+  const post = rowToPost(data);
+  await hydrateAuthors([post.user_id]);
+  await hydrateEngagement([post]);
+  return post;
+}
+
 export async function deletePost(id: string) {
-  try {
-    const { error } = await db.from("posts").delete().eq("id", id);
-    if (error) console.warn("deletePost DB notice:", error.message);
-  } catch (err) {
-    console.warn("deletePost exception:", err);
+  const { error } = await db.from("posts").delete().eq("id", id);
+  if (error) {
+    // Surface the failure (e.g. RLS denial for a non-owner) instead of
+    // reporting a delete that never happened.
+    throw new Error(error.message || "Could not delete that post");
   }
   emitRealtime("post:deleted", { id });
   return { ok: true };
@@ -315,7 +327,12 @@ export async function toggleLikePost(postId: string) {
 }
 
 export async function toggleRepostPost(postId: string) {
-  const { active, count } = await toggleRelation("reposts", postId, "post_repost_updated", "repostCount");
+  const { active, count } = await toggleRelation(
+    "reposts",
+    postId,
+    "post_repost_updated",
+    "repostCount",
+  );
   return { reposted: active, repostCount: count };
 }
 
@@ -336,7 +353,6 @@ export async function getMyEngagement(postIds: string[]) {
   const pick = (r: any) => ((r.data ?? []) as any[]).map((x) => String(x.post_id));
   return { liked: pick(likes), reposted: pick(reposts), bookmarked: pick(bookmarks) };
 }
-
 
 export async function addPostComment(postId: string, content: string) {
   const userId = me();
@@ -364,7 +380,11 @@ export async function addPostComment(postId: string, content: string) {
     .eq("post_id", postId);
   const count = exactCount ?? 1;
 
-  emitRealtime("new_comment", { postId, data: { ...comment, post_id: postId }, commentCount: count });
+  emitRealtime("new_comment", {
+    postId,
+    data: { ...comment, post_id: postId },
+    commentCount: count,
+  });
   return { comment, commentCount: count };
 }
 
@@ -389,7 +409,8 @@ export async function getPostComments(postId: string): Promise<PostComment[]> {
 export async function votePoll(postId: string, optionId: string) {
   const userId = me();
   if (!userId || userId === "guest") throw new Error("Sign in to vote");
-  if (!isDbId(postId) || !isDbId(userId)) throw new Error("Voting isn't available on sample posts.");
+  if (!isDbId(postId) || !isDbId(userId))
+    throw new Error("Voting isn't available on sample posts.");
   const { data: prior } = await db
     .from("poll_votes")
     .select("option_id")
@@ -545,8 +566,7 @@ export async function toggleLikeStory(storyId: string) {
     .eq("story_id", storyId)
     .eq("user_id", userId)
     .maybeSingle();
-  if (existing)
-    await db.from("story_likes").delete().eq("story_id", storyId).eq("user_id", userId);
+  if (existing) await db.from("story_likes").delete().eq("story_id", storyId).eq("user_id", userId);
   else await db.from("story_likes").insert({ story_id: storyId, user_id: userId });
 
   const { count } = await db
@@ -655,7 +675,10 @@ export async function getFollowingIds(): Promise<string[]> {
   return ((data ?? []) as any[]).map((r) => String(r.target_id));
 }
 
-export async function uploadMedia(file: File, folder: "avatars" | "posts" | "stories" | "media" | "messages" = "media") {
+export async function uploadMedia(
+  file: File,
+  folder: "avatars" | "posts" | "stories" | "media" | "messages" = "media",
+) {
   const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
   const path = `${folder}/${me()}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
   try {
@@ -685,7 +708,6 @@ export async function uploadMedia(file: File, folder: "avatars" | "posts" | "sto
     reader.readAsDataURL(file);
   });
 }
-
 
 /* ----------------------------------------------------------------- spaces */
 
@@ -727,12 +749,10 @@ export async function createSpace(input: {
   live?: boolean;
   startsAt?: string | null;
 }) {
-  const id = `space_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
   const isLive = input.live !== false;
   const { data, error } = await db
     .from("spaces")
     .insert({
-      id,
       title: input.title,
       topic: input.topic,
       host_id: me(),
@@ -744,6 +764,7 @@ export async function createSpace(input: {
     .select("*")
     .single();
   if (error) throw error;
+  const id = data.id as string;
   if (isLive) {
     await db.from("space_participants").insert({ space_id: id, user_id: me(), role: "host" });
   }
@@ -752,20 +773,24 @@ export async function createSpace(input: {
   return { space };
 }
 
-
 /** Keep the room's listener count in step with who is actually inside. */
 async function syncSpaceListeners(spaceId: string) {
   const { count } = await db
     .from("space_participants")
     .select("user_id", { count: "exact", head: true })
     .eq("space_id", spaceId);
-  await db.from("spaces").update({ listeners: count ?? 0 }).eq("id", spaceId);
+  await db
+    .from("spaces")
+    .update({ listeners: count ?? 0 })
+    .eq("id", spaceId);
   emitRealtime("space:listeners", { spaceId, listeners: count ?? 0 });
   return count ?? 0;
 }
 
 export async function joinSpace(spaceId: string) {
-  await db.from("space_participants").upsert({ space_id: spaceId, user_id: me(), role: "listener" });
+  await db
+    .from("space_participants")
+    .upsert({ space_id: spaceId, user_id: me(), role: "listener" });
   emitRealtime("space:joined", { spaceId, userId: me() });
   await syncSpaceListeners(spaceId);
   return { ok: true };
@@ -791,7 +816,6 @@ export async function endSpace(spaceId: string) {
   emitRealtime("space:ended", { spaceId });
   return { ok: true };
 }
-
 
 export async function toggleHandRaised(spaceId: string, raised: boolean) {
   await db
@@ -907,7 +931,10 @@ export async function getConversations(): Promise<Conversation[]> {
         .select("conversation_id")
         .is("read_at", null)
         .neq("sender_id", userId)
-        .in("conversation_id", rows.map((r) => r.id));
+        .in(
+          "conversation_id",
+          rows.map((r) => r.id),
+        );
       const unreadByConversation = new Map<string, number>();
       for (const row of (unreadRows ?? []) as any[]) {
         const key = String(row.conversation_id);
@@ -954,7 +981,6 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
   return [];
 }
 
-
 export async function getOrCreateConversation(participantId: string): Promise<string> {
   const userId = me();
   if (!isDbId(userId) || !isDbId(participantId)) {
@@ -991,7 +1017,12 @@ export async function sendMessage(target: string, body: string, mediaUrl?: strin
 
   const { data, error } = await db
     .from("messages")
-    .insert({ conversation_id: conversationId, sender_id: senderId, body, media_url: mediaUrl ?? null })
+    .insert({
+      conversation_id: conversationId,
+      sender_id: senderId,
+      body,
+      media_url: mediaUrl ?? null,
+    })
     .select("*")
     .single();
   if (error) throw new Error(error.message || "Your message couldn't be sent");
@@ -1071,7 +1102,6 @@ export async function deleteMessage(messageId: string) {
   emitRealtime("message:deleted", { id: messageId });
   return { id: messageId };
 }
-
 
 export async function getNotifications(): Promise<Notification[]> {
   if (!isDbId(me())) return [];
@@ -1177,11 +1207,7 @@ export async function sendTipApi(input: {
   let recipientId = input.recipientId;
   const username = input.recipientUsername?.replace(/^@/, "");
   if (!isDbId(recipientId) && username) {
-    const { data } = await db
-      .from("profiles")
-      .select("id")
-      .eq("username", username)
-      .maybeSingle();
+    const { data } = await db.from("profiles").select("id").eq("username", username).maybeSingle();
     recipientId = data?.id;
   }
   if (!isDbId(recipientId)) throw new Error("We couldn't find that creator.");
@@ -1198,11 +1224,12 @@ export async function sendTipApi(input: {
   });
   if (error) throw new Error(error.message || "That tip didn't go through");
 
+  // Broadcast only non-sensitive routing info. The tip amount and note stay
+  // private; the public realtime channel must not leak them to every client.
   emitRealtime("tip:sent", {
-    ...input,
     from_user_id: senderId,
     to_user_id: recipientId,
-    amount: input.amount,
+    post_id: isDbId(input.postId) ? input.postId : null,
   });
 
   return { ok: true, amount: input.amount, recipientId };
@@ -1229,19 +1256,28 @@ export async function submitReport(input: {
   reason: string;
   details?: string | undefined;
 }) {
+  const reporterId = me();
+  if (!isDbId(reporterId)) throw new Error("Sign in to submit a report");
   const { data, error } = await db
     .from("reports")
     .insert({
       ...input,
       details: input.details ?? "",
-      reporter_id: me(),
+      reporter_id: reporterId,
       reporter_name: currentUser.display_name,
       status: "pending",
     })
     .select("*")
     .maybeSingle();
   if (error) throw error;
-  emitRealtime("report:created", data);
+  // Signal only that a report exists so staff views can refresh. The full row
+  // (reporter identity, details, preview) is fetched via the RLS-gated
+  // getAdminReports and must never be broadcast on the public channel.
+  emitRealtime("report:created", {
+    id: (data as ModerationReport | null)?.id ?? null,
+    target_type: input.target_type,
+    target_id: input.target_id,
+  });
   return data as ModerationReport;
 }
 
@@ -1274,11 +1310,30 @@ export async function getAdminUsers(
   filters: { query?: string; role?: string; status?: string; verified?: boolean } = {},
 ) {
   let q = db.from("profiles").select("*").limit(200);
-  if (filters.role) q = q.eq("role", filters.role);
   if (filters.status) q = q.eq("status", filters.status);
   if (typeof filters.verified === "boolean") q = q.eq("verified", filters.verified);
   const { data } = await q;
-  let profiles = (data ?? []).map(rowToProfile);
+  const rawRows = (data ?? []) as any[];
+  let profiles = rawRows.map(rowToProfile);
+
+  // Roles live in `user_roles` (keyed by auth_user_id), not on `profiles`, so
+  // resolve them separately instead of filtering a nonexistent column.
+  if (filters.role) {
+    const { data: roleRows } = await db.from("user_roles").select("user_id, role");
+    const rows = (roleRows ?? []) as Array<{ user_id: string; role: string }>;
+    const withRole = new Set(
+      rows.filter((r) => r.role === filters.role).map((r) => String(r.user_id)),
+    );
+    const anyStaff = new Set(rows.map((r) => String(r.user_id)));
+    const matchProfileIds = new Set<string>();
+    for (const row of rawRows) {
+      const authId = String(row.auth_user_id ?? "");
+      const matches = filters.role === "user" ? !anyStaff.has(authId) : withRole.has(authId);
+      if (matches) matchProfileIds.add(String(row.id));
+    }
+    profiles = profiles.filter((p: Profile) => matchProfileIds.has(p.id));
+  }
+
   if (filters.query) {
     const needle = filters.query.toLowerCase();
     profiles = profiles.filter(
@@ -1289,7 +1344,11 @@ export async function getAdminUsers(
   return profiles;
 }
 
-export async function updateUserAdmin(userId: string, patch: Record<string, any>, _actorId?: string) {
+export async function updateUserAdmin(
+  userId: string,
+  patch: Record<string, any>,
+  _actorId?: string,
+) {
   const data = await moderateUser({
     data: {
       profileId: userId,
@@ -1310,7 +1369,11 @@ export async function updateUserAdmin(userId: string, patch: Record<string, any>
 }
 
 export async function getAdminPosts(filters: { query?: string } = {}) {
-  const { data } = await db.from("posts").select("*").order("created_at", { ascending: false }).limit(200);
+  const { data } = await db
+    .from("posts")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(200);
   let posts = (data ?? []).map((row: any) => rowToPost(row));
   if (filters.query) {
     const needle = filters.query.toLowerCase();
@@ -1391,7 +1454,10 @@ export async function syncSupabaseDatabase() {
 
 export async function getAdminOverview(): Promise<AdminOverviewData> {
   const started = Date.now();
-  const [{ counts }, reports] = await Promise.all([syncSupabaseDatabase(), getAdminReports({ status: "pending" })]);
+  const [{ counts }, reports] = await Promise.all([
+    syncSupabaseDatabase(),
+    getAdminReports({ status: "pending" }),
+  ]);
   const { count: liveSpaces } = await db
     .from("spaces")
     .select("id", { count: "exact", head: true })
@@ -1400,8 +1466,12 @@ export async function getAdminOverview(): Promise<AdminOverviewData> {
     .from("post_impressions")
     .select("post_id", { count: "exact", head: true });
   const { count: likes } = await db.from("likes").select("post_id", { count: "exact", head: true });
-  const { count: comments } = await db.from("comments").select("id", { count: "exact", head: true });
-  const { count: reposts } = await db.from("reposts").select("post_id", { count: "exact", head: true });
+  const { count: comments } = await db
+    .from("comments")
+    .select("id", { count: "exact", head: true });
+  const { count: reposts } = await db
+    .from("reposts")
+    .select("post_id", { count: "exact", head: true });
   const { count: suspended } = await db
     .from("profiles")
     .select("id", { count: "exact", head: true })
@@ -1433,6 +1503,7 @@ export async function getAdminOverview(): Promise<AdminOverviewData> {
         storage_usage_bytes: 0,
         error_rate_percent: 0,
         db_driver: "postgres",
+        memory_mb: Math.round((process.memoryUsage?.().heapUsed ?? 0) / 1024 / 1024),
       },
     },
     storage_usage_breakdown: {
@@ -1479,7 +1550,8 @@ async function buildAdminCharts(totals: {
 
   const hourly: AdminCharts["hourly_traffic"] = Array.from({ length: 24 }, (_, hour) => ({
     hour: `${String(hour).padStart(2, "0")}:00`,
-    requests: posts.filter((p) => new Date(p.created_at ?? Date.now()).getUTCHours() === hour).length,
+    requests: posts.filter((p) => new Date(p.created_at ?? Date.now()).getUTCHours() === hour)
+      .length,
   }));
 
   const timeline: AdminCharts["system_load_timeline"] = Array.from({ length: 12 }, (_, i) => {
@@ -1497,7 +1569,10 @@ async function buildAdminCharts(totals: {
     byUser.set(p.user_id, (byUser.get(p.user_id) ?? 0) + Number(p.view_count ?? 0));
     postCount.set(p.user_id, (postCount.get(p.user_id) ?? 0) + 1);
   }
-  const topIds = [...byUser.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([id]) => id);
+  const topIds = [...byUser.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([id]) => id);
   const { data: creatorRows } = topIds.length
     ? await db.from("profiles").select("*").in("id", topIds)
     : { data: [] as any[] };
@@ -1512,7 +1587,8 @@ async function buildAdminCharts(totals: {
   }));
 
   const tagCounts = new Map<string, number>();
-  for (const p of posts) for (const tag of p.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  for (const p of posts)
+    for (const tag of p.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
   const category_velocity: AdminCharts["category_velocity"] = [...tagCounts.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 6)
@@ -1565,7 +1641,6 @@ export async function preloadFeedBundle(): Promise<PreloadBundleResponse> {
   ]);
   return { foryou, following, latest: foryou, stories, spaces, trendingTags };
 }
-
 
 /* ------------------------------------------------- compatibility surface ----
  * Thin adapters so feature pages can speak in domain terms while the data
@@ -1636,14 +1711,18 @@ export async function globalSearch(
   const like = `%${q}%`;
   const [postRes, profileRes, spaceRes] = await Promise.all([
     db.from("posts").select("*").eq("hidden", false).ilike("content", like).limit(20),
-    db.from("profiles").select("*").or(`username.ilike.${like},display_name.ilike.${like}`).limit(20),
+    db
+      .from("profiles")
+      .select("*")
+      .or(`username.ilike.${like},display_name.ilike.${like}`)
+      .limit(20),
     db.from("spaces").select("*").or(`title.ilike.${like},topic.ilike.${like}`).limit(20),
   ]);
   const posts = ((postRes.data ?? []) as any[]).map((row) => rowToPost(row));
   await hydrateAuthors(posts.map((p) => p.user_id));
   const profiles = ((profileRes.data ?? []) as any[]).map((row) => rowToProfile(row));
   cacheProfiles(profiles);
-  return { posts, profiles, spaces: ((spaceRes.data ?? []) as any[]) as Space[] };
+  return { posts, profiles, spaces: (spaceRes.data ?? []) as any[] as Space[] };
 }
 
 /** Single Space by id. */
@@ -1685,7 +1764,9 @@ export async function recordPostImpressions(postIds: string[]) {
 export async function generateSmartRepliesAI(messages: string[]): Promise<{ replies: string[] }> {
   const last = (messages[messages.length - 1] ?? "").toLowerCase();
   if (last.includes("?"))
-    return { replies: ["Good question — let me check.", "Yes, absolutely.", "Not sure yet, I'll confirm."] };
+    return {
+      replies: ["Good question — let me check.", "Yes, absolutely.", "Not sure yet, I'll confirm."],
+    };
   if (last.includes("thanks") || last.includes("thank you"))
     return { replies: ["Anytime!", "Happy to help 🙌", "You got it."] };
   return { replies: ["Sounds good!", "On it 👍", "Let's do it."] };
@@ -1877,8 +1958,7 @@ export async function getCreatorAnalytics(
       const hour = new Date(String(imp.created_at ?? 0)).getHours();
       return hour >= h && hour < h + 3;
     }).length;
-    const label =
-      h === 0 ? "12am" : h < 12 ? `${h}am` : h === 12 ? "12pm" : `${h - 12}pm`;
+    const label = h === 0 ? "12am" : h < 12 ? `${h}am` : h === 12 ? "12pm" : `${h - 12}pm`;
     return { hour: label, activity: count };
   });
 
