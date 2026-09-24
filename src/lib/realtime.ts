@@ -97,6 +97,7 @@ function dispatchLocal(event: string, payload: any) {
   window.dispatchEvent(new CustomEvent("rt:*", { detail: { ...payload, type: event, event } }));
 }
 
+let authHooked = false;
 let dbChannel: ReturnType<typeof supabase.channel> | null = null;
 
 /** Subscribes once to database inserts; access rules decide who receives them. */
@@ -118,6 +119,8 @@ function ensureDbFeed() {
     })
     .subscribe();
   // Rejoin with the user's token after sign-in so access rules apply.
+  if (authHooked) return;
+  authHooked = true;
   supabase.auth.onAuthStateChange((event) => {
     if (event !== "SIGNED_IN" && event !== "SIGNED_OUT") return;
     const old = dbChannel;

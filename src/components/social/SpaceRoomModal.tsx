@@ -187,9 +187,11 @@ function SpaceRoomModalContent({ space, onClose }: { space: Space; onClose: () =
     (event) => {
       if (event.type === "space:message" || event.type === "space_chat_message") {
         const msg = event.message || event.data;
+        const msgSpace = event.spaceId || msg?.spaceId;
+        if (msgSpace && msgSpace !== space.id) return;
         if (msg && msg.userId === currentUser.id) return;
         if (msg) {
-          setMessages((prev) => [
+          setMessages((prev) => prev.some((m) => m.id === msg.id) ? prev : [
             ...prev,
             {
               id: msg.id || `msg_${Date.now()}`,
