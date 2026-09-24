@@ -80,10 +80,50 @@ export function emitRealtime(event: string, payload: any) {
     /* non-browser */
   }
 
+  // Private rows reach their intended recipients through database change
+  // feeds (filtered by access rules), never through the public broadcast.
+  if (DB_DELIVERED.has(event)) return;
+
   const channel = getChannel();
   if (!channel) return;
   if (channelReady) void channel.send({ type: "broadcast", event, payload });
   else pending.push({ event, payload });
+}
+
+const DB_DELIVERED = new Set(["message:created", "space:message"]);
+
+function dispatchLocal(event: string, payload: any) {
+  window.dispatchEvent(new CustomEvent(`rt:${event}`, { detail: payload }));
+  window.dispatchEvent(new CustomEvent("rt:*", { detail: { ...payload, type: event, event } }));
+}
+
+let dbChannel: ReturnType<typeof supabase.channel> | null = null;
+
+/** Subscribes once to database inserts; access rules decide who receives them. */
+function ensureDbFeed() {
+  if (typeof window === "undefined" || dbChannel) return;
+  dbChannel = supabase
+    .channel("db-feed")
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, (p: any) => {
+      const row = p.new;
+      if (row?.id) dispatchLocal("message:created", { message: row, ...row });
+    })
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "space_messages" }, (p: any) => {
+      const row = p.new;
+      if (!row?.id) return;
+      dispatchLocal("space:message", {
+        spaceId: row.space_id,
+        message: { id: row.id, userId: row.user_id, body: row.body, spaceId: row.space_id },
+      });
+    })
+    .subscribe();
+  // Rejoin with the user's token after sign-in so access rules apply.
+  supabase.auth.onAuthStateChange((event) => {
+    if (event !== "SIGNED_IN" && event !== "SIGNED_OUT") return;
+    const old = dbChannel;
+    dbChannel = null;
+    if (old) void supabase.removeChannel(old).then(() => ensureDbFeed());
+  });
 }
 
 export function useRealtime(
@@ -108,6 +148,7 @@ export function useRealtime(
     // Remote broadcasts arrive through the shared channel bridge, which
     // re-dispatches them as the same local window events.
     getChannel();
+    ensureDbFeed();
 
     return () => {
       for (const { event, listener } of localListeners) {
