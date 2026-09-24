@@ -12,7 +12,6 @@ import type { Profile } from "@/lib/types";
 
 let loadedOnce = false;
 
-const STORAGE_KEY = "spaces_local_session_user";
 
 async function loadSessionProfile() {
   try {
