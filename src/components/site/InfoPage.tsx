@@ -35,7 +35,7 @@ export function InfoPage({
             <Link to="/feed" className="hidden min-h-11 items-center rounded-full px-4 text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline-flex">
               Open app
             </Link>
-            <Link to="/auth" className="inline-flex min-h-11 items-center rounded-full bg-brand px-5 text-sm font-bold text-brand-foreground hover:opacity-90">
+            <Link to="/auth" className="inline-flex min-h-11 items-center rounded-full bg-brand px-5 text-sm font-bold text-white hover:opacity-90">
               Join Spaces1
             </Link>
           </div>

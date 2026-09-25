@@ -50,7 +50,7 @@ function ContactPage() {
           <textarea rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className={field} />
           {errors["message"] ? <span className="mt-1 block text-xs text-destructive">{errors["message"]}</span> : null}
         </label>
-        <button type="submit" className="min-h-11 rounded-full bg-brand px-6 text-sm font-bold text-brand-foreground hover:opacity-90">
+        <button type="submit" className="min-h-11 rounded-full bg-brand px-6 text-sm font-bold text-white hover:opacity-90">
           Send message
         </button>
       </form>
