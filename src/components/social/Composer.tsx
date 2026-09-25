@@ -54,6 +54,8 @@ export function Composer({
   const [showPollBuilder, setShowPollBuilder] = useState(false);
   const [pollQuestion, setPollQuestion] = useState("");
   const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
+  const [pollError, setPollError] = useState<"question" | "options" | null>(null);
+  const [locationInput, setLocationInput] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -143,11 +145,25 @@ export function Composer({
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (showPollBuilder) {
+      const filled = pollOptions.map((o) => o.trim().toLowerCase()).filter(Boolean);
+      if (!pollQuestion.trim()) {
+        setPollError("question");
+        toast.error("Your poll needs a question.");
+        return;
+      }
+      if (filled.length < 2 || new Set(filled).size !== filled.length) {
+        setPollError("options");
+        toast.error("Add at least two different poll options.");
+        return;
+      }
+      setPollError(null);
+    }
     if (!canPost) return;
     setPosting(true);
 
     try {
-      const rawContent = draft.trim();
+      const rawContent = draft.trim() || (showPollBuilder ? pollQuestion.trim() : "");
       const contentWithLocation = selectedLocation
         ? `${rawContent}\n📍 ${selectedLocation}`
         : rawContent;
@@ -422,20 +438,78 @@ export function Composer({
             )}
 
             {showLocationPicker && (
-              <div className="mt-2 p-3 rounded-2xl bg-foreground/5 border border-border/80 flex flex-wrap gap-1.5 animate-in fade-in">
-                {sampleLocations.map((loc) => (
+              <div className="mt-2 p-3 rounded-2xl bg-foreground/5 border border-border/80 space-y-2.5 animate-in fade-in">
+                <form
+                  className="flex items-center gap-2"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const v = locationInput.trim();
+                    if (!v) return;
+                    setSelectedLocation(v.slice(0, 80));
+                    setLocationInput("");
+                    setShowLocationPicker(false);
+                  }}
+                >
+                  <div className="relative flex-1">
+                    <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      type="text"
+                      autoFocus
+                      maxLength={80}
+                      list="composer-location-suggestions"
+                      aria-label="Location"
+                      placeholder="Type a place, e.g. Nairobi, Kenya"
+                      value={locationInput}
+                      onChange={(e) => setLocationInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const v = locationInput.trim();
+                          if (!v) return;
+                          setSelectedLocation(v.slice(0, 80));
+                          setLocationInput("");
+                          setShowLocationPicker(false);
+                        }
+                      }}
+                      className="w-full rounded-xl bg-card border border-border pl-9 pr-3 py-2.5 text-sm outline-none focus:border-brand"
+                    />
+                    <datalist id="composer-location-suggestions">
+                      {sampleLocations.map((l) => <option key={l} value={l} />)}
+                    </datalist>
+                  </div>
                   <button
-                    key={loc}
                     type="button"
+                    disabled={!locationInput.trim()}
                     onClick={() => {
-                      setSelectedLocation(loc);
+                      const v = locationInput.trim();
+                      if (!v) return;
+                      setSelectedLocation(v.slice(0, 80));
+                      setLocationInput("");
                       setShowLocationPicker(false);
                     }}
-                    className="rounded-full bg-card px-3 py-1 text-xs font-semibold hover:border-brand/40 border border-border transition-all active:scale-95"
+                    className="min-h-11 rounded-xl bg-brand px-4 text-xs font-semibold text-white disabled:opacity-40"
                   >
-                    📍 {loc}
+                    Add
                   </button>
-                ))}
+                </form>
+                <div className="flex flex-wrap gap-1.5">
+                  {sampleLocations
+                    .filter((l) => l.toLowerCase().includes(locationInput.trim().toLowerCase()))
+                    .map((loc) => (
+                      <button
+                        key={loc}
+                        type="button"
+                        onClick={() => {
+                          setSelectedLocation(loc);
+                          setLocationInput("");
+                          setShowLocationPicker(false);
+                        }}
+                        className="rounded-full bg-card px-3 py-1.5 text-xs font-semibold hover:border-brand/40 border border-border transition-all active:scale-95"
+                      >
+                        📍 {loc}
+                      </button>
+                    ))}
+                </div>
               </div>
             )}
 
@@ -463,26 +537,50 @@ export function Composer({
 
             {/* Poll Builder Panel */}
             {showPollBuilder && (
-              <div className="mt-3 p-4 rounded-2xl bg-foreground/[0.04] border border-border/80 space-y-3 animate-in fade-in">
+              <div className="mt-3 p-4 rounded-2xl bg-foreground/[0.04] border border-border/80 space-y-4 animate-in fade-in">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                    <BarChart2 className="h-4 w-4 text-brand" /> Create a Poll
+                  <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
+                    <BarChart2 className="h-4 w-4 text-brand" /> Create a poll
                   </span>
                   <button
                     type="button"
+                    aria-label="Remove poll"
                     onClick={() => setShowPollBuilder(false)}
-                    className="rounded-full p-1 text-muted-foreground hover:text-foreground"
+                    className="grid h-11 w-11 place-items-center rounded-full text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
                   >
-                    <X className="h-3.5 w-3.5" />
+                    <X className="h-4 w-4" />
                   </button>
                 </div>
 
+                <label className="block">
+                  <span className="text-xs font-semibold text-foreground">Question</span>
+                  <input
+                    type="text"
+                    maxLength={140}
+                    placeholder="What do you want to ask?"
+                    value={pollQuestion}
+                    onChange={(e) => setPollQuestion(e.target.value)}
+                    className={cn(
+                      "mt-1.5 w-full rounded-xl bg-card border px-3 py-2.5 text-sm outline-none focus:border-brand",
+                      pollError === "question" ? "border-destructive" : "border-border",
+                    )}
+                  />
+                  <span className="mt-1 flex justify-between text-[11px] text-muted-foreground">
+                    <span>{pollError === "question" ? <span className="text-destructive">Add a question for your poll.</span> : "Keep it short and clear."}</span>
+                    <span>{pollQuestion.length}/140</span>
+                  </span>
+                </label>
+
                 <div className="space-y-2">
+                  <span className="text-xs font-semibold text-foreground">Options <span className="font-normal text-muted-foreground">(2–4)</span></span>
                   {pollOptions.map((opt, idx) => (
                     <div key={idx} className="flex items-center gap-2">
+                      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand/10 text-xs font-bold text-brand">{idx + 1}</span>
                       <input
                         type="text"
-                        placeholder={`Option ${idx + 1}`}
+                        maxLength={60}
+                        aria-label={`Option ${idx + 1}`}
+                        placeholder={idx < 2 ? `Option ${idx + 1} (required)` : `Option ${idx + 1}`}
                         value={opt}
                         onChange={(e) => {
                           const val = e.target.value;
@@ -492,28 +590,37 @@ export function Composer({
                             return copy;
                           });
                         }}
-                        className="flex-1 rounded-xl bg-card border border-border px-3 py-2 text-xs outline-none focus:border-brand"
+                        className={cn(
+                          "flex-1 rounded-xl bg-card border px-3 py-2.5 text-sm outline-none focus:border-brand",
+                          pollError === "options" && idx < 2 && !opt.trim() ? "border-destructive" : "border-border",
+                        )}
                       />
-                      {pollOptions.length > 2 && (
+                      {pollOptions.length > 2 ? (
                         <button
                           type="button"
+                          aria-label={`Remove option ${idx + 1}`}
                           onClick={() => setPollOptions((prev) => prev.filter((_, i) => i !== idx))}
-                          className="p-1.5 text-muted-foreground hover:text-rose-500 transition-colors"
+                          className="grid h-11 w-11 place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 className="h-4 w-4" />
                         </button>
+                      ) : (
+                        <span className="w-11" />
                       )}
                     </div>
                   ))}
+                  {pollError === "options" && (
+                    <p className="text-[11px] text-destructive">Fill in at least two different options.</p>
+                  )}
                 </div>
 
                 {pollOptions.length < 4 && (
                   <button
                     type="button"
                     onClick={() => setPollOptions((prev) => [...prev, ""])}
-                    className="flex items-center gap-1 text-xs font-semibold text-brand hover:underline pt-1"
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-dashed border-brand/50 px-4 text-xs font-semibold text-brand hover:bg-brand/5"
                   >
-                    <Plus className="h-3.5 w-3.5" /> Add another option
+                    <Plus className="h-4 w-4" /> Add option
                   </button>
                 )}
               </div>
