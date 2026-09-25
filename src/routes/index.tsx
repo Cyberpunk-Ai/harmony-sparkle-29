@@ -1076,17 +1076,17 @@ function Cta() {
 /* ---------------------------------- footer --------------------------------- */
 
 function Footer() {
-  const cols = [
-    { title: "Product", links: ["Features", "Spaces", "Creators", "Pricing"] },
-    { title: "Company", links: ["About", "Careers", "Press", "Blog"] },
-    { title: "Resources", links: ["Help Center", "Community", "Guidelines", "Status"] },
-    { title: "Legal", links: ["Privacy", "Terms", "Cookies", "Licenses"] },
+  const cols: { title: string; links: [string, string][] }[] = [
+    { title: "Product", links: [["Features", "/#features"], ["Spaces", "/spaces"], ["Explore", "/explore"], ["Pricing", "/pricing"]] },
+    { title: "Company", links: [["About", "/about"], ["Contact", "/contact"]] },
+    { title: "Resources", links: [["Help Center", "/help"], ["Guidelines", "/guidelines"]] },
+    { title: "Legal", links: [["Privacy", "/privacy"], ["Terms", "/terms"], ["Cookies", "/cookies"]] },
   ];
   return (
     <footer className="border-t border-gray-200 bg-white/60 pb-10 pt-20">
       <div className="container mx-auto px-6">
-        <div className="mb-20 grid gap-x-16 gap-y-12 md:grid-cols-6">
-          <div className="md:col-span-2">
+        <div className="mb-20 grid gap-x-16 gap-y-12 grid-cols-2 md:grid-cols-6">
+          <div className="col-span-2">
             <p className="mb-4 text-2xl font-extrabold tracking-tight">Spaces1</p>
             <p className="max-w-xs text-gray-500">
               The next-generation social platform built for creators and communities.
@@ -1097,10 +1097,10 @@ function Footer() {
               <p className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-900">
                 {c.title}
               </p>
-              <ul className="space-y-3 text-sm text-gray-500">
-                {c.links.map((l) => (
+              <ul className="space-y-1 text-sm text-gray-500">
+                {c.links.map(([l, href]) => (
                   <li key={l}>
-                    <a href="#top" className="transition-colors hover:text-brand">
+                    <a href={href} className="inline-flex min-h-11 items-center transition-colors hover:text-brand">
                       {l}
                     </a>
                   </li>
