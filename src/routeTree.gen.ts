@@ -10,17 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BookmarksRouteImport } from './routes/bookmarks'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FeedRouteImport } from './routes/feed'
+import { Route as GuidelinesRouteImport } from './routes/guidelines'
+import { Route as HelpRouteImport } from './routes/help'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SpacesRouteImport } from './routes/spaces'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as BillingCallbackRouteImport } from './routes/billing.callback'
 import { Route as PostIdRouteImport } from './routes/post.$id'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
@@ -30,6 +37,11 @@ import { Route as ApiPublicPaystackWebhookRouteImport } from './routes/api/publi
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -47,6 +59,16 @@ const BookmarksRoute = BookmarksRouteImport.update({
   path: '/bookmarks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
@@ -55,6 +77,16 @@ const ExploreRoute = ExploreRouteImport.update({
 const FeedRoute = FeedRouteImport.update({
   id: '/feed',
   path: '/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidelinesRoute = GuidelinesRouteImport.update({
+  id: '/guidelines',
+  path: '/guidelines',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MessagesRoute = MessagesRouteImport.update({
@@ -72,6 +104,11 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -85,6 +122,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const SpacesRoute = SpacesRouteImport.update({
   id: '/spaces',
   path: '/spaces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BillingCallbackRoute = BillingCallbackRouteImport.update({
@@ -116,17 +158,24 @@ const ApiPublicPaystackWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRoute
+  '/guidelines': typeof GuidelinesRoute
+  '/help': typeof HelpRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
+  '/terms': typeof TermsRoute
   '/billing/callback': typeof BillingCallbackRoute
   '/post/$id': typeof PostIdRoute
   '/u/$username': typeof UUsernameRoute
@@ -135,17 +184,24 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRoute
+  '/guidelines': typeof GuidelinesRoute
+  '/help': typeof HelpRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
+  '/terms': typeof TermsRoute
   '/billing/callback': typeof BillingCallbackRoute
   '/post/$id': typeof PostIdRoute
   '/u/$username': typeof UUsernameRoute
@@ -155,17 +211,24 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/bookmarks': typeof BookmarksRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/explore': typeof ExploreRoute
   '/feed': typeof FeedRoute
+  '/guidelines': typeof GuidelinesRoute
+  '/help': typeof HelpRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
+  '/terms': typeof TermsRoute
   '/billing/callback': typeof BillingCallbackRoute
   '/post/$id': typeof PostIdRoute
   '/u/$username': typeof UUsernameRoute
@@ -176,17 +239,24 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/admin'
     | '/auth'
     | '/bookmarks'
+    | '/contact'
+    | '/cookies'
     | '/explore'
     | '/feed'
+    | '/guidelines'
+    | '/help'
     | '/messages'
     | '/notifications'
     | '/pricing'
+    | '/privacy'
     | '/profile'
     | '/settings'
     | '/spaces'
+    | '/terms'
     | '/billing/callback'
     | '/post/$id'
     | '/u/$username'
@@ -195,17 +265,24 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/admin'
     | '/auth'
     | '/bookmarks'
+    | '/contact'
+    | '/cookies'
     | '/explore'
     | '/feed'
+    | '/guidelines'
+    | '/help'
     | '/messages'
     | '/notifications'
     | '/pricing'
+    | '/privacy'
     | '/profile'
     | '/settings'
     | '/spaces'
+    | '/terms'
     | '/billing/callback'
     | '/post/$id'
     | '/u/$username'
@@ -214,17 +291,24 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/admin'
     | '/auth'
     | '/bookmarks'
+    | '/contact'
+    | '/cookies'
     | '/explore'
     | '/feed'
+    | '/guidelines'
+    | '/help'
     | '/messages'
     | '/notifications'
     | '/pricing'
+    | '/privacy'
     | '/profile'
     | '/settings'
     | '/spaces'
+    | '/terms'
     | '/billing/callback'
     | '/post/$id'
     | '/u/$username'
@@ -234,17 +318,24 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   BookmarksRoute: typeof BookmarksRoute
+  ContactRoute: typeof ContactRoute
+  CookiesRoute: typeof CookiesRoute
   ExploreRoute: typeof ExploreRoute
   FeedRoute: typeof FeedRoute
+  GuidelinesRoute: typeof GuidelinesRoute
+  HelpRoute: typeof HelpRoute
   MessagesRoute: typeof MessagesRoute
   NotificationsRoute: typeof NotificationsRoute
   PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRoute
   SpacesRoute: typeof SpacesRoute
+  TermsRoute: typeof TermsRoute
   BillingCallbackRoute: typeof BillingCallbackRoute
   PostIdRoute: typeof PostIdRoute
   UUsernameRoute: typeof UUsernameRoute
@@ -259,6 +350,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -282,6 +380,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookmarksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore': {
       id: '/explore'
       path: '/explore'
@@ -294,6 +406,20 @@ declare module '@tanstack/react-router' {
       path: '/feed'
       fullPath: '/feed'
       preLoaderRoute: typeof FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guidelines': {
+      id: '/guidelines'
+      path: '/guidelines'
+      fullPath: '/guidelines'
+      preLoaderRoute: typeof GuidelinesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/messages': {
@@ -317,6 +443,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -336,6 +469,13 @@ declare module '@tanstack/react-router' {
       path: '/spaces'
       fullPath: '/spaces'
       preLoaderRoute: typeof SpacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/billing/callback': {
@@ -378,17 +518,24 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   BookmarksRoute: BookmarksRoute,
+  ContactRoute: ContactRoute,
+  CookiesRoute: CookiesRoute,
   ExploreRoute: ExploreRoute,
   FeedRoute: FeedRoute,
+  GuidelinesRoute: GuidelinesRoute,
+  HelpRoute: HelpRoute,
   MessagesRoute: MessagesRoute,
   NotificationsRoute: NotificationsRoute,
   PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRoute,
   SpacesRoute: SpacesRoute,
+  TermsRoute: TermsRoute,
   BillingCallbackRoute: BillingCallbackRoute,
   PostIdRoute: PostIdRoute,
   UUsernameRoute: UUsernameRoute,
